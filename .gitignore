@@ -5,3 +5,6 @@ waf3*/
 
 # Build stuff.
 build/
+
+# VSCode stuff
+/.vscode
