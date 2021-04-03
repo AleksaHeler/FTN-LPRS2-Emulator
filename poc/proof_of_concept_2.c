@@ -1,36 +1,32 @@
 
 ///////////////////////////////////////////////////////////////////////////////
-// Headers.
-
+// Headers:
 #include <stdint.h>
 #include "system.h"
 #include <stdio.h>
-#include <math.h>
+#include <math.h> // TODO: remove this library and use our own sin() and cos() functions
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Useful macros.
-
+// Useful macros:
 #define ABS(N) ((N<0)?(-N):(N))
-
-
-///////////////////////////////////////////////////////////////////////////////
-// HW stuff.
-
 #define WAIT_UNITL_0(x) while(x != 0){}
 #define WAIT_UNITL_1(x) while(x != 1){}
 
+
+///////////////////////////////////////////////////////////////////////////////
+// HW stuff:
+// supported resolutions: 640x480 (1b color), 320x240 (4b color), 160x120(9b color)
 #define SCREEN_W 320
 #define SCREEN_H 240
-#define SCREEN_IDX4_W8 (SCREEN_W/8)
 
-#define gpu_p32 ((volatile uint32_t*)LPRS2_GPU_BASE)
-#define palette_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x1000))
-#define unpack_idx1_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x400000))
-#define pack_idx1_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x600000))
-#define unpack_idx4_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x800000))
-#define pack_idx4_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0xa00000))
-#define joypad_p32 ((volatile uint32_t*)LPRS2_JOYPAD_BASE)
+#define gpu_p32 ((volatile uint32_t*)LPRS2_GPU_BASE)                        // GPU buffer base
+#define palette_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x1000))           // Color palette
+#define unpack_idx1_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x400000))     // IDX1 - unpacked
+#define pack_idx1_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x600000))       // IDX1 - packed
+#define unpack_idx4_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x800000))     // IDX4 - unpacked
+#define pack_idx4_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0xa00000))       // IDX4 - packed
+#define joypad_p32 ((volatile uint32_t*)LPRS2_JOYPAD_BASE)                  // Joypad
 
 typedef struct {
 	unsigned a      : 1;
@@ -42,24 +38,21 @@ typedef struct {
 	unsigned left   : 1;
 	unsigned right  : 1;
 } bf_joypad;
-#define joypad (*((volatile bf_joypad*)LPRS2_JOYPAD_BASE))
+#define joypad (*((volatile bf_joypad*)LPRS2_JOYPAD_BASE))                  // Joypad struct
 
 typedef struct {
 	uint32_t m[SCREEN_H][SCREEN_W];
 } bf_unpack_idx1;
-#define unpack_idx1 (*((volatile bf_unpack_idx1*)unpack_idx1_p32))
+#define unpack_idx1 (*((volatile bf_unpack_idx1*)unpack_idx1_p32))          // Unpacked IDX1 for use with [x][y] indexing
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Game config.
-
-#define UNPACKED_0_PACKED_1 0
-
+// Game config:
+// TODO: parametrize stuff
 
 ///////////////////////////////////////////////////////////////////////////////
-// Game data structures.
-
+// Game data:
 #define mapWidth 24
 #define mapHeight 24
 
@@ -100,34 +93,30 @@ int worldMap[mapWidth][mapHeight]=
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// Game code.
-
+// Game code:
 int main(void) {
 	
-	// Setup.
+	/* Setup */
 	gpu_p32[0] = 2; // 4b index mode. (16 colors)
 	gpu_p32[1] = 0; // Koristimo unpacked
     
-    /* setting colors */
-	palette_p32[0] = 0x00C6CEF5; // #F5CEC6
-	palette_p32[1] = 0x00A64E61; // #614EA6
-	palette_p32[2] = 0x00A2C7F2; // #F2C7A2
-	palette_p32[3] = 0x00F18AA1; // #A18AF1
-	palette_p32[4] = 0x0077F272; // #72F277
-	palette_p32[5] = 0x0059A656; // #56A659
-	palette_p32[6] = 0x00C6CEF5; // #F5CEC6
-    
-    /*palette_p32[0] = 0x00ff0000; // Blue.
-    palette_p32[1] = 0x000000ff; // Red.
-    palette_p32[2] = 0x0000ff00; // Green.
-    palette_p32[3] = 0x0000ffff;
-    palette_p32[4] = 0x00ffff00;*/
+    /* Setting colors, light and dark are kept in pairs */
+	palette_p32[0] = 0x00A86765;        // #6567A8
+	palette_p32[1] = 0x00A64E61;        // #614EA6
+	palette_p32[2] = 2*0x00A64E61/3;    // darker #614EA6
+	palette_p32[3] = 0x00A2C7F2;        // #F2C7A2
+	palette_p32[4] = 2*0x00A2C7F2/3;    // darker #F2C7A2
+	palette_p32[5] = 0x00F18AA1;        // #A18AF1
+	palette_p32[6] = 2*0x00F18AA1/3;    // darker #A18AF1
+	palette_p32[7] = 0x0077F272;        // #72F277
+	palette_p32[8] = 2*0x0077F272/3;    // darker #72F277
+	palette_p32[9] = 0x0059A656;        // #56A659
+	palette_p32[10] = 2*0x0059A656/3;   // darker #56A659
+	palette_p32[11] = 0x00C6CEF5;       // #F5CEC6
+	palette_p32[12] = 2*0x00C6CEF5/3;   // darker #F5CEC6
+	gpu_p32[0x800] = 0x0000ff00;        // Green for HUD.
 
-	gpu_p32[0x800] = 0x0000ff00; // Green for HUD.
-
-
-	// Game state.
-	/* Player data */
+	/* Player & camera data */
     double posX = 22, posY = 12;  // player x and y start position
     double dirX = -1, dirY = 0; // initial player direction vector
 
@@ -138,6 +127,7 @@ int main(void) {
     double planeX = 0, planeY = 0.66; // the 2d raycaster version of camera plane
 	
 	
+    /* Main loop, all game mechanics is happening here */
 	while(1){
 		
 		/* The speed modifiers use frameTime, and a constant value, to 
@@ -146,17 +136,17 @@ int main(void) {
            moving and rotating speed is independent of the processor speed */
         //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
         //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
-        double moveSpeed = 5.0/120.0;
-        double rotSpeed = 3.0/120.0;
+        double moveSpeed = 5.0/60.0;
+        double rotSpeed = 3.0/60.0;
 		
-		/* Move forward if no wall in front of you */
+		/* Move forward if no wall in front of the player */
         if(joypad.up) {
             if(worldMap[(int)(posX + dirX * moveSpeed)][(int)posY] == 0) 
                 posX += dirX * moveSpeed;
             if(worldMap[(int)(posX)][(int)(posY + dirY * moveSpeed)] == 0) 
                 posY += dirY * moveSpeed;
         }
-        /* Move backwards if no wall behind you */
+        /* Move backwards if no wall behind the player */
         if(joypad.down) {
             if(worldMap[(int)(posX - dirX * moveSpeed)][(int)posY] == 0) posX -= dirX * moveSpeed;
             if(worldMap[(int)(posX)][(int)(posY - dirY * moveSpeed)] == 0) posY -= dirY * moveSpeed;
@@ -189,34 +179,28 @@ int main(void) {
 		
 		
 		/////////////////////////////////////
-		// Gameplay.
+		// Gameplay:
 		
 		
 		
 		
 		/////////////////////////////////////
-		// Drawing.
+		// Drawing:
 		
 		
-		// Detecting rising edge of VSync.
-		WAIT_UNITL_0(gpu_p32[2]);
-		WAIT_UNITL_1(gpu_p32[2]);
-		// Draw in buffer while it is in VSync.
+		WAIT_UNITL_0(gpu_p32[2]);   // Detecting rising edge of VSync
+		WAIT_UNITL_1(gpu_p32[2]);   // Draw in buffer while it is in VSync
 		
-		
-		
-#if !UNPACKED_0_PACKED_1
-		// Unpacked.
-		
-		// Clear to blue.
+		/* Clear background to base color */
         for(uint16_t r = 0; r < SCREEN_H; r++){
 			for(uint16_t c = 0; c < SCREEN_W; c++){
 				uint32_t idx = r*SCREEN_W + c;
-				unpack_idx4_p32[idx] = 6;
+				unpack_idx4_p32[idx] = 0;
 			}
 		}
 
-		////////////////////////////// RAYCASTER DRAWING /////////////////////////////////////////////
+		/////////////////////////////////////
+		// Raycaster: for every vertical line on the screen
 		for(int x = 0; x < SCREEN_W; x++) {
 		
 			/* 'cameraX' is the x-coordinate on the camera plane that the current 
@@ -247,8 +231,7 @@ int main(void) {
             /* Length of ray from current position to next x or y-side.
                In this engine when we raycast we dont look down the ray by stepping some amount,
                but by going from one dividing line of the map squares to the next, so we dont miss
-               the wall in edge case scenarios
-              */
+               the wall in edge case scenarios */
             double sideDistX;
             double sideDistY;
 
@@ -265,12 +248,12 @@ int main(void) {
                use 1 instead of |v|, because only the *ratio* between deltaDistX 
                and deltaDistY matters for the DDA code that follows later below, so we get:
                  deltaDistX = abs(1 / rayDirX)
-                 deltaDistY = abs(1 / rayDirY) 
-               */
+                 deltaDistY = abs(1 / rayDirY) */
             double deltaDistX = ABS(1 / rayDirX);
             double deltaDistY = ABS(1 / rayDirY);
 
-            /* Alternative code for deltaDist in case division through zero is not supported.
+            /* TODO: Make this work
+               Alternative code for deltaDist in case division through zero is not supported.
                the following will make the DDA loop also work correctly by instead setting the finite one to 0. */
             //double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : abs(1 / rayDirX));
             //double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : abs(1 / rayDirY));
@@ -372,52 +355,26 @@ int main(void) {
 
 
 			/* Choose wall color */
-			int color = 0;
+            int color = 0;
             switch(worldMap[mapX][mapY])
             {
-                case 1:  color = 1;    break; //red
-                case 2:  color = 2;  break; //green
-                case 3:  color = 3;   break; //blue
-                case 4:  color = 4;  break; //white
-                default: color = 5; break; //yellow
+                case 1:  color = 1; break;
+                case 2:  color = 3; break;
+                case 3:  color = 5; break;
+                case 4:  color = 7; break;
+                default: color = 9; break;
             }
+
             /* If an y-side was hit, the color is made darker, this gives a nicer effect */
-            //if(side == 1) {color = color / 2;}
+            if(side == 1) { color++; } // Colors palette is in pairs of light and then dark version of the color
 
-            /* DRAW A VERICAL LINE */
-			for(int r = drawStart; r < drawEnd; r++){
-				//unpack_idx1_p32[r*SCREEN_W + x] = color;
-
-                // Blue
+            /* Draw the calculated verical line in right color*/
+			for(int r = drawStart; r < drawEnd; r++){ // 
                 unpack_idx4_p32[r*SCREEN_W + x] = color;
-
-                // Red
-				//pack_idx4_p32[idx] = 0x11111111;
-
-                // Green
-				//pack_idx4_p32[idx] = 0x22222222;
 			}
 		
-		}
-		////////////////////////////// END OF DRAWING /////////////////////////////////////////////
-		
-		
-#else
-		// Packed.
-
-
-		//TODO This is just test. Implement same as for unpacked.
-		for(int r = 0; r < 32; r++){
-			for(int c = 0; c < 1; c++){
-				pack_idx1_p32[r*(SCREEN_W/32) + c] = 0xffffffff;
-			}
-		}
-		
-		
-#endif
-	}
+		} /// End of drawing ///
+	} /// End of main while loop ///
 
 	return 0;
-}
-
-///////////////////////////////////////////////////////////////////////////////
+} /// End of main ///
