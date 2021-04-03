@@ -5,7 +5,16 @@
 #include "system.h"
 #include <stdio.h>
 #include <math.h> // TODO: remove this library and use our own sin() and cos() functions
-
+// Images
+#include "inc/bluestone.h"
+#include "inc/colorstone.h"
+#include "inc/eagle.h"
+#include "inc/greystone.h"
+#include "inc/mossy.h"
+#include "inc/purplestone.h"
+#include "inc/redbrick.h"
+#include "inc/wood.h"
+#include "sprites_idx4.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Useful macros:
@@ -105,11 +114,22 @@ int worldMap[mapWidth][mapHeight]=
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
+/*uint32_t* images[8] = {
+	bluestone__p,
+	colorstone__p,
+	eagle__p,
+	greystone__p,
+	mossy__p,
+	purplestone__p,
+	redbrick__p,
+	wood__p
+};*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // Game code:
 int main(void) {
 	
+
 	// Setup
 	gpu_p32[0] = INDEX_MODE;
 	gpu_p32[1] = USE_PACKED;
