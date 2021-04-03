@@ -146,8 +146,8 @@ int main(void) {
            moving and rotating speed is independent of the processor speed */
         //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
         //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
-        double moveSpeed = 5.0/120.0;
-        double rotSpeed = 3.0/120.0;
+        double moveSpeed = 5.0/60.0;
+        double rotSpeed = 3.0/60.0;
 		
 		/* Move forward if no wall in front of you */
         if(joypad.up) {
