@@ -38,3 +38,9 @@ TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
 ``` sudo ./waf build run --app=intro ``` - run the app
 
 ## Proof of concept
+### proof_of_concept1.c
+Koristi 1bit indeksiranje boja, dakle postoje dve boje (u našem slučaju plava 0 i crvena 1). Implementira jednostavno kretanje igrača (napred nazad, okretanje levo desno). Kod iscrtavanja na ekran, nakon što sačeka vSync signal, sve piksele postavi na plavo (pozadina = 0), i zatim prolazi kroz širinu ekrana, od levo ka desno i iscrtava linije odgovarajuće visine koristeći DDA algoritam i svaki zid oboji istom bojom. Mapa je zabeležena u kodu (hard coded) kao dvodimenzionalni niz tipa *int*.
+
+### proof_of_concept2.c
+Slično kao i prvi p.o.c. samo koristi 4bit indeksiranje za boje, i paletu definišemo na početku koda. Onda se kod iscrtavanja linije gleda koji je broj (tip) kvadrata na mapi pogođen i u zavisnosti od toga oboji liniju. Ostatak je u suštini isti.
+
