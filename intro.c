@@ -1,4 +1,3 @@
-
 ///////////////////////////////////////////////////////////////////////////////
 // Headers:
 #include <stdint.h>
@@ -59,7 +58,7 @@ typedef struct {
 /* The map of the world is a 2D array, where each value represents a square 
    If the value is 0, that square represents an empty, walkthroughable square, and if 
    the value is higher than 0, it represents a wall with  a certain color or texture.
-   The map declared here is very small, only 24 by 24 squares, and is defined directly 
+   The map declared here is versprites_idx4y small, only 24 by 24 squares, and is defined directly 
    in the code. For a real game, like Wolfenstein 3D, you use a bigger map and load it 
    from a file instead. All the zero's in the grid are empty space, so basicly you see 
    a very big room, with a wall around it (the values 1), a small room inside it (the 
@@ -92,15 +91,16 @@ int worldMap[mapWidth][mapHeight]=
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // Game code:
 int main(void) {
 	
-	/* Setup */
+	// Setup 
 	gpu_p32[0] = 2; // 4b index mode. (16 colors)
 	gpu_p32[1] = 0; // Koristimo unpacked
     
-    /* Setting colors, light and dark are kept in pairs */
+    // Setting colors, light and dark are kept in pairs
 	palette_p32[0] = 0x00A86765;        // #6567A8
 	palette_p32[1] = 0x00A64E61;        // #614EA6
 	palette_p32[2] = 2*0x00A64E61/3;    // darker #614EA6
@@ -116,18 +116,18 @@ int main(void) {
 	palette_p32[12] = 2*0x00C6CEF5/3;   // darker #F5CEC6
 	gpu_p32[0x800] = 0x0000ff00;        // Green for HUD.
 
-	/* Player & camera data */
+	// Player & camera data
     double posX = 22, posY = 12;  // player x and y start position
     double dirX = -1, dirY = 0; // initial player direction vector
 
-    /* Camera plane is perpendicular to the direction, but we 
-        can change the length of it. The ratio between the length
-        of the direction and the camera plane determinates the FOV.
-        FOV is 2 * atan(0.66/1.0)=66°, which is perfect for a first person shooter game */
+    // Camera plane is perpendicular to the direction, but we 
+    // can change the length of it. The ratio between the length
+    // of the direction and the camera plane determinates the FOV.
+    // FOV is 2 * atan(0.66/1.0)=66°, which is perfect for a first person shooter game */
     double planeX = 0, planeY = 0.66; // the 2d raycaster version of camera plane
 	
 	
-    /* Main loop, all game mechanics is happening here */
+    // Main loop, all game mechanics is happening here
 	while(1){
 		
 		/* The speed modifiers use frameTime, and a constant value, to 
@@ -372,7 +372,7 @@ int main(void) {
 			for(int r = drawStart; r < drawEnd; r++){ // 
                 unpack_idx4_p32[r*SCREEN_W + x] = color;
 			}
-		
+            
 		} /// End of drawing ///
 	} /// End of main while loop ///
 

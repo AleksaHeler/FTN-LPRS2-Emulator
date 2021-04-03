@@ -95,8 +95,13 @@ static inline uint32_t shift_div_with_round_up(uint32_t num, uint32_t shift){
 	return d;
 }
 
-
-
+/*
+src_p  -  green__p[gs.digits[0]]
+src_w  -  32
+src_h  -  64
+dst_x  -  152
+dst_y  -  32
+*/
 static void draw_sprite(
 	uint32_t* src_p,
 	uint16_t src_w,
@@ -105,6 +110,7 @@ static void draw_sprite(
 	uint16_t dst_y
 ) {
 	
+	/* USING PACKED IDX4 MODE */
 	
 	uint16_t dst_x8 = shift_div_with_round_down(dst_x, 3);
 	uint16_t src_w8 = shift_div_with_round_up(src_w, 3);
