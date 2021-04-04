@@ -8,7 +8,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Useful macros:
-#define ABS(N) ((N<0)?(-N):(N))
 #define WAIT_UNITL_0(x) while(x != 0){}
 #define WAIT_UNITL_1(x) while(x != 1){}
 

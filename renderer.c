@@ -20,22 +20,10 @@ void renderer_init() {
 	gpu_p32[1] = USE_PACKED;
 
 	// Setting colors
-	palette_p32[0] = 0xa40000;      // 
-	palette_p32[1] = 0x7c0000;      //
-	palette_p32[2] = 0x000000;      //
-	palette_p32[3] = 0xb00000;      //
-	palette_p32[4] = 0x980000;      //
-	palette_p32[5] = 0x202020;      //
-	palette_p32[6] = 0xbc0000;      //
-	palette_p32[7] = 0x880000;      //
-	palette_p32[8] = 0x640000;      //
-	palette_p32[9] = 0x580000;      //
-	palette_p32[10] = 0x700000;     //
-	palette_p32[11] = 0x420000;     //
-	palette_p32[12] = 0x545454;     //
-	palette_p32[13] = 0xc80000;     //
-	palette_p32[14] = 0xd90303;     //
-	palette_p32[15] = 0x373737;     //
+    // Copy colors from 'my_sprites.c'
+    for(int i = 0; i < 16; i++){
+        palette_p32[i] = palette[i];
+    }
 	gpu_p32[0x800] = 0x00ff00ff;    // Magenta for HUD.
 }
 
