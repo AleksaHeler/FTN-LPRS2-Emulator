@@ -112,7 +112,7 @@ def build(bld):
 	
 	bld.program(
 		features = 'cxx',
-		source = ['project.c'],
+		source = ['project.c', 'my_sprites.c'],
 		includes = ['build/'],
 		use = 'emulator',
 		target = 'project'
