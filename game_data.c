@@ -38,5 +38,5 @@ int worldMap[mapWidth][mapHeight]=
 
 uint32_t* images[8] = {
     bluestone__p, colorstone__p, eagle__p, greystone__p,
-    mossy__p, purplestone__p, redbrick__p, wood__p
+    mossy__p, purplestone__p, wood__p, redbrick__p
 };

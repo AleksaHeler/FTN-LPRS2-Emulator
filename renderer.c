@@ -39,9 +39,89 @@ void renderer_render(camera_t* camera) {
             unpack_idx4_p32[idx] = 0;
         }
     }
+
+    /////////////////////////////////////
+    // Floor raycaster: for every horizontal line from middle to the bottom of the screen
+    for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y)
+    {
+      // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
+      float rayDirX0 = camera->dirX - camera->planeX;
+      float rayDirY0 = camera->dirY - camera->planeY;
+      float rayDirX1 = camera->dirX + camera->planeX;
+      float rayDirY1 = camera->dirY + camera->planeY;
+
+      // Current y position compared to the center of the screen (the horizon)
+      int p = y - SCREEN_H / 2;
+
+      // Vertical position of the camera.
+      // NOTE: with 0.5, it's exactly in the center between floor and ceiling,
+      // matching also how the walls are being raycasted. For different values
+      // than 0.5, a separate loop must be done for ceiling and floor since
+      // they're no longer symmetrical.
+      float posZ = 0.5 * SCREEN_H;
+
+      // Horizontal distance from the camera to the floor for the current row.
+      // 0.5 is the z position exactly in the middle between floor and ceiling.
+      // NOTE: this is affine texture mapping, which is not perspective correct
+      // except for perfectly horizontal and vertical surfaces like the floor.
+      // NOTE: this formula is explained as follows: The camera ray goes through
+      // the following two points: the camera itself, which is at a certain
+      // height (posZ), and a point in front of the camera (through an imagined
+      // vertical plane containing the screen pixels) with horizontal distance
+      // 1 from the camera, and vertical position p lower than posZ (posZ - p). When going
+      // through that point, the line has vertically traveled by p units and
+      // horizontally by 1 unit. To hit the floor, it instead needs to travel by
+      // posZ units. It will travel the same ratio horizontally. The ratio was
+      // 1 / p for going through the camera plane, so to go posZ times farther
+      // to reach the floor, we get that the total horizontal distance is posZ / p.
+      float rowDistance = posZ / p;
+
+      // calculate the real world step vector we have to add for each x (parallel to camera plane)
+      // adding step by step avoids multiplications with a weight in the inner loop
+      float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_W;
+      float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_W;
+
+      // real world coordinates of the leftmost column. This will be updated as we step to the right.
+      float floorX = camera->posX + rowDistance * rayDirX0;
+      float floorY = camera->posY + rowDistance * rayDirY0;
+
+      for(int x = 0; x < SCREEN_W; ++x)
+      {
+        // the cell coord is simply got from the integer parts of floorX and floorY
+        int cellX = (int)(floorX);
+        int cellY = (int)(floorY);
+
+        // get the texture coordinate from the fractional part
+        int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+        int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+        floorX += floorStepX;
+        floorY += floorStepY;
+
+        // choose texture and draw the pixel
+        int checkerBoardPattern = ((int)(cellX + cellY)) & 1;
+        int floorTexture;
+        if(checkerBoardPattern == 0) floorTexture = 3;
+        else floorTexture = 4;
+        int ceilingTexture = 6;
+        uint32_t color;
+
+        // floor
+        uint32_t dst_idx = y*SCREEN_W + x;
+        uint32_t src_idx = texWidth/8 * ty + tx/8;
+        color = images[floorTexture][src_idx] >> (tx%8)*4;
+        unpack_idx4_p32[dst_idx] = color;
+
+        //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
+        dst_idx = (SCREEN_H-y-1)*SCREEN_W + x;
+        src_idx = (texWidth/8) * ty + tx/8;
+        color = images[ceilingTexture][src_idx] >> (tx%8)*4;
+        unpack_idx4_p32[dst_idx] = color;
+      }
+    }
     
     /////////////////////////////////////
-    // Raycaster: for every vertical line on the screen
+    // Wall raycaster: for every vertical line on the screen
     for(int x = 0; x < SCREEN_W; x++) {
     
         // 'cameraX' is the x-coordinate on the camera plane that the current 
