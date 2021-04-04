@@ -53,4 +53,4 @@ typedef struct {
 } bf_unpack_idx1;
 #define unpack_idx1 (*((volatile bf_unpack_idx1*)unpack_idx1_p32))
 
-#endif
+#endif // DEVICE_H
