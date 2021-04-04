@@ -1,5 +1,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
+// Convert images to src files:
+// python img_to_src.py -v -f IDX4 -o bluestone.c images/bluestone.png 
+//    -p 72a6e4,506fb8,393f74,32283f,35289e,443be5,2b92fb,62e7ff,dc663,457332,3f3d19,81674f,d2bfaf,ffffff,f4e82c,d18404
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Headers:
 #include <stdint.h>
 #include "system.h"
@@ -133,18 +139,19 @@ static void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_
     uint16_t dst_x8 = shift_div_with_round_down(dst_x, 3);
 	uint16_t src_w8 = shift_div_with_round_up(src_w, 3);
 	
-    // Prodje kroz region na ekranu na kom treba biti iscrtano, i za svaki piksel nadje vrednost
-    for(uint16_t x = 0; x < src_w; x++){ 
-        for(uint16_t y = 0; y < src_h; y++){
-            uint32_t dst_idx = (dst_y+y)*SCREEN_W + dst_x+x;
-            uint32_t src_idx = (y)*(src_w/8) + x/8;
-			
-            uint32_t pixel = src_p[src_idx] >> x%8;
-        
-            unpack_idx4_p32[dst_idx] = pixel;
+    // TODO: MAKE THIS WORK
+    /*for(uint16_t y = 0; y < src_h; y++){
+		for(uint16_t x8 = 0; x8 < src_w8; x8++){
+			uint32_t src_idx = y*src_w8 + x8;
+			uint32_t pixels = src_p[src_idx];
+			uint32_t dst_idx =
+				(dst_y+y)*SCREEN_IDX4_W8 +
+				(dst_x8+x8);
+			pack_idx4_p32[dst_idx] = pixels;
 		}
-	}
+	}*/
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Game code:
@@ -155,22 +162,22 @@ int main(void) {
 	gpu_p32[1] = USE_PACKED;
 
 	// Setting colors
-	palette_p32[0] = 0xa40000;      // 
-	palette_p32[1] = 0x7c0000;      //
-	palette_p32[2] = 0x000000;      //
-	palette_p32[3] = 0xb00000;      //
-	palette_p32[4] = 0x980000;      //
-	palette_p32[5] = 0x202020;      //
-	palette_p32[6] = 0xbc0000;      //
-	palette_p32[7] = 0x880000;      //
-	palette_p32[8] = 0x640000;      //
-	palette_p32[9] = 0x580000;      //
-	palette_p32[10] = 0x700000;     //
-	palette_p32[11] = 0x420000;     //
-	palette_p32[12] = 0x545454;     //
-	palette_p32[13] = 0xc80000;     //
-	palette_p32[14] = 0xd90303;     //
-	palette_p32[15] = 0x373737;     //
+	palette_p32[0] = 0x72a6e4;      //
+	palette_p32[1] = 0x506fb8;      //
+	palette_p32[2] = 0x393f74;      //
+	palette_p32[3] = 0x32283f;      //
+	palette_p32[4] = 0x35289e;      //
+	palette_p32[5] = 0x443be5;      //
+	palette_p32[6] = 0x2b92fb;      //
+	palette_p32[7] = 0x62e7ff;      //
+	palette_p32[8] = 0xdc663;      //
+	palette_p32[9] = 0x457332;      //
+	palette_p32[10] = 0x3f3d19;     //
+	palette_p32[11] = 0x81674f;     //
+	palette_p32[12] = 0xd2bfaf;     //
+	palette_p32[13] = 0xffffff;     //
+	palette_p32[14] = 0xf4e82c;     //
+	palette_p32[15] = 0xd18404;     //
 	gpu_p32[0x800] = 0x00ff00ff;    // Magenta for HUD.
 
 	// Player & camera data
@@ -432,6 +439,7 @@ int main(void) {
         
         // Draw an example image over everything just to test how it works
         draw_sprite(images[0], 64, 64, 30, 30);
+        draw_sprite(images[1], 64, 64, 100, 30);
 
 	} /// End of main while loop ///
 
