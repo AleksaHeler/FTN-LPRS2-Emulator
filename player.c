@@ -1,5 +1,11 @@
 #include "player.h"
 
+#if USE_MATH_LIB
+    #include <math.h>
+#else
+    #include "fmath.h"
+#endif
+
 camera_t playerCamera;
 
 void player_init() {
@@ -44,21 +50,39 @@ void player_update() {
             // Rotating vectors by multiplying it with rotation matrix:
             //   [ cos(a) -sin(a) ]
             //   [ sin(a)  cos(a) ]
+#if USE_MATH_LIB
             double oldDirX = playerCamera.dirX;
             playerCamera.dirX = playerCamera.dirX * cos(-rotSpeed) - playerCamera.dirY * sin(-rotSpeed);
             playerCamera.dirY = oldDirX * sin(-rotSpeed) + playerCamera.dirY * cos(-rotSpeed);
             double oldPlaneX = playerCamera.planeX;
             playerCamera.planeX = playerCamera.planeX * cos(-rotSpeed) - playerCamera.planeY * sin(-rotSpeed);
             playerCamera.planeY = oldPlaneX * sin(-rotSpeed) + playerCamera.planeY * cos(-rotSpeed);
+#else
+            double oldDirX = playerCamera.dirX;
+            playerCamera.dirX = playerCamera.dirX * my_cos(-rotSpeed) - playerCamera.dirY * my_sin(-rotSpeed);
+            playerCamera.dirY = oldDirX * my_sin(-rotSpeed) + playerCamera.dirY * my_cos(-rotSpeed);
+            double oldPlaneX = playerCamera.planeX;
+            playerCamera.planeX = playerCamera.planeX * my_cos(-rotSpeed) - playerCamera.planeY * my_sin(-rotSpeed);
+            playerCamera.planeY = oldPlaneX * my_sin(rotSpeed) + playerCamera.planeY * my_cos(-rotSpeed);
+#endif
         }
         // Rotate to the left
         if(joypad.left) {
             // Both camera direction and camera plane must be rotated
+#if USE_MATH_LIB
             double oldDirX = playerCamera.dirX;
             playerCamera.dirX = playerCamera.dirX * cos(rotSpeed) - playerCamera.dirY * sin(rotSpeed);
             playerCamera.dirY = oldDirX * sin(rotSpeed) + playerCamera.dirY * cos(rotSpeed);
             double oldPlaneX = playerCamera.planeX;
             playerCamera.planeX = playerCamera.planeX * cos(rotSpeed) - playerCamera.planeY * sin(rotSpeed);
             playerCamera.planeY = oldPlaneX * sin(rotSpeed) + playerCamera.planeY * cos(rotSpeed);
+#else
+            double oldDirX = playerCamera.dirX;
+            playerCamera.dirX = playerCamera.dirX * my_cos(rotSpeed) - playerCamera.dirY * my_sin(rotSpeed);
+            playerCamera.dirY = oldDirX * my_sin(rotSpeed) + playerCamera.dirY * my_cos(rotSpeed);
+            double oldPlaneX = playerCamera.planeX;
+            playerCamera.planeX = playerCamera.planeX * my_cos(rotSpeed) - playerCamera.planeY * my_sin(rotSpeed);
+            playerCamera.planeY = oldPlaneX * my_sin(rotSpeed) + playerCamera.planeY * my_cos(rotSpeed);
+#endif
         }
 }
