@@ -35,7 +35,7 @@ TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
 
 ``` sudo ./waf configure ``` - configure project
 
-``` sudo ./waf build run --app=intro ``` - run the app
+``` sudo ./waf build run --app=project ``` - run the app
 
 ## Proof of concept
 ### proof_of_concept1.c
