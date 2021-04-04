@@ -71,14 +71,6 @@ def configure(cfg):
 
 def build(bld):
 	bld.recurse('emulator')
-	
-	for p in ['intro', 'advanced_modes']:
-		bld.program(
-			features = 'cxx',
-			source = [p + '.c'],
-			use = 'emulator',
-			target = p
-		)
 		
 	digit_imgs = sorted(
 		glob.glob('images/red_*.png') + glob.glob('images/green_*.png')
@@ -95,24 +87,10 @@ def build(bld):
 		source = 'images/Pacman_Sprite_Map.png',
 		target = ['sprites_rgb333.c', 'sprites_rgb333.h']
 	)
-	bld.program(
-		features = 'cxx',
-		source = ['sprites.c', 'sprites_idx4.c'],
-		includes = ['build/'],
-		use = 'emulator',
-		target = 'sprites'
-	)
-	bld.program(
-		features = 'cxx',
-		source = ['sprite_anim.c', 'sprites_rgb333.c'],
-		includes = ['build/'],
-		use = 'emulator',
-		target = 'sprite_anim'
-	)
 	
 	bld.program(
 		features = 'cxx',
-		source = ['project.c', 'my_sprites.c'],
+		source = ['project.c', 'my_sprites.c', 'fmath.c', 'game_data.c', 'renderer.c', 'player.c'],
 		includes = ['build/'],
 		use = 'emulator',
 		target = 'project'
