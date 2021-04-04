@@ -11,26 +11,63 @@
 #define WAIT_UNITL_0(x) while(x != 0){}
 #define WAIT_UNITL_1(x) while(x != 1){}
 
+///////////////////////////////////////////////////////////////////////////////
+// Helper functions:
+static inline uint32_t shift_div_with_round_down(uint32_t num, uint32_t shift){
+	uint32_t d = num >> shift;
+	return d;
+}
+
+static inline uint32_t shift_div_with_round_up(uint32_t num, uint32_t shift){
+	uint32_t d = num >> shift;
+	uint32_t mask = (1<<shift)-1;
+	if((num & mask) != 0){
+		d++;
+	}
+	return d;
+}
+
+static void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x, uint16_t dst_y) {
+	// Using unpacked idx4 mode
+    uint16_t dst_x8 = shift_div_with_round_down(dst_x, 3);
+	uint16_t src_w8 = shift_div_with_round_up(src_w, 3);
+	
+    // Prodje kroz region na ekranu na kom treba biti iscrtano, i za svaki piksel nadje vrednost
+    for(uint16_t x = 0; x < src_w; x++){ 
+        for(uint16_t y = 0; y < src_h; y++){
+            uint32_t dst_idx = (dst_y+y)*SCREEN_W + dst_x+x;
+            uint32_t src_idx = (y)*(src_w/8) + x/8;
+			
+            uint32_t pixel = src_p[src_idx] >> x%8;
+        
+            unpack_idx4_p32[dst_idx] = pixel;
+		}
+	}
+}
+
 void renderer_init() {
     // Setup
 	gpu_p32[0] = INDEX_MODE;
 	gpu_p32[1] = USE_PACKED;
 
-	// Setting colors, light and dark are kept in pairs
-	palette_p32[0] = 0x00A86765;        // #6567A8
-	palette_p32[1] = 0x00A64E61;        // #614EA6
-	palette_p32[2] = 2*0x00A64E61/3;    // darker #614EA6
-	palette_p32[3] = 0x00A2C7F2;        // #F2C7A2
-	palette_p32[4] = 2*0x00A2C7F2/3;    // darker #F2C7A2
-	palette_p32[5] = 0x00F18AA1;        // #A18AF1
-	palette_p32[6] = 2*0x00F18AA1/3;    // darker #A18AF1
-	palette_p32[7] = 0x0077F272;        // #72F277
-	palette_p32[8] = 2*0x0077F272/3;    // darker #72F277
-	palette_p32[9] = 0x0059A656;        // #56A659
-	palette_p32[10] = 2*0x0059A656/3;   // darker #56A659
-	palette_p32[11] = 0x00C6CEF5;       // #F5CEC6
-	palette_p32[12] = 2*0x00C6CEF5/3;   // darker #F5CEC6
-	gpu_p32[0x800] = 0x00ff00ff;        // Magenta for HUD.
+	// Setting colors
+	palette_p32[0] = 0xa40000;      // 
+	palette_p32[1] = 0x7c0000;      //
+	palette_p32[2] = 0x000000;      //
+	palette_p32[3] = 0xb00000;      //
+	palette_p32[4] = 0x980000;      //
+	palette_p32[5] = 0x202020;      //
+	palette_p32[6] = 0xbc0000;      //
+	palette_p32[7] = 0x880000;      //
+	palette_p32[8] = 0x640000;      //
+	palette_p32[9] = 0x580000;      //
+	palette_p32[10] = 0x700000;     //
+	palette_p32[11] = 0x420000;     //
+	palette_p32[12] = 0x545454;     //
+	palette_p32[13] = 0xc80000;     //
+	palette_p32[14] = 0xd90303;     //
+	palette_p32[15] = 0x373737;     //
+	gpu_p32[0x800] = 0x00ff00ff;    // Magenta for HUD.
 }
 
 void renderer_render(camera_t* camera) {
