@@ -14,6 +14,7 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 	}
 }
 
+
 void renderer_init() {
     // Setup
 	gpu_p32[0] = INDEX_MODE;
@@ -192,25 +193,40 @@ void renderer_render(camera_t* camera) {
         if(drawStart < 0)drawStart = 0;
         int drawEnd = lineHeight / 2 + SCREEN_H / 2;
         if(drawEnd >= SCREEN_H)drawEnd = SCREEN_H - 1;
+        
+        // Choose wall texture from map
+        // Number 1 on map corresponds with texture 0 and so on
+        int texNum = worldMap[mapX][mapY] - 1;
 
+        // Calculate value of wallX 
+        double wallX; //where exactly the wall was hit
+        if(side == 0) wallX = camera->posY + perpWallDist * rayDirY;
+        else          wallX = camera->posX + perpWallDist * rayDirX;
+        wallX -= floor((wallX));
 
-        // Choose wall color
-        int color = 0;
-        switch(worldMap[mapX][mapY])
-        {
-            case 1:  color = 1; break;
-            case 2:  color = 3; break;
-            case 3:  color = 5; break;
-            case 4:  color = 7; break;
-            default: color = 9; break;
-        }
+        // X coordinate on the texture 
+        int texX = (int)(wallX * ((double)texWidth)); // pos on the wall texture
+        if(side == 0 && rayDirX > 0) texX = texWidth - texX - 1;
+        if(side == 1 && rayDirY < 0) texX = texWidth - texX - 1;
 
-        // If an y-side was hit, the color is made darker, this gives a nicer effect
-        if(side == 1) { color++; } // Colors palette is in pairs of light and then dark version of the color
+        // TODO: an integer-only bresenham or DDA like algorithm could make the texture coordinate stepping faster
+        // How much to increase the texture coordinate per screen pixel
+        double step = 1.0 * texHeight / lineHeight;
+        // Starting texture coordinate
+        double texPos = (drawStart - SCREEN_H / 2 + lineHeight / 2) * step;
 
-        // Draw the calculated verical line in right color
-        for(int r = drawStart; r < drawEnd; r++){ // 
-            unpack_idx4_p32[r*SCREEN_W + x] = color;
+        // Draw the texture vertical stripe
+        for(int y = drawStart; y < drawEnd; y++) {
+            // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+            int texY = (int)texPos & (texHeight - 1);
+            texPos += step;
+
+            // Get the indices of source texture pixel and destination in buffer
+            uint32_t dst_idx = y*SCREEN_W + x;
+            uint32_t src_idx = texY*(texWidth/8) + texX/8;
+            // Get the pixel color and write to buffer
+            uint32_t color = images[texNum][src_idx] >> (texX%8)*4;
+            unpack_idx4_p32[dst_idx] = color;
         }
         
     } /// End of raycaster for loop ///
