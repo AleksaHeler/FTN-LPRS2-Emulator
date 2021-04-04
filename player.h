@@ -4,6 +4,7 @@
 #include "device.h"
 #include "engine.h"
 #include "game_data.h"
+#include "fmath.h"
 
 extern camera_t playerCamera;
 

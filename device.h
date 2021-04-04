@@ -32,8 +32,6 @@
 #define SCREEN_W SCREEN_IDX4_W		// Currently used screen size
 #define SCREEN_H SCREEN_IDX4_H
 #define USE_PACKED 0 				// Use unpacked indexing
-#define USE_MATH_LIB 1				// Use math lib and floating point (or fixed point and our sin/cos)
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Indexing structs:

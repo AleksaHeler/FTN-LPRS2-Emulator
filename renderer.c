@@ -202,7 +202,7 @@ void renderer_render(camera_t* camera) {
         double wallX; //where exactly the wall was hit
         if(side == 0) wallX = camera->posY + perpWallDist * rayDirY;
         else          wallX = camera->posX + perpWallDist * rayDirX;
-        wallX -= floor((wallX));
+        wallX -= (int)(wallX);
 
         // X coordinate on the texture 
         int texX = (int)(wallX * ((double)texWidth)); // pos on the wall texture

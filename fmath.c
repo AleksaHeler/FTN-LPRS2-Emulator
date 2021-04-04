@@ -1,9 +1,6 @@
-#include "device.h"
 #include "fmath.h"
 
-#include <stdint.h>
-
-#if USE_MATH_LIB==0
+#ifndef USE_MATH_LIB
 
     // CORDIC algorithm constants
     //Cordic in 32 bit signed fixed point math
@@ -57,4 +54,3 @@
     }
 
 #endif
-
