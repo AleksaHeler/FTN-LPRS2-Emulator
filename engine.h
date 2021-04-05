@@ -10,4 +10,11 @@ typedef struct {
 	double planeY;
 } camera_t;
 
+typedef struct
+{
+  double x;
+  double y;
+  int texture;
+} sprite_t;
+
 #endif

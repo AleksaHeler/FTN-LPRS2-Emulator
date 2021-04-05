@@ -18,6 +18,30 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 	}
 }
 
+//sort algorithm
+//sort the sprites based on distance
+//The sortSprites sorts the sprites from farthest away to closest by distance. 
+//It uses the standard std::sort function provided by C++. But since we need to 
+//sort two arrays using the same order here (order and dist), most of the code 
+//is spent moving the data into and out of a vector of pairs.
+// sortSprites(spriteOrder, spriteDistance, numSprites);
+/// TODO: implement a C variant of this function
+/*void sortSprites(int* order, double* dist, int amount)
+{
+    std::vector<std::pair<double, int>> spr(amount);
+    for(int i = 0; i < amount; i++) {
+        spr[i].first = dist[i];
+        spr[i].second = order[i];
+    }
+    std::sort(spr.begin(), spr.end());
+
+    // restore in reverse order to go from farthest to nearest
+    for(int i = 0; i < amount; i++) {
+        dist[i] = spr[amount - i - 1].first;
+        order[i] = spr[amount - i - 1].second;
+    }
+}*/
+void sortSprites(int* order, double* dist, int amount){}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Initialization and setup of the renderer data
@@ -315,6 +339,93 @@ void renderer_render(camera_t* camera) {
             uint32_t color = textures[texNum][src_idx] >> (texX%8)*4;
             unpack_idx4_p32[dst_idx] = color;
         }
+
+        // Set the Z buffer (depth) for sprite casting
+        ZBuffer[x] = perpWallDist; //perpendicular distance is used
         
     } /// End of raycaster for loop ///
+
+    /*
+    To bring the sprite's coordinates to camera space, first subtract the player's position 
+    from the sprite's position, then you have the position of the sprite relative to the player. 
+    Then it has to be rotated so that the direction is relative to the player. The camera 
+    can also be skewed and has a certain size, so it isn't really a rotation, but a transformation. 
+    The transformation is done by multiplying the relative position of the sprite with the inverse 
+    of the camera matrix. The camera matrix is in our case
+
+    [planeX   dirX]
+    [planeY   dirY]
+
+    And the inverse of a 2x2 matrix is very easy to calculate
+
+    ____________1___________    [dirY      -dirX]
+    (planeX*dirY-dirX*planeY) * [-planeY  planeX]
+
+
+    Then you get the X and Y coordinate of the sprite in camera space, where Y is the depth inside 
+    the screen (in a true 3D engine, Z is the depth). To project it on screen, divide X through the 
+    depth, and then translate and scale it so that it's in pixel coordinates.
+    */
+    
+    /////////////////////////////////////
+    // Sprite casting:
+    for(int i = 0; i < numSprites; i++) { //sort all sprites from far to close
+        spriteOrder[i] = i;
+        spriteDistance[i] = ((camera->posX - sprites_data[i].x) * (camera->posX - sprites_data[i].x) + (camera->posY - sprites_data[i].y) * (camera->posY - sprites_data[i].y)); //sqrt not taken, unneeded
+    }
+    sortSprites(spriteOrder, spriteDistance, numSprites);
+
+    // After sorting the sprites, do the projection and draw them
+    for(int i = 0; i < numSprites; i++) {
+        // Translate sprite position to relative to camera
+        double spriteX = sprites_data[spriteOrder[i]].x - camera->posX;
+        double spriteY = sprites_data[spriteOrder[i]].y - camera->posY;
+
+        //transform sprite with the inverse camera matrix
+        // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
+        // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
+        // [ planeY   dirY ]                                          [ -planeY  planeX ]
+
+        double invDet = 1.0 / (camera->planeX * camera->dirY - camera->dirX * camera->planeY); //required for correct matrix multiplication
+
+        double transformX = invDet * (camera->dirY * spriteX - camera->dirX * spriteY);
+        double transformY = invDet * (-camera->planeY * spriteX + camera->planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
+
+        int spriteScreenX = (int)((SCREEN_W / 2) * (1 + transformX / transformY));
+
+        //calculate height of the sprite on screen
+        int spriteHeight = abs((int)(SCREEN_H / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
+        //calculate lowest and highest pixel to fill in current stripe
+        int drawStartY = -spriteHeight / 2 + SCREEN_H / 2;
+        if(drawStartY < 0) drawStartY = 0;
+        int drawEndY = spriteHeight / 2 + SCREEN_H / 2;
+        if(drawEndY >= SCREEN_H) drawEndY = SCREEN_H - 1;
+
+        //calculate width of the sprite
+        int spriteWidth = abs((int)(SCREEN_H / (transformY)));
+        int drawStartX = -spriteWidth / 2 + spriteScreenX;
+        if(drawStartX < 0) drawStartX = 0;
+        int drawEndX = spriteWidth / 2 + spriteScreenX;
+        if(drawEndX >= SCREEN_W) drawEndX = SCREEN_W - 1;
+
+        //loop through every vertical stripe of the sprite on screen
+        for(int stripe = drawStartX; stripe < drawEndX; stripe++) {
+            int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
+            //the conditions in the if are:
+            //1) it's in front of camera plane so you don't see things behind you
+            //2) it's on the screen (left)
+            //3) it's on the screen (right)
+            //4) ZBuffer, with perpendicular distance
+            if(transformY > 0 && stripe > 0 && stripe < SCREEN_W && transformY < ZBuffer[stripe])
+            for(int y = drawStartY; y < drawEndY; y++){ //for every pixel of the current stripe  
+                int d = (y) * 256 - SCREEN_H * 128 + spriteHeight * 128; //256 and 128 factors to avoid floats
+                int texY = ((d * texHeight) / spriteHeight) / 256;
+                uint32_t src_idx = texY*(texWidth/8) + texX/8;
+                uint32_t dst_idx = y*SCREEN_W + stripe;
+                uint32_t color = sprites[sprites_data[spriteOrder[i]].texture][src_idx] >> (texX%8)*4 & 0xF; //get current color from the texture
+                if(color != 0xd) 
+                    unpack_idx4_p32[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
+            }
+        }
+    }
 }
