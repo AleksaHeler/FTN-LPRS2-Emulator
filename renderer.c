@@ -1,6 +1,8 @@
 #include "renderer.h"
 
-
+double ZBuffer[SCREEN_W];               // 1D 'depth/distance' Zbuffer
+int spriteOrder[numSprites];            // Arrays used to sort the sprites
+double spriteDistance[numSprites];
 
 ///////////////////////////////////////////////////////////////////////////////
 // Draws whole sprite at the given location:
@@ -394,7 +396,7 @@ void renderer_render(camera_t* camera) {
         int spriteScreenX = (int)((SCREEN_W / 2) * (1 + transformX / transformY));
 
         //calculate height of the sprite on screen
-        int spriteHeight = abs((int)(SCREEN_H / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
+        int spriteHeight = ABS((int)(SCREEN_H / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
         //calculate lowest and highest pixel to fill in current stripe
         int drawStartY = -spriteHeight / 2 + SCREEN_H / 2;
         if(drawStartY < 0) drawStartY = 0;
@@ -402,7 +404,7 @@ void renderer_render(camera_t* camera) {
         if(drawEndY >= SCREEN_H) drawEndY = SCREEN_H - 1;
 
         //calculate width of the sprite
-        int spriteWidth = abs((int)(SCREEN_H / (transformY)));
+        int spriteWidth = ABS((int)(SCREEN_H / (transformY)));
         int drawStartX = -spriteWidth / 2 + spriteScreenX;
         if(drawStartX < 0) drawStartX = 0;
         int drawEndX = spriteWidth / 2 + spriteScreenX;
