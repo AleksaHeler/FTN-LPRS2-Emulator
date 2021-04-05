@@ -11,6 +11,6 @@
 
 extern int worldMap[mapWidth][mapHeight];
 
-extern uint32_t* images[8];
+extern uint32_t* textures[8];
 
 #endif

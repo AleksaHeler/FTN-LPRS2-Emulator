@@ -5,6 +5,8 @@
 
 extern uint32_t palette[16];
 
+// Wall, floor & ceiling sprites
+
 extern uint16_t bluestone__w;
 extern uint16_t bluestone__h;
 extern uint32_t bluestone__p[];
@@ -36,5 +38,19 @@ extern uint32_t redbrick__p[];
 extern uint16_t wood__w;
 extern uint16_t wood__h;
 extern uint32_t wood__p[];
+
+// Standing billboard sprites
+
+extern uint16_t barrel__w;
+extern uint16_t barrel__h;
+extern uint32_t barrel__p[];
+
+extern uint16_t greenlight__w;
+extern uint16_t greenlight__h;
+extern uint32_t greenlight__p[];
+
+extern uint16_t pillar__w;
+extern uint16_t pillar__h;
+extern uint32_t pillar__p[];
 
 #endif // MY_SPRITES

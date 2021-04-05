@@ -116,13 +116,13 @@ void renderer_render(camera_t* camera) {
         // floor
         uint32_t dst_idx = y*SCREEN_W + x;
         uint32_t src_idx = texWidth/8 * ty + tx/8;
-        color = images[floorTexture][src_idx] >> (tx%8)*4;
+        color = textures[floorTexture][src_idx] >> (tx%8)*4;
         unpack_idx4_p32[dst_idx] = color;
 
         //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
         dst_idx = (SCREEN_H-y-1)*SCREEN_W + x;
         src_idx = (texWidth/8) * ty + tx/8;
-        color = images[ceilingTexture][src_idx] >> (tx%8)*4;
+        color = textures[ceilingTexture][src_idx] >> (tx%8)*4;
         unpack_idx4_p32[dst_idx] = color;
       }
     }
@@ -312,7 +312,7 @@ void renderer_render(camera_t* camera) {
             uint32_t dst_idx = y*SCREEN_W + x;
             uint32_t src_idx = texY*(texWidth/8) + texX/8;
             // Get the pixel color and write to buffer
-            uint32_t color = images[texNum][src_idx] >> (texX%8)*4;
+            uint32_t color = textures[texNum][src_idx] >> (texX%8)*4;
             unpack_idx4_p32[dst_idx] = color;
         }
         

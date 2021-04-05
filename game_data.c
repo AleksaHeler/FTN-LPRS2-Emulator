@@ -36,7 +36,13 @@ int worldMap[mapWidth][mapHeight]=
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-uint32_t* images[8] = {
+// Wall, floor & ceiling textures
+uint32_t* textures[8] = {
     bluestone__p, colorstone__p, eagle__p, greystone__p,
     mossy__p, purplestone__p, wood__p, redbrick__p
+};
+
+// Billboard sprites
+uint32_t* sprites[3] = {
+    barrel__p, greenlight__p, pillar__p
 };
