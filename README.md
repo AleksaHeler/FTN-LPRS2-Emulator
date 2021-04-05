@@ -16,12 +16,10 @@ TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
 - [ ] Proof of concept
   - [X] Render bez tekstura sa dve boje (1bit color indexing)
   - [X] Render bez tekstura sa vise boja (4bit color indexing)
-  - [ ] Render sa teksturama (učitavanje iz fajla)
+  - [X] Render sa teksturama (učitavanje iz fajla)
   - [ ] Učitavanje mape iz fajla (idealno slike, ali može bilo koji fajl)
 - [ ] Igra
-  - [ ] Do kraja implementiran renderer
-    - [ ] Naše funkcije sin() i cos() umesto *math.h*
-    - [ ] Fixed point aritmetika umesto floating point
+  - [ ] Do kraja implementiran nas renderer
   - [ ] Modularne mape i teksture
   - [ ] Napredne kontrole igrača (drugačije kretanje, konstantna brzina nezavisno od FPS, pucanje)
   - [ ] UI (životi, municija, rezultat...)
@@ -47,4 +45,14 @@ Koristi 1bit indeksiranje boja, dakle postoje dve boje (u našem slučaju plava 
 Slično kao i prvi p.o.c. samo koristi 4bit indeksiranje za boje, i paletu definišemo na početku koda. Onda se kod iscrtavanja linije gleda koji je broj (tip) kvadrata na mapi pogođen i u zavisnosti od toga oboji liniju. Ostatak je u suštini isti. Može se primetitit da je u drugom p.o.c. rezolucija manja. To je zato što za indeksiranje koristimo više bitova, i sa istim ograničenjem memorije može da stane manje piksela, u ovom slučaju 4x manje, što je rezolucija 320x240 umesto 640x480.
 
 ![proof of concept 2](poc/images/proof_of_concept2.png)
+
+### proof_of_concept3.c
+Nastavak na drugi proof of concept, gde je dodato da se umesto jednobojne vertikalne linije crta linija koja se ucitava iz teksture.
+
+![proof of concept 3](poc/images/proof_of_concept3.png) 
+
+### Proof of concept 4
+Nije prilozen kod za ovo, ali je dodatak na raycasting algoritam gde se na pocetku frejma iscrtaju plafon i pod.
+
+![proof of concept 4](poc/images/proof_of_concept4.png)
 
