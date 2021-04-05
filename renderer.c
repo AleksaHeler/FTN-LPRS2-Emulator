@@ -1,5 +1,9 @@
 #include "renderer.h"
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Draws whole sprite at the given location:
 void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x, uint16_t dst_y) {
     // Prodje kroz region na ekranu na kom treba biti iscrtano, i za svaki piksel nadje vrednost
     for(uint16_t x = 0; x < src_w; x++){ 
@@ -15,6 +19,8 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// Initialization and setup of the renderer data
 void renderer_init() {
     // Setup
 	gpu_p32[0] = INDEX_MODE;
@@ -25,7 +31,8 @@ void renderer_init() {
     for(int i = 0; i < 16; i++){
         palette_p32[i] = palette[i];
     }
-	gpu_p32[0x800] = 0x00ff00ff;    // Magenta for HUD.
+    // Green for HUD
+	gpu_p32[0x800] = 0x0000FF00;
 }
 
 void renderer_render(camera_t* camera) {
