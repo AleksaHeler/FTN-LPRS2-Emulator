@@ -6,16 +6,16 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // HW stuff:
-#define SCREEN_IDX1_W 640
+#define SCREEN_IDX1_W 640		// Screen resolutions for different kinds of indexing types
 #define SCREEN_IDX1_H 480
 #define SCREEN_IDX4_W 320
 #define SCREEN_IDX4_H 240
 #define SCREEN_RGB333_W 160
 #define SCREEN_RGB333_H 120
 
-#define SCREEN_IDX4_W8 (SCREEN_IDX4_W/8)
+#define SCREEN_IDX4_W8 (SCREEN_IDX4_W/8) // constant: screen width / 8
 
-#define gpu_p32 ((volatile uint32_t*)LPRS2_GPU_BASE)
+#define gpu_p32 ((volatile uint32_t*)LPRS2_GPU_BASE)						// Indexing bases
 #define palette_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x1000))
 #define unpack_idx1_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x400000))
 #define pack_idx1_p32 ((volatile uint32_t*)(LPRS2_GPU_BASE+0x600000))
@@ -32,6 +32,16 @@
 #define SCREEN_W SCREEN_IDX4_W		// Currently used screen size
 #define SCREEN_H SCREEN_IDX4_H
 #define USE_PACKED 0 				// Use unpacked indexing
+#define USE_DOUBLE_BUFFER			// Wether to use seperate buffer to store rendered data and only then display it
+
+// Double buffer: renderer draws to this buffer, and then on vSync copies it to the screen
+// Although this may reduce framerate a bit, it can save us from displaying unfinished renders.
+// So we can use 'buffer' in code, while actually having control over what exact buffer is used
+#ifdef USE_DOUBLE_BUFFER
+	volatile uint32_t buffer[SCREEN_W*SCREEN_H];
+#else
+	#define buffer unpack_idx4_p32		
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Indexing structs:

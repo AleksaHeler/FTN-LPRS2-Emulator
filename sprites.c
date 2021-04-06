@@ -11,7 +11,7 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 			
             uint32_t pixel = src_p[src_idx] >> (x%8)*4;
         
-            unpack_idx4_p32[dst_idx] = pixel;
+            buffer[dst_idx] = pixel;
 		}
 	}
 }

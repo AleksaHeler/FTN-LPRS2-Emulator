@@ -21,7 +21,13 @@ void renderer_init() {
 ///////////////////////////////////////////////////////////////////////////////
 // Rendering: floor&ceiling, walls, sprites
 void renderer_render(camera_t* camera) {
+
+#ifdef USE_DOUBLE_BUFFER
     wait_for_vsync();
+	transfer_buffer(); // Copy buffer from prev frame to screen
+#else
+    wait_for_vsync();
+#endif
 
     cls();  // Clear background to color with index 0 in palette
     floor_raycaster(camera);
@@ -44,7 +50,7 @@ void cls(){
     // Go trough the whole screen buffer and set to 0 
     uint32_t end = SCREEN_H * SCREEN_W;
     for(uint32_t i = 0; i < end; i++){
-        unpack_idx4_p32[i] = 0;
+        buffer[i] = 0;
     }
 }
 
@@ -100,13 +106,13 @@ void floor_raycaster(camera_t* camera){
             uint32_t dst_idx = y*SCREEN_W + x;
             uint32_t src_idx = texWidth/8 * ty + tx/8;
             color = textures[floorTexture][src_idx] >> (tx%8)*4;
-            unpack_idx4_p32[dst_idx] = color;
+            buffer[dst_idx] = color;
 
             //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
             dst_idx = (SCREEN_H-y-1)*SCREEN_W + x;
             src_idx = (texWidth/8) * ty + tx/8;
             color = textures[ceilingTexture][src_idx] >> (tx%8)*4;
-            unpack_idx4_p32[dst_idx] = color;
+            buffer[dst_idx] = color;
         }
     }
 }
@@ -220,7 +226,7 @@ void wall_raycaster(camera_t* camera){
             uint32_t src_idx = texY*(texWidth/8) + texX/8;
             // Get the pixel color and write to buffer
             uint32_t color = textures[texNum][src_idx] >> (texX%8)*4;
-            unpack_idx4_p32[dst_idx] = color;
+            buffer[dst_idx] = color;
         }
 
         // Set the Z buffer (depth) for sprite casting
@@ -296,8 +302,16 @@ void sprite_raycaster(camera_t* camera){
                 uint32_t dst_idx = y*SCREEN_W + stripe;
                 uint32_t color = sprites[sprites_data[sprite_order[i]].texture][src_idx] >> (texX%8)*4 & 0xF; //get current color from the texture
                 if(color != 0xd) 
-                    unpack_idx4_p32[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
+                    buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
             }
         }
+    }
+}
+
+// Currently only works for IDX4 in unpacked mode
+void transfer_buffer(){
+    uint32_t end = SCREEN_W * SCREEN_H;
+    for(uint32_t i = 0; i < end; i++){
+        unpack_idx4_p32[i] = buffer[i];
     }
 }

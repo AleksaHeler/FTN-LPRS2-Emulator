@@ -31,4 +31,6 @@ void wall_raycaster();
 void dda();
 void sprite_raycaster();
 
+void transfer_buffer();     // Copy from double buffer to original one for displaying
+
 #endif // RENDERER_H
