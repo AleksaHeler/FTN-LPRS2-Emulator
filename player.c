@@ -25,18 +25,21 @@ void player_update() {
     // TODO: make speeds relate to time and not FPS
     double move_speed = 5.0/60.0;
     double rotation_speed = 3.0/60.0;
+    double player_width = 0.3;
     
     // Move forward if no wall in front of the player
     if(joypad.up) {
-        if(world_map[(int)(player_camera.pos_x + player_camera.dir_x * move_speed)][(int)player_camera.pos_y] == 0) 
+        if(world_map[(int)(player_camera.pos_x + player_camera.dir_x * move_speed + player_camera.dir_x*player_width)][(int)player_camera.pos_y] == 0) 
             player_camera.pos_x += player_camera.dir_x * move_speed;
-        if(world_map[(int)(player_camera.pos_x)][(int)(player_camera.pos_y + player_camera.dir_y * move_speed)] == 0) 
+        if(world_map[(int)(player_camera.pos_x)][(int)(player_camera.pos_y + player_camera.dir_y * move_speed + player_camera.dir_y*player_width)] == 0) 
             player_camera.pos_y += player_camera.dir_y * move_speed;
     }
     // Move backwards if no wall behind the player
     if(joypad.down) {
-        if(world_map[(int)(player_camera.pos_x - player_camera.dir_x * move_speed)][(int)player_camera.pos_y] == 0) player_camera.pos_x -= player_camera.dir_x * move_speed;
-        if(world_map[(int)(player_camera.pos_x)][(int)(player_camera.pos_y - player_camera.dir_y * move_speed)] == 0) player_camera.pos_y -= player_camera.dir_y * move_speed;
+        if(world_map[(int)(player_camera.pos_x - player_camera.dir_x * move_speed - player_camera.dir_x*player_width)][(int)player_camera.pos_y] == 0) 
+            player_camera.pos_x -= player_camera.dir_x * move_speed;
+        if(world_map[(int)(player_camera.pos_x)][(int)(player_camera.pos_y - player_camera.dir_y * move_speed - player_camera.dir_y*player_width)] == 0) 
+            player_camera.pos_y -= player_camera.dir_y * move_speed;
     }
 
     // Rotate to the right
