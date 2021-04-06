@@ -1,143 +1,126 @@
 #include "renderer.h"
 
+
 double z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
 int sprite_order[numSprites];            // Arrays used to sort the sprites
 double sprite_distance[numSprites];
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // Initialization and setup of the renderer data. Copies colors from palette in 'my_sprites.c'
 void renderer_init() {
-    // Setup
 	gpu_p32[0] = INDEX_MODE;
 	gpu_p32[1] = USE_PACKED;
 
-	// Setting colors
-    // Copy colors from 'my_sprites.c'
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < 16; i++)         // Copy colors from 'my_sprites.c'
         palette_p32[i] = palette[i];
-    }
-    // Green for HUD
-	gpu_p32[0x800] = 0x0000FF00;
+
+	gpu_p32[0x800] = 0x0000FF00;        // Green for HUD
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Rendering: floor&ceiling, walls, sprites
 void renderer_render(camera_t* camera) {
-    // TODO: add wait_for_vsync() function
-    WAIT_UNITL_0(gpu_p32[2]);   // Detecting rising edge of VSync
-    WAIT_UNITL_1(gpu_p32[2]);   // Draw in buffer while it is in VSync
-    
-    // TODO: add cls() function
-    // Clear background to base color
-    for(uint16_t r = 0; r < SCREEN_H; r++){
-        for(uint16_t c = 0; c < SCREEN_W; c++){
-            uint32_t idx = r*SCREEN_W + c;
-            unpack_idx4_p32[idx] = 0;
+    wait_for_vsync();
+
+    cls();  // Clear background to color with index 0 in palette
+    floor_raycaster(camera);
+    wall_raycaster(camera);
+    sort_sprites(sprite_order, sprite_distance, camera, numSprites);
+    sprite_raycaster(camera);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Helper functions for renderer
+
+// Detecting VSync pulse
+void wait_for_vsync(){
+    WAIT_UNITL_0(gpu_p32[2]);   // Wait for rising edge
+    WAIT_UNITL_1(gpu_p32[2]);   // After falling edge return from function
+}
+
+// Clear background to color with index 0 in palette
+void cls(){
+    // Go trough the whole screen buffer and set to 0 
+    uint32_t end = SCREEN_H * SCREEN_W;
+    for(uint32_t i = 0; i < end; i++){
+        unpack_idx4_p32[i] = 0;
+    }
+}
+
+// Draw floor and ceiling in screen buffer
+void floor_raycaster(camera_t* camera){
+    // For every horizontal line from middle to the bottom of the screen
+    for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y) {
+        // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
+        float rayDirX0 = camera->dirX - camera->planeX;
+        float rayDirY0 = camera->dirY - camera->planeY;
+        float rayDirX1 = camera->dirX + camera->planeX;
+        float rayDirY1 = camera->dirY + camera->planeY;
+
+        // Current y position compared to the center of the screen (the horizon)
+        int p = y - SCREEN_H / 2;
+
+        // Vertical position of the camera
+        float posZ = 0.5 * SCREEN_H;
+
+        // Horizontal distance from the camera to the floor for the current row
+        float rowDistance = posZ / p;
+
+        // Calculate the real world step vector we have to add for each x (parallel to camera plane)
+        // adding step by step avoids multiplications with a weight in the inner loop
+        float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_W;
+        float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_W;
+
+        // real world coordinates of the leftmost column. This will be updated as we step to the right.
+        float floorX = camera->posX + rowDistance * rayDirX0;
+        float floorY = camera->posY + rowDistance * rayDirY0;
+
+        for(int x = 0; x < SCREEN_W; ++x){
+            // the cell coord is simply derived from the integer parts of floorX and floorY
+            int cellX = (int)(floorX);
+            int cellY = (int)(floorY);
+
+            // get the texture coordinate from the fractional part
+            int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+            int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+            floorX += floorStepX;
+            floorY += floorStepY;
+
+            // choose texture and draw the pixel
+            int checkerBoardPattern = ((int)(cellX + cellY)) & 1;
+            int floorTexture;
+            if(checkerBoardPattern == 0) floorTexture = 3;
+            else floorTexture = 4;
+            int ceilingTexture = 6;
+            uint32_t color;
+
+            // floor
+            uint32_t dst_idx = y*SCREEN_W + x;
+            uint32_t src_idx = texWidth/8 * ty + tx/8;
+            color = textures[floorTexture][src_idx] >> (tx%8)*4;
+            unpack_idx4_p32[dst_idx] = color;
+
+            //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
+            dst_idx = (SCREEN_H-y-1)*SCREEN_W + x;
+            src_idx = (texWidth/8) * ty + tx/8;
+            color = textures[ceilingTexture][src_idx] >> (tx%8)*4;
+            unpack_idx4_p32[dst_idx] = color;
         }
     }
+}
 
-    // TODO: add floor_raycaster() function
-    /////////////////////////////////////
-    // Floor raycaster: for every horizontal line from middle to the bottom of the screen
-    for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y)
-    {
-      // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-      float rayDirX0 = camera->dirX - camera->planeX;
-      float rayDirY0 = camera->dirY - camera->planeY;
-      float rayDirX1 = camera->dirX + camera->planeX;
-      float rayDirY1 = camera->dirY + camera->planeY;
-
-      // Current y position compared to the center of the screen (the horizon)
-      int p = y - SCREEN_H / 2;
-
-      // Vertical position of the camera.
-      // NOTE: with 0.5, it's exactly in the center between floor and ceiling,
-      // matching also how the walls are being raycasted. For different values
-      // than 0.5, a separate loop must be done for ceiling and floor since
-      // they're no longer symmetrical.
-      float posZ = 0.5 * SCREEN_H;
-
-      // Horizontal distance from the camera to the floor for the current row.
-      // 0.5 is the z position exactly in the middle between floor and ceiling.
-      // NOTE: this is affine texture mapping, which is not perspective correct
-      // except for perfectly horizontal and vertical surfaces like the floor.
-      // NOTE: this formula is explained as follows: The camera ray goes through
-      // the following two points: the camera itself, which is at a certain
-      // height (posZ), and a point in front of the camera (through an imagined
-      // vertical plane containing the screen pixels) with horizontal distance
-      // 1 from the camera, and vertical position p lower than posZ (posZ - p). When going
-      // through that point, the line has vertically traveled by p units and
-      // horizontally by 1 unit. To hit the floor, it instead needs to travel by
-      // posZ units. It will travel the same ratio horizontally. The ratio was
-      // 1 / p for going through the camera plane, so to go posZ times farther
-      // to reach the floor, we get that the total horizontal distance is posZ / p.
-      float rowDistance = posZ / p;
-
-      // calculate the real world step vector we have to add for each x (parallel to camera plane)
-      // adding step by step avoids multiplications with a weight in the inner loop
-      float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_W;
-      float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_W;
-
-      // real world coordinates of the leftmost column. This will be updated as we step to the right.
-      float floorX = camera->posX + rowDistance * rayDirX0;
-      float floorY = camera->posY + rowDistance * rayDirY0;
-
-      for(int x = 0; x < SCREEN_W; ++x)
-      {
-
-        // the cell coord is simply got from the integer parts of floorX and floorY
-        int cellX = (int)(floorX);
-        int cellY = (int)(floorY);
-
-        // get the texture coordinate from the fractional part
-        int tx = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
-        int ty = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
-
-        floorX += floorStepX;
-        floorY += floorStepY;
-
-        // choose texture and draw the pixel
-        int checkerBoardPattern = ((int)(cellX + cellY)) & 1;
-        int floorTexture;
-        if(checkerBoardPattern == 0) floorTexture = 3;
-        else floorTexture = 4;
-        int ceilingTexture = 6;
-        uint32_t color;
-
-        // floor
-        uint32_t dst_idx = y*SCREEN_W + x;
-        uint32_t src_idx = texWidth/8 * ty + tx/8;
-        color = textures[floorTexture][src_idx] >> (tx%8)*4;
-        unpack_idx4_p32[dst_idx] = color;
-
-        //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
-        dst_idx = (SCREEN_H-y-1)*SCREEN_W + x;
-        src_idx = (texWidth/8) * ty + tx/8;
-        color = textures[ceilingTexture][src_idx] >> (tx%8)*4;
-        unpack_idx4_p32[dst_idx] = color;
-      }
-    }
-    
-    // TODO: add wall_raycaster() function
-    /////////////////////////////////////
-    // Wall raycaster: for every vertical line on the screen
+void wall_raycaster(camera_t* camera){
+    // For every vertical line on the screen
     for(int x = 0; x < SCREEN_W; x++) {
-    
-        // 'cameraX' is the x-coordinate on the camera plane that the current 
-        // x-coordinate of the screen represents, done this way so that the 
-        // right side of the screen will get coordinate 1, the center of the 
-        // screen gets coordinate 0, and the left side of the screen gets 
-        // coordinate -1. 
         //                  \     
-        //       ____________x______________________ camera plane
+        //       __________camX_____________________ camera plane
         //       -1           \   |                1
         //                  ray\  |dir
         //                      \ |
         //                       \|
         //                      player
-        // Out of this, the direction of the ray can be calculated
-        // as the sum of the direction vector, and a part of the plane 
-        // vector. This has to be done both for the x and y coordinate of the 
-        // vector (since adding two vectors is adding their x-coordinates, and 
-        // adding their y-coordinates). 
         double cameraX = 2 * x / (double)SCREEN_W - 1; //x-coordinate in camera space
         double rayDirX = camera->dirX + camera->planeX * cameraX;
         double rayDirY = camera->dirY + camera->planeY * cameraX;
@@ -146,52 +129,24 @@ void renderer_render(camera_t* camera) {
         int mapX = (int)camera->posX;
         int mapY = (int)camera->posY;
 
-        // Length of ray from current position to next x or y-side.
-        // In this engine when we raycast we dont look down the ray by stepping some amount,
-        // but by going from one dividing line of the map squares to the next, so we dont miss
-        // the wall in edge case scenarios 
+        // Length of ray from current position to next x or y-side
         double sideDistX;
         double sideDistY;
 
         // The distance the ray has to travel to go from 1 x-side 
         // to the next x-side, or from 1 y-side to the next y-side.
-        // When deriving deltaDistX geometrically you get, with Pythagoras, the formulas:
-        //   deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX))
-        //   deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY))
-        // But this can be simplified to:
-        //   deltaDistX = abs(|v| / rayDirX)
-        //   deltaDistY = abs(|v| / rayDirY)
-        // Where |v| is the length of the vector rayDirX, rayDirY (that is 
-        // sqrt(rayDirX * rayDirX + rayDirY * rayDirY)). However, we can 
-        // use 1 instead of |v|, because only the *ratio* between deltaDistX 
-        // and deltaDistY matters for the DDA code that follows later below, so we get:
-        //   deltaDistX = abs(1 / rayDirX)
-        //   deltaDistY = abs(1 / rayDirY) 
         double deltaDistX = ABS(1 / rayDirX);
         double deltaDistY = ABS(1 / rayDirY);
-
-        // TODO: Make this work
-        // Alternative code for deltaDist in case division through zero is not supported.
-        // the following will make the DDA loop also work correctly by instead setting the finite one to 0.
-        //double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : abs(1 / rayDirX));
-        //double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : abs(1 / rayDirY));
 
         // Will be used later to calculate the length of the ray
         double perpWallDist;
 
-        // The DDA algorithm will always jump exactly one square each loop, either 
-        // a square in the x-direction, or a square in the y-direction. If it has to 
-        // go in the negative or positive x-direction, and the negative or positive 
-        // y-direction will depend on the direction of the ray, and this fact will 
-        // be stored in stepX and stepY.
         int stepX;
         int stepY;
 
         // Used to determinate whether or not the coming loop may be ended (was there a wall hit?)
         int hit = 0;
-        // Will contain if an x-side or a y-side of a wall was hit. If an x-side was hit, 
-        // side is set to 0, if an y-side was hit, side will be 1. By x-side and y-side, 
-        // I mean the lines of the grid that are the borders between two squares.
+        // Will contain if an x-side or a y-side of a wall was hit
         int side;
 
         // Now, before the actual DDA can start, first stepX, stepY, and the 
@@ -211,60 +166,19 @@ void renderer_render(camera_t* camera) {
             sideDistY = (mapY + 1.0 - camera->posY) * deltaDistY;
         }
 
-        // TODO: add dda() function
-        // --- Perform DDA ---
-        // A loop that increments the ray with one 
-        // square every time, until a wall is hit 
-        while (hit == 0)
-        {
-            // Either jumps a square in the x-direction (with stepX) or a square 
-            // in the y-direction (with stepY), it always jumps 1 square at once.
-            if(sideDistX < sideDistY) {
-                // sideDistX and sideDistY get incremented with deltaDistX with 
-                // every jump in their direction, and mapX and mapY get incremented 
-                // with stepX and stepY respectively.
-                sideDistX += deltaDistX;
-                mapX += stepX;
-                side = 0;
-            }
-            else {
-                sideDistY += deltaDistY;
-                mapY += stepY;
-                side = 1;
-            }
-
-            // Check if the ray has hit a wall (current map square is not empty)
-            if(worldMap[mapX][mapY] > 0) hit = 1;
-        }
-
-        // We won't know exactly where the wall was hit however, but that's 
-        // not needed in this case because we won't use textured walls for now
+        dda(&hit, &mapX, &mapY, &stepX, &stepY, &sideDistX, &sideDistY, &deltaDistX, &deltaDistY, &side);
 
         // Calculate distance projected on camera direction. We don't use the 
         // Euclidean distance to the point representing player, but instead 
         // the distance to the camera plane (or, the distance of the point 
-        // projected on the camera direction to the player), to avoid the 
-        // fisheye effect. The fisheye effect is an effect you see if you 
-        // use the real distance, where all the walls become rounded, and 
-        // can make you sick if you rotate 
-        // The distance is then calculated as follows: if an x-side is hit, 
-        // mapX - posX + (1-stepX)/2) is the number of squares the ray has 
-        // crossed in X direction (this is not necessarily a whole number). 
-        // If the ray is perpendicular to the X side, this is the correct 
-        // value already, but because the direction of the ray is different 
-        // most of the times, its real perpendicular distance will be larger, 
-        // so we divide it through the X coordinate of the rayDir vector 
+        // projected on the camera direction to the player), to avoid the fisheye effect
         if(side == 0) perpWallDist = (mapX - camera->posX + (1 - stepX) / 2) / rayDirX;
         else          perpWallDist = (mapY - camera->posY + (1 - stepY) / 2) / rayDirY;
 
 
-        // Now that we have the calculated distance (perpWallDist), we can 
-        // calculate the height of the line that has to be drawn on screen: 
-        // this is the inverse of perpWallDist, and then multiplied by h, the 
-        // height in pixels of the screen, to bring it to pixel coordinates.
+        // Calculate the height of the line that has to be drawn on screen
         int lineHeight = (int)(SCREEN_H / perpWallDist);
         
-
         // TODO: add draw_wall() function
         // Calculate lowest and highest pixel to fill in current stripe. 
         // The center of the wall should be at the center of the screen, and 
@@ -311,37 +225,30 @@ void renderer_render(camera_t* camera) {
 
         // Set the Z buffer (depth) for sprite casting
         z_buffer[x] = perpWallDist; //perpendicular distance is used
-        
-    } /// End of raycaster for loop ///
+    }
+}
 
-    /*
-    To bring the sprite's coordinates to camera space, first subtract the player's position 
-    from the sprite's position, then you have the position of the sprite relative to the player. 
-    Then it has to be rotated so that the direction is relative to the player. The camera 
-    can also be skewed and has a certain size, so it isn't really a rotation, but a transformation. 
-    The transformation is done by multiplying the relative position of the sprite with the inverse 
-    of the camera matrix. The camera matrix is in our case
+void dda(int* hit, int* mapX, int* mapY, int* stepX, int* stepY, double* sideDistX, double* sideDistY, double* deltaDistX, double* deltaDistY, int* side){
+    // A loop that increments the ray with one square every time, until a wall is hit 
+    while (*hit == 0) { // Perform DDA
+        // Either jumps a square in the x-direction (with stepX) or a square in the 
+        // y-direction (with stepY), it always jumps 1 square at once.
+        if(*sideDistX < *sideDistY) {
+            *sideDistX += *deltaDistX;
+            *mapX += *stepX;
+            *side = 0;
+        }
+        else {
+            *sideDistY += *deltaDistY;
+            *mapY += *stepY;
+            *side = 1;
+        }
+        // Check if the ray has hit a wall (current map square is not empty)
+        if(worldMap[*mapX][*mapY] > 0) *hit = 1;
+    }
+}
 
-    [planeX   dirX]
-    [planeY   dirY]
-
-    And the inverse of a 2x2 matrix is very easy to calculate
-
-    ____________1___________    [dirY      -dirX]
-    (planeX*dirY-dirX*planeY) * [-planeY  planeX]
-
-
-    Then you get the X and Y coordinate of the sprite in camera space, where Y is the depth inside 
-    the screen (in a true 3D engine, Z is the depth). To project it on screen, divide X through the 
-    depth, and then translate and scale it so that it's in pixel coordinates.
-    */
-    
-    // TODO: add sprite_raycaster() function
-    /////////////////////////////////////
-    // Sprite casting:
-    sort_sprites(sprite_order, sprite_distance, camera, numSprites);
-
-    // After sorting the sprites, do the projection and draw them
+void sprite_raycaster(camera_t* camera){
     for(int i = 0; i < numSprites; i++) {
         // Translate sprite position to relative to camera
         double spriteX = sprites_data[sprite_order[i]].x - camera->posX;
@@ -351,7 +258,6 @@ void renderer_render(camera_t* camera) {
         // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
         // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
         // [ planeY   dirY ]                                          [ -planeY  planeX ]
-
         double invDet = 1.0 / (camera->planeX * camera->dirY - camera->dirX * camera->planeY); //required for correct matrix multiplication
 
         double transformX = invDet * (camera->dirY * spriteX - camera->dirX * spriteY);
