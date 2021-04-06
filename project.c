@@ -9,7 +9,7 @@ int main(void) {
 
 	while(1){
 		player_update();
-        renderer_render(&playerCamera);
+        renderer_render(&player_camera);
 	}
 	return 0;
 }

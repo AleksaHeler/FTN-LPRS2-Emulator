@@ -64,12 +64,12 @@ void renderer_render(camera_t* camera) {
         // vector (since adding two vectors is adding their x-coordinates, and 
         // adding their y-coordinates). 
         double cameraX = 2 * x / (double)SCREEN_W - 1; //x-coordinate in camera space
-        double rayDirX = camera->dirX + camera->planeX * cameraX;
-        double rayDirY = camera->dirY + camera->planeY * cameraX;
+        double rayDirX = camera->dir_x + camera->plane_x * cameraX;
+        double rayDirY = camera->dir_y + camera->plane_y * cameraX;
 
         // Which box of the map we're in (just rounding to int), basically the index in map matrix
-        int mapX = (int)camera->posX;
-        int mapY = (int)camera->posY;
+        int mapX = (int)camera->pos_x;
+        int mapY = (int)camera->pos_y;
 
         // Length of ray from current position to next x or y-side.
         // In this engine when we raycast we dont look down the ray by stepping some amount,
@@ -123,17 +123,17 @@ void renderer_render(camera_t* camera) {
         // initial sideDistX and sideDistY still have to be calculated.
         if(rayDirX < 0) {
             stepX = -1;
-            sideDistX = (camera->posX - mapX) * deltaDistX;
+            sideDistX = (camera->pos_x - mapX) * deltaDistX;
         } else { // rayDirX > 0
             stepX = 1;
-            sideDistX = (mapX + 1.0 - camera->posX) * deltaDistX;
+            sideDistX = (mapX + 1.0 - camera->pos_x) * deltaDistX;
         }
         if(rayDirY < 0) {
             stepY = -1;
-            sideDistY = (camera->posY - mapY) * deltaDistY;
+            sideDistY = (camera->pos_y - mapY) * deltaDistY;
         } else { // rayDirY > 0
             stepY = 1;
-            sideDistY = (mapY + 1.0 - camera->posY) * deltaDistY;
+            sideDistY = (mapY + 1.0 - camera->pos_y) * deltaDistY;
         }
 
         // --- Perform DDA ---
@@ -158,7 +158,7 @@ void renderer_render(camera_t* camera) {
             }
 
             // Check if the ray has hit a wall (current map square is not empty)
-            if(worldMap[mapX][mapY] > 0) hit = 1;
+            if(world_map[mapX][mapY] > 0) hit = 1;
         }
 
         // We won't know exactly where the wall was hit however, but that's 
@@ -172,14 +172,14 @@ void renderer_render(camera_t* camera) {
         // use the real distance, where all the walls become rounded, and 
         // can make you sick if you rotate 
         // The distance is then calculated as follows: if an x-side is hit, 
-        // mapX - posX + (1-stepX)/2) is the number of squares the ray has 
+        // mapX - pos_x + (1-stepX)/2) is the number of squares the ray has 
         // crossed in X direction (this is not necessarily a whole number). 
         // If the ray is perpendicular to the X side, this is the correct 
         // value already, but because the direction of the ray is different 
         // most of the times, its real perpendicular distance will be larger, 
         // so we divide it through the X coordinate of the rayDir vector 
-        if(side == 0) perpWallDist = (mapX - camera->posX + (1 - stepX) / 2) / rayDirX;
-        else          perpWallDist = (mapY - camera->posY + (1 - stepY) / 2) / rayDirY;
+        if(side == 0) perpWallDist = (mapX - camera->pos_x + (1 - stepX) / 2) / rayDirX;
+        else          perpWallDist = (mapY - camera->pos_y + (1 - stepY) / 2) / rayDirY;
 
 
         // Now that we have the calculated distance (perpWallDist), we can 
@@ -198,34 +198,34 @@ void renderer_render(camera_t* camera) {
         
         // Choose wall texture from map
         // Number 1 on map corresponds with texture 0 and so on
-        int texNum = worldMap[mapX][mapY] - 1;
+        int texNum = world_map[mapX][mapY] - 1;
 
         // Calculate value of wallX 
         double wallX; //where exactly the wall was hit
-        if(side == 0) wallX = camera->posY + perpWallDist * rayDirY;
-        else          wallX = camera->posX + perpWallDist * rayDirX;
+        if(side == 0) wallX = camera->pos_y + perpWallDist * rayDirY;
+        else          wallX = camera->pos_x + perpWallDist * rayDirX;
         wallX -= floor((wallX));
 
         // X coordinate on the texture 
-        int texX = (int)(wallX * ((double)texWidth)); // pos on the wall texture
-        if(side == 0 && rayDirX > 0) texX = texWidth - texX - 1;
-        if(side == 1 && rayDirY < 0) texX = texWidth - texX - 1;
+        int texX = (int)(wallX * ((double)tex_width)); // pos on the wall texture
+        if(side == 0 && rayDirX > 0) texX = tex_width - texX - 1;
+        if(side == 1 && rayDirY < 0) texX = tex_width - texX - 1;
 
         // TODO: an integer-only bresenham or DDA like algorithm could make the texture coordinate stepping faster
         // How much to increase the texture coordinate per screen pixel
-        double step = 1.0 * texHeight / lineHeight;
+        double step = 1.0 * tex_height / lineHeight;
         // Starting texture coordinate
         double texPos = (drawStart - SCREEN_H / 2 + lineHeight / 2) * step;
 
         // Draw the texture vertical stripe
         for(int y = drawStart; y < drawEnd; y++) {
-            // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
-            int texY = (int)texPos & (texHeight - 1);
+            // Cast the texture coordinate to integer, and mask with (tex_height - 1) in case of overflow
+            int texY = (int)texPos & (tex_height - 1);
             texPos += step;
 
             // Get the indices of source texture pixel and destination in buffer
             uint32_t dst_idx = y*SCREEN_W + x;
-            uint32_t src_idx = texY*(texWidth/8) + texX/8;
+            uint32_t src_idx = texY*(tex_width/8) + texX/8;
             // Get the pixel color and write to buffer
             uint32_t color = textures[texNum][src_idx] >> (texX%8)*4;
             unpack_idx4_p32[dst_idx] = color;

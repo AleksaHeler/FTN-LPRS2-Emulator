@@ -1,16 +1,16 @@
 #include "player.h"
 
-camera_t playerCamera;
+camera_t player_camera;
 
 void player_init() {
-    playerCamera.posX = 22, playerCamera.posY = 12;  // player x and y start position
-    playerCamera.dirX = -1, playerCamera.dirY = 0; // initial player direction vector
+    player_camera.pos_x = 22.5, player_camera.pos_y = 12.5;  // player x and y start position
+    player_camera.dir_x = -1, player_camera.dir_y = 0; // initial player direction vector
 
     // Camera plane is perpendicular to the direction, but we 
     //  can change the length of it. The ratio between the length
     //  of the direction and the camera plane determinates the FOV.
     //  FOV is 2 * atan(0.66/1.0)=66°, which is perfect for a first person shooter game
-    playerCamera.planeX = 0, playerCamera.planeY = 0.66; // the 2d raycaster version of camera plane
+    player_camera.plane_x = 0, player_camera.plane_y = 0.66; // the 2d raycaster version of camera plane
 }
 
 void player_update() {
@@ -23,20 +23,20 @@ void player_update() {
     //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
     //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
     // TODO: make speeds relate to time and not FPS
-    double moveSpeed = 5.0/60.0;
-    double rotSpeed = 3.0/60.0;
+    double move_speed = 5.0/60.0;
+    double rotation_speed = 3.0/60.0;
     
     // Move forward if no wall in front of the player
     if(joypad.up) {
-        if(worldMap[(int)(playerCamera.posX + playerCamera.dirX * moveSpeed)][(int)playerCamera.posY] == 0) 
-            playerCamera.posX += playerCamera.dirX * moveSpeed;
-        if(worldMap[(int)(playerCamera.posX)][(int)(playerCamera.posY + playerCamera.dirY * moveSpeed)] == 0) 
-            playerCamera.posY += playerCamera.dirY * moveSpeed;
+        if(world_map[(int)(player_camera.pos_x + player_camera.dir_x * move_speed)][(int)player_camera.pos_y] == 0) 
+            player_camera.pos_x += player_camera.dir_x * move_speed;
+        if(world_map[(int)(player_camera.pos_x)][(int)(player_camera.pos_y + player_camera.dir_y * move_speed)] == 0) 
+            player_camera.pos_y += player_camera.dir_y * move_speed;
     }
     // Move backwards if no wall behind the player
     if(joypad.down) {
-        if(worldMap[(int)(playerCamera.posX - playerCamera.dirX * moveSpeed)][(int)playerCamera.posY] == 0) playerCamera.posX -= playerCamera.dirX * moveSpeed;
-        if(worldMap[(int)(playerCamera.posX)][(int)(playerCamera.posY - playerCamera.dirY * moveSpeed)] == 0) playerCamera.posY -= playerCamera.dirY * moveSpeed;
+        if(world_map[(int)(player_camera.pos_x - player_camera.dir_x * move_speed)][(int)player_camera.pos_y] == 0) player_camera.pos_x -= player_camera.dir_x * move_speed;
+        if(world_map[(int)(player_camera.pos_x)][(int)(player_camera.pos_y - player_camera.dir_y * move_speed)] == 0) player_camera.pos_y -= player_camera.dir_y * move_speed;
     }
 
     // Rotate to the right
@@ -45,21 +45,21 @@ void player_update() {
         // Rotating vectors by multiplying it with rotation matrix:
         //   [ cos(a) -sin(a) ]
         //   [ sin(a)  cos(a) ]
-        double oldDirX = playerCamera.dirX;
-        playerCamera.dirX = playerCamera.dirX * my_cos(-rotSpeed) - playerCamera.dirY * my_sin(-rotSpeed);
-        playerCamera.dirY = oldDirX * my_sin(-rotSpeed) + playerCamera.dirY * my_cos(-rotSpeed);
-        double oldPlaneX = playerCamera.planeX;
-        playerCamera.planeX = playerCamera.planeX * my_cos(-rotSpeed) - playerCamera.planeY * my_sin(-rotSpeed);
-        playerCamera.planeY = oldPlaneX * my_sin(-rotSpeed) + playerCamera.planeY * my_cos(-rotSpeed);
+        double old_dir_x = player_camera.dir_x;
+        player_camera.dir_x = player_camera.dir_x * my_cos(-rotation_speed) - player_camera.dir_y * my_sin(-rotation_speed);
+        player_camera.dir_y = old_dir_x * my_sin(-rotation_speed) + player_camera.dir_y * my_cos(-rotation_speed);
+        double old_plane_x = player_camera.plane_x;
+        player_camera.plane_x = player_camera.plane_x * my_cos(-rotation_speed) - player_camera.plane_y * my_sin(-rotation_speed);
+        player_camera.plane_y = old_plane_x * my_sin(-rotation_speed) + player_camera.plane_y * my_cos(-rotation_speed);
     }
     // Rotate to the left
     if(joypad.left) {
         // Both camera direction and camera plane must be rotated
-        double oldDirX = playerCamera.dirX;
-        playerCamera.dirX = playerCamera.dirX * my_cos(rotSpeed) - playerCamera.dirY * my_sin(rotSpeed);
-        playerCamera.dirY = oldDirX * my_sin(rotSpeed) + playerCamera.dirY * my_cos(rotSpeed);
-        double oldPlaneX = playerCamera.planeX;
-        playerCamera.planeX = playerCamera.planeX * my_cos(rotSpeed) - playerCamera.planeY * my_sin(rotSpeed);
-        playerCamera.planeY = oldPlaneX * my_sin(rotSpeed) + playerCamera.planeY * my_cos(rotSpeed);
+        double old_dir_x = player_camera.dir_x;
+        player_camera.dir_x = player_camera.dir_x * my_cos(rotation_speed) - player_camera.dir_y * my_sin(rotation_speed);
+        player_camera.dir_y = old_dir_x * my_sin(rotation_speed) + player_camera.dir_y * my_cos(rotation_speed);
+        double old_plane_x = player_camera.plane_x;
+        player_camera.plane_x = player_camera.plane_x * my_cos(rotation_speed) - player_camera.plane_y * my_sin(rotation_speed);
+        player_camera.plane_y = old_plane_x * my_sin(rotation_speed) + player_camera.plane_y * my_cos(rotation_speed);
     }
 }

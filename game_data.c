@@ -8,7 +8,7 @@
 // from a file instead. All the zero's in the grid are empty space, so basicly you see 
 // a very big room, with a wall around it (the values 1), a small room inside it (the 
 // values 2), a few pilars (the values 3), and a corridor with a room (the values 4).
-int worldMap[mapWidth][mapHeight]=
+int world_map[map_width][map_height]=
 {
   {8,8,8,8,8,8,8,8,8,8,8,4,4,6,4,4,6,4,6,4,4,4,6,4},
   {8,0,0,0,0,0,0,0,0,0,8,4,0,0,0,0,0,0,0,0,0,0,0,4},
@@ -47,7 +47,7 @@ uint32_t* sprites[3] = {
     barrel__p, greenlight__p, pillar__p
 };
 
-sprite_t sprites_data[numSprites] =
+sprite_t sprites_data[num_sprites] =
 {
   {20.5, 11.5, 1}, //green light in front of playerstart
   //green lights in every room

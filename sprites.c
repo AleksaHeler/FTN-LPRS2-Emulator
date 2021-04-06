@@ -58,10 +58,10 @@ void quick_sort(int* order, double* dist, int begin, int end){
 // From farthest to nearest
 void sort_sprites(int* order, double* dist, camera_t* cam, int amount){
     // First calculate the distane frome player for each sprite
-    for(int i = 0; i < numSprites; i++) {
+    for(int i = 0; i < num_sprites; i++) {
         order[i] = i;
         // Sqrt not taken, only relative distance is enough
-        dist[i] = ((cam->posX - sprites_data[i].x) * (cam->posX - sprites_data[i].x) + (cam->posY - sprites_data[i].y) * (cam->posY - sprites_data[i].y));
+        dist[i] = ((cam->pos_x - sprites_data[i].x) * (cam->pos_x - sprites_data[i].x) + (cam->pos_y - sprites_data[i].y) * (cam->pos_y - sprites_data[i].y));
     }
     // Then sort them
     quick_sort(order, dist, 0, amount - 1);

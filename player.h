@@ -6,7 +6,7 @@
 #include "game_data.h"
 #include "fmath.h"
 
-extern camera_t playerCamera;
+extern camera_t player_camera;
 
 void player_init();
 

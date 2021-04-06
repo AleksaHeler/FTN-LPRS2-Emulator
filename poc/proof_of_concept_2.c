@@ -53,8 +53,8 @@ typedef struct {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Game data:
-#define mapWidth 24
-#define mapHeight 24
+#define map_width 24
+#define map_height 24
 
 /* The map of the world is a 2D array, where each value represents a square 
    If the value is 0, that square represents an empty, walkthroughable square, and if 
@@ -64,7 +64,7 @@ typedef struct {
    from a file instead. All the zero's in the grid are empty space, so basicly you see 
    a very big room, with a wall around it (the values 1), a small room inside it (the 
    values 2), a few pilars (the values 3), and a corridor with a room (the values 4). */
-int worldMap[mapWidth][mapHeight]=
+int world_map[map_width][map_height]=
 {
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -141,15 +141,15 @@ int main(void) {
 		
 		/* Move forward if no wall in front of the player */
         if(joypad.up) {
-            if(worldMap[(int)(posX + dirX * moveSpeed)][(int)posY] == 0) 
+            if(world_map[(int)(posX + dirX * moveSpeed)][(int)posY] == 0) 
                 posX += dirX * moveSpeed;
-            if(worldMap[(int)(posX)][(int)(posY + dirY * moveSpeed)] == 0) 
+            if(world_map[(int)(posX)][(int)(posY + dirY * moveSpeed)] == 0) 
                 posY += dirY * moveSpeed;
         }
         /* Move backwards if no wall behind the player */
         if(joypad.down) {
-            if(worldMap[(int)(posX - dirX * moveSpeed)][(int)posY] == 0) posX -= dirX * moveSpeed;
-            if(worldMap[(int)(posX)][(int)(posY - dirY * moveSpeed)] == 0) posY -= dirY * moveSpeed;
+            if(world_map[(int)(posX - dirX * moveSpeed)][(int)posY] == 0) posX -= dirX * moveSpeed;
+            if(world_map[(int)(posX)][(int)(posY - dirY * moveSpeed)] == 0) posY -= dirY * moveSpeed;
         }
 
         /* Rotate to the right */
@@ -315,7 +315,7 @@ int main(void) {
                 }
 
                 /* Check if the ray has hit a wall (current map square is not empty) */
-                if(worldMap[mapX][mapY] > 0) hit = 1;
+                if(world_map[mapX][mapY] > 0) hit = 1;
             }
 
 			/* We won't know exactly where the wall was hit however, but that's 
@@ -356,7 +356,7 @@ int main(void) {
 
 			/* Choose wall color */
             int color = 0;
-            switch(worldMap[mapX][mapY])
+            switch(world_map[mapX][mapY])
             {
                 case 1:  color = 1; break;
                 case 2:  color = 3; break;

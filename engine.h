@@ -2,12 +2,12 @@
 #define ENGINE_H
 
 typedef struct {
-	double posX;
-	double posY;
-	double dirX;
-	double dirY;
-	double planeX;
-	double planeY;
+	double pos_x;
+	double pos_y;
+	double dir_x;
+	double dir_y;
+	double plane_x;
+	double plane_y;
 } camera_t;
 
 typedef struct
