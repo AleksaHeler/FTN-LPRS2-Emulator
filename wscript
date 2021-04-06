@@ -90,7 +90,7 @@ def build(bld):
 	
 	bld.program(
 		features = 'cxx',
-		source = ['project.c', 'my_sprites.c', 'fmath.c', 'game_data.c', 'renderer.c', 'player.c'],
+		source = ['project.c', 'my_sprites.c', 'fmath.c', 'game_data.c', 'sprites.c', 'renderer.c', 'player.c'],
 		includes = ['build/'],
 		use = 'emulator',
 		target = 'project'
