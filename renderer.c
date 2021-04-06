@@ -20,30 +20,7 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 	}
 }
 
-//sort algorithm
-//sort the sprites based on distance
-//The sortSprites sorts the sprites from farthest away to closest by distance. 
-//It uses the standard std::sort function provided by C++. But since we need to 
-//sort two arrays using the same order here (order and dist), most of the code 
-//is spent moving the data into and out of a vector of pairs.
-// sortSprites(spriteOrder, spriteDistance, numSprites);
-/// TODO: implement a C variant of this function
-/*void sortSprites(int* order, double* dist, int amount)
-{
-    std::vector<std::pair<double, int>> spr(amount);
-    for(int i = 0; i < amount; i++) {
-        spr[i].first = dist[i];
-        spr[i].second = order[i];
-    }
-    std::sort(spr.begin(), spr.end());
-
-    // restore in reverse order to go from farthest to nearest
-    for(int i = 0; i < amount; i++) {
-        dist[i] = spr[amount - i - 1].first;
-        order[i] = spr[amount - i - 1].second;
-    }
-}*/
-
+// Used for quick sort
 void swap(int* order1, double* dist1, int* order2, double* dist2){
     int temp_order = *order1;
     double temp_dist = *dist1;
