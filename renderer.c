@@ -22,12 +22,12 @@ void renderer_init() {
 // Rendering: floor&ceiling, walls, sprites
 void renderer_render(camera_t* camera) {
 
-#ifdef USE_DOUBLE_BUFFER
-    wait_for_vsync();
-	transfer_buffer(); // Copy buffer from prev frame to screen
-#else
-    wait_for_vsync();
-#endif
+    #ifdef USE_DOUBLE_BUFFER
+        wait_for_vsync();
+        transfer_buffer(); // Copy buffer from prev frame to screen
+    #else
+        wait_for_vsync();
+    #endif
 
     cls();  // Clear background to color with index 0 in palette
     floor_raycaster(camera);
