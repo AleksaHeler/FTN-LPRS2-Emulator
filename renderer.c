@@ -7,12 +7,12 @@ double sprite_distance[numSprites];
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Initialization and setup of the renderer data. Copies colors from palette in 'my_sprites.c'
+// Initialization and setup of the renderer data. Copies colors from palette in 'sprites_data.c'
 void renderer_init() {
 	gpu_p32[0] = INDEX_MODE;
 	gpu_p32[1] = USE_PACKED;
 
-    for(int i = 0; i < 16; i++)         // Copy colors from 'my_sprites.c'
+    for(int i = 0; i < 16; i++)         // Copy colors from 'sprites_data.c'
         palette_p32[i] = palette[i];
 
 	gpu_p32[0x800] = 0x0000FF00;        // Green for HUD

@@ -23,7 +23,7 @@ void renderer_init() {
 	gpu_p32[1] = USE_PACKED;
 
 	// Setting colors
-    // Copy colors from 'my_sprites.c'
+    // Copy colors from 'sprites_data.c'
     for(int i = 0; i < 16; i++){
         palette_p32[i] = palette[i];
     }

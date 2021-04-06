@@ -1,4 +1,4 @@
-#include "my_sprites.h"
+#include "sprites_data.h"
 
 // EDG16 color palette
 uint32_t palette[16] = {

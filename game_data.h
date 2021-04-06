@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "engine.h"
-#include "my_sprites.h"
+#include "sprites_data.h"
 
 #define mapWidth 24         // Map size
 #define mapHeight 24

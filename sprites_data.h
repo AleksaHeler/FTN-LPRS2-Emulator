@@ -1,5 +1,5 @@
-#ifndef MY_SPRITES_H
-#define MY_SPRITES_H
+#ifndef SPRITES_DATA_H
+#define SPRITES_DATA_H
 
 #include <stdint.h>
 
@@ -53,4 +53,4 @@ extern uint16_t pillar__w;
 extern uint16_t pillar__h;
 extern uint32_t pillar__p[];
 
-#endif // MY_SPRITES
+#endif // SPRITES_DATA_H
