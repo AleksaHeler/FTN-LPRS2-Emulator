@@ -22,6 +22,7 @@ void player_update() {
     // moving and rotating speed is independent of the processor speed
     //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
     //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
+    // TODO: make speeds relate to time and not FPS
     double moveSpeed = 5.0/60.0;
     double rotSpeed = 3.0/60.0;
     

@@ -46,14 +46,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Indexing structs:
 typedef struct {
-	unsigned a      : 1;
-	unsigned b      : 1;
-	unsigned z      : 1;
-	unsigned start  : 1;
-	unsigned up     : 1;
-	unsigned down   : 1;
-	unsigned left   : 1;
-	unsigned right  : 1;
+	unsigned a      : 1;	// Keyboard: A
+	unsigned b      : 1;	// Keyboard: B
+	unsigned z      : 1;	// Keyboard: Z
+	unsigned start  : 1;	// Keyboard: S
+	unsigned up     : 1;	// Up arrow
+	unsigned down   : 1;	// Down arrow
+	unsigned left   : 1;	// Left arrow
+	unsigned right  : 1;	// Right arrow
 } bf_joypad;
 #define joypad (*((volatile bf_joypad*)LPRS2_JOYPAD_BASE))
 
