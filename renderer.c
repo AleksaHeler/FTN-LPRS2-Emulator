@@ -43,7 +43,48 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
         order[i] = spr[amount - i - 1].second;
     }
 }*/
-void sortSprites(int* order, double* dist, int amount){}
+
+void swap(int* order1, double* dist1, int* order2, double* dist2){
+    int temp_order = *order1;
+    double temp_dist = *dist1;
+
+    *order1 = *order2;
+    *dist1 = *dist2;
+
+    *order2 = temp_order;
+    *dist2 = temp_dist;
+}
+
+int partition(int* order, double* dist, int begin, int end){
+    double pivot_dist = dist[end];
+
+    int i = begin - 1;
+
+    for (int j = begin; j < end; j++){
+        if(dist[j] > pivot_dist){
+            i++;
+            swap(&order[i], &dist[i], &order[j], &dist[j]);
+        }
+    }
+
+    swap(&order[i + 1], &dist[i + 1], &order[end], &dist[end]);
+
+    return i + 1;
+}
+
+void quickSort(int* order, double* dist, int begin, int end){
+    if(begin < end){
+        int index = partition(order, dist, begin, end);
+
+        quickSort(order, dist, begin, index - 1);
+        quickSort(order, dist, index + 1, end);
+    }
+}
+
+//from farthest to nearest
+void sortSprites(int* order, double* dist, int amount){
+    quickSort(order, dist, 0, amount - 1);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Initialization and setup of the renderer data
