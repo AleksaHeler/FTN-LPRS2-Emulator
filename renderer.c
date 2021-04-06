@@ -1,11 +1,11 @@
 #include "renderer.h"
 
-double ZBuffer[SCREEN_W];               // 1D 'depth/distance' Zbuffer
-int spriteOrder[numSprites];            // Arrays used to sort the sprites
-double spriteDistance[numSprites];
+double z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
+int sprite_order[numSprites];            // Arrays used to sort the sprites
+double sprite_distance[numSprites];
 
 ///////////////////////////////////////////////////////////////////////////////
-// Initialization and setup of the renderer data
+// Initialization and setup of the renderer data. Copies colors from palette in 'my_sprites.c'
 void renderer_init() {
     // Setup
 	gpu_p32[0] = INDEX_MODE;
@@ -21,9 +21,11 @@ void renderer_init() {
 }
 
 void renderer_render(camera_t* camera) {
+    // TODO: add wait_for_vsync() function
     WAIT_UNITL_0(gpu_p32[2]);   // Detecting rising edge of VSync
     WAIT_UNITL_1(gpu_p32[2]);   // Draw in buffer while it is in VSync
     
+    // TODO: add cls() function
     // Clear background to base color
     for(uint16_t r = 0; r < SCREEN_H; r++){
         for(uint16_t c = 0; c < SCREEN_W; c++){
@@ -32,6 +34,7 @@ void renderer_render(camera_t* camera) {
         }
     }
 
+    // TODO: add floor_raycaster() function
     /////////////////////////////////////
     // Floor raycaster: for every horizontal line from middle to the bottom of the screen
     for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y)
@@ -79,6 +82,7 @@ void renderer_render(camera_t* camera) {
 
       for(int x = 0; x < SCREEN_W; ++x)
       {
+
         // the cell coord is simply got from the integer parts of floorX and floorY
         int cellX = (int)(floorX);
         int cellY = (int)(floorY);
@@ -112,6 +116,7 @@ void renderer_render(camera_t* camera) {
       }
     }
     
+    // TODO: add wall_raycaster() function
     /////////////////////////////////////
     // Wall raycaster: for every vertical line on the screen
     for(int x = 0; x < SCREEN_W; x++) {
@@ -206,6 +211,7 @@ void renderer_render(camera_t* camera) {
             sideDistY = (mapY + 1.0 - camera->posY) * deltaDistY;
         }
 
+        // TODO: add dda() function
         // --- Perform DDA ---
         // A loop that increments the ray with one 
         // square every time, until a wall is hit 
@@ -257,7 +263,9 @@ void renderer_render(camera_t* camera) {
         // this is the inverse of perpWallDist, and then multiplied by h, the 
         // height in pixels of the screen, to bring it to pixel coordinates.
         int lineHeight = (int)(SCREEN_H / perpWallDist);
+        
 
+        // TODO: add draw_wall() function
         // Calculate lowest and highest pixel to fill in current stripe. 
         // The center of the wall should be at the center of the screen, and 
         // if these points lie outside the screen, they're capped to 0 or h-1
@@ -274,7 +282,7 @@ void renderer_render(camera_t* camera) {
         double wallX; //where exactly the wall was hit
         if(side == 0) wallX = camera->posY + perpWallDist * rayDirY;
         else          wallX = camera->posX + perpWallDist * rayDirX;
-        wallX -= (int)(wallX);
+        wallX -= floor((wallX));
 
         // X coordinate on the texture 
         int texX = (int)(wallX * ((double)texWidth)); // pos on the wall texture
@@ -302,7 +310,7 @@ void renderer_render(camera_t* camera) {
         }
 
         // Set the Z buffer (depth) for sprite casting
-        ZBuffer[x] = perpWallDist; //perpendicular distance is used
+        z_buffer[x] = perpWallDist; //perpendicular distance is used
         
     } /// End of raycaster for loop ///
 
@@ -328,19 +336,16 @@ void renderer_render(camera_t* camera) {
     depth, and then translate and scale it so that it's in pixel coordinates.
     */
     
+    // TODO: add sprite_raycaster() function
     /////////////////////////////////////
     // Sprite casting:
-    for(int i = 0; i < numSprites; i++) { //sort all sprites from far to close
-        spriteOrder[i] = i;
-        spriteDistance[i] = ((camera->posX - sprites_data[i].x) * (camera->posX - sprites_data[i].x) + (camera->posY - sprites_data[i].y) * (camera->posY - sprites_data[i].y)); //sqrt not taken, unneeded
-    }
-    sort_sprites(spriteOrder, spriteDistance, numSprites);
+    sort_sprites(sprite_order, sprite_distance, camera, numSprites);
 
     // After sorting the sprites, do the projection and draw them
     for(int i = 0; i < numSprites; i++) {
         // Translate sprite position to relative to camera
-        double spriteX = sprites_data[spriteOrder[i]].x - camera->posX;
-        double spriteY = sprites_data[spriteOrder[i]].y - camera->posY;
+        double spriteX = sprites_data[sprite_order[i]].x - camera->posX;
+        double spriteY = sprites_data[sprite_order[i]].y - camera->posY;
 
         //transform sprite with the inverse camera matrix
         // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
@@ -376,14 +381,14 @@ void renderer_render(camera_t* camera) {
             //1) it's in front of camera plane so you don't see things behind you
             //2) it's on the screen (left)
             //3) it's on the screen (right)
-            //4) ZBuffer, with perpendicular distance
-            if(transformY > 0 && stripe > 0 && stripe < SCREEN_W && transformY < ZBuffer[stripe])
+            //4) z_buffer, with perpendicular distance
+            if(transformY > 0 && stripe > 0 && stripe < SCREEN_W && transformY < z_buffer[stripe])
             for(int y = drawStartY; y < drawEndY; y++){ //for every pixel of the current stripe  
                 int d = (y) * 256 - SCREEN_H * 128 + spriteHeight * 128; //256 and 128 factors to avoid floats
                 int texY = ((d * texHeight) / spriteHeight) / 256;
                 uint32_t src_idx = texY*(texWidth/8) + texX/8;
                 uint32_t dst_idx = y*SCREEN_W + stripe;
-                uint32_t color = sprites[sprites_data[spriteOrder[i]].texture][src_idx] >> (texX%8)*4 & 0xF; //get current color from the texture
+                uint32_t color = sprites[sprites_data[sprite_order[i]].texture][src_idx] >> (texX%8)*4 & 0xF; //get current color from the texture
                 if(color != 0xd) 
                     unpack_idx4_p32[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
             }

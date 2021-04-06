@@ -24,5 +24,11 @@
 void renderer_init();
 void renderer_render(camera_t* camera);
 
+void wait_for_vsync();
+void cls();
+void floor_raycaster();
+void wall_raycaster();
+void dda();
+void sprite_raycaster();
 
 #endif // RENDERER_H
