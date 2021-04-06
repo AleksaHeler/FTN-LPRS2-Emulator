@@ -183,16 +183,16 @@ void wall_raycaster(camera_t* camera){
 
 
         // Calculate the height of the line that has to be drawn on screen
-        int lineHeight = (int)(SCREEN_H / perpWallDist);
+        double lineHeight = (double)SCREEN_H / perpWallDist;
         
         // TODO: add draw_wall() function
         // Calculate lowest and highest pixel to fill in current stripe. 
         // The center of the wall should be at the center of the screen, and 
         // if these points lie outside the screen, they're capped to 0 or h-1
-        int drawStart = -lineHeight / 2 + SCREEN_H / 2;
+        int drawStart = -(int)lineHeight / 2 + SCREEN_H / 2;
         if(drawStart < 0)drawStart = 0;
-        int drawEnd = lineHeight / 2 + SCREEN_H / 2;
-        if(drawEnd >= SCREEN_H)drawEnd = SCREEN_H - 1;
+        int drawEnd = (int)lineHeight / 2 + SCREEN_H / 2;
+        if(drawEnd >= SCREEN_H)drawEnd = SCREEN_H;
         
         // Choose wall texture from map
         // Number 1 on map corresponds with texture 0 and so on
@@ -211,13 +211,14 @@ void wall_raycaster(camera_t* camera){
 
         // TODO: an integer-only bresenham or DDA like algorithm could make the texture coordinate stepping faster
         // How much to increase the texture coordinate per screen pixel
-        double step = 1.0 * texHeight / lineHeight;
+        double step = (double)texHeight / (double)lineHeight;
         // Starting texture coordinate
-        double texPos = (drawStart - SCREEN_H / 2 + lineHeight / 2) * step;
+        double texPos = ((double)drawStart - (double)(SCREEN_H / 2) + (double)lineHeight / 2.0) * step;
 
         // Draw the texture vertical stripe
         for(int y = drawStart; y < drawEnd; y++) {
             // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+            //int texY = (int)floor(texPos) & (texHeight - 1);
             int texY = (int)texPos & (texHeight - 1);
             texPos += step;
 
@@ -272,19 +273,19 @@ void sprite_raycaster(camera_t* camera){
         int spriteScreenX = (int)((SCREEN_W / 2) * (1 + transformX / transformY));
 
         //calculate height of the sprite on screen
-        int spriteHeight = ABS((int)(SCREEN_H / (transformY))); //using 'transformY' instead of the real distance prevents fisheye
+        int spriteHeight = ABS((int)((double)SCREEN_H / transformY)); //using 'transformY' instead of the real distance prevents fisheye
         //calculate lowest and highest pixel to fill in current stripe
         int drawStartY = -spriteHeight / 2 + SCREEN_H / 2;
         if(drawStartY < 0) drawStartY = 0;
         int drawEndY = spriteHeight / 2 + SCREEN_H / 2;
-        if(drawEndY >= SCREEN_H) drawEndY = SCREEN_H - 1;
+        if(drawEndY >= SCREEN_H) drawEndY = SCREEN_H;
 
         //calculate width of the sprite
         int spriteWidth = ABS((int)(SCREEN_H / (transformY)));
         int drawStartX = -spriteWidth / 2 + spriteScreenX;
         if(drawStartX < 0) drawStartX = 0;
         int drawEndX = spriteWidth / 2 + spriteScreenX;
-        if(drawEndX >= SCREEN_W) drawEndX = SCREEN_W - 1;
+        if(drawEndX >= SCREEN_W) drawEndX = SCREEN_W;
 
         //loop through every vertical stripe of the sprite on screen
         for(int stripe = drawStartX; stripe < drawEndX; stripe++) {
@@ -294,7 +295,7 @@ void sprite_raycaster(camera_t* camera){
             //2) it's on the screen (left)
             //3) it's on the screen (right)
             //4) z_buffer, with perpendicular distance
-            if(transformY > 0 && stripe > 0 && stripe < SCREEN_W && transformY < z_buffer[stripe])
+            if(transformY > 0 && stripe >= 0 && stripe < SCREEN_W && transformY < z_buffer[stripe])
             for(int y = drawStartY; y < drawEndY; y++){ //for every pixel of the current stripe  
                 int d = (y) * 256 - SCREEN_H * 128 + spriteHeight * 128; //256 and 128 factors to avoid floats
                 int texY = ((d * texHeight) / spriteHeight) / 256;
