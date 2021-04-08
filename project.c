@@ -15,10 +15,10 @@ int main(void) {
 	// TODO: add main menu here
 
 	while(1){
-
+	
 		player_update();
         renderer_render(&player_camera);
-		
+
 		#ifdef DEBUG
 			//// FPS LIMITER ////////////////////////////////////////////////////////////
 			do{ // Waits until at least 16.67ms passed (1/60 for max of 60fps)

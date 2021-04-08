@@ -20,20 +20,20 @@ void renderer_init() {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Rendering: floor&ceiling, walls, sprites
-void renderer_render(camera_t* camera) {
-
+void renderer_render(camera_t* camera) {                                // Time taken on an average pc:
+    
     #ifdef USE_DOUBLE_BUFFER
-        wait_for_vsync();
-        transfer_buffer(); // Copy buffer from prev frame to screen
+        wait_for_vsync();                                               // usually: 24-28ms
+        transfer_buffer(); // Copy buffer from prev frame to screen     // usually: 0.4 - 4ms
     #else
         wait_for_vsync();
     #endif
 
-    cls();  // Clear background to color with index 0 in palette
-    floor_raycaster(camera);
-    wall_raycaster(camera);
-    sort_sprites(sprite_order, sprite_distance, camera, num_sprites);
-    sprite_raycaster(camera);
+    cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
+    floor_raycaster(camera);                                            // usually: 1.5 - 5ms
+    wall_raycaster(camera);                                             // usually: 1 - 1.4ms
+    sort_sprites(sprite_order, sprite_distance, camera, num_sprites);   // usually: 0.006ms
+    sprite_raycaster(camera);                                           // usually: 0.65ms
 }
 
 ///////////////////////////////////////////////////////////////////////////////
