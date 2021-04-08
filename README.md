@@ -13,6 +13,7 @@ Grupni projekat iz predmeta LPRS2.
   - [POC 3 - textured walls](#poc3)
   - [POC 4 - floor and ceiling](#poc4)
   - [POC 5 - sprites](#poc5)
+- [Struktura projekta](#struktura)
 - [Igrica](#igrica)
 
 ## Uvod <a name = "uvod"></a>
@@ -22,7 +23,6 @@ Kako bismo dobili 3D efekat, potrebno je zidove nacrtati tako da im je visina ob
 
 DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. Mi ga koristimo da nađemo koji kvadrat naše mape je zrak pogodio i zaustavimo algoritam u tom trenutku i nacrtamo vertikalnu liniju čija visina odgovara udaljenosti zida tj. dužini zraka. Ideju za ovaj algoritam nam je dao [Lode Vandevenne](https://lodev.org/), i deo implementacije je odrađen po njegovom [tutorijalu](https://lodev.org/cgtutor/raycasting.html).
 
-TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
 
 ## Timeline <a name = "timeline"></a>
 - [X] Proof of concept
@@ -112,6 +112,30 @@ Dodati sprajtovi (bure, stub i lampa). Crtanje sprajtova se odvija nakon zidova 
  6. Nacrtamo sprajtove jednu po jednu vertikalnu liniju, i ne crtamo linije gde je sprajt uddaljeniji od 1D ZBuffer-a koji govori da je zid između
  7. Nacrtamo vertikalnu liniju piksel po piksel, i obratimo pažnju da postoje 'nevidljive' boje (u našem slučaju 0xffffff) kako svi sprajtovi ne bi bili kockasti
 Nije potrebno apdejtovati ZBuffer dok crtamo linije, kako su već sortirani sprajtovi, oni koji su bliži biće nacrtani poslednji.
+
+![proof of concept 5](poc/images/proof_of_concept5.png)
+
 </details>
+
+## Struktura projekta <a name = "struktura"></a>
+
+**project.c** - glavni fajl, **main** funkcija, entry point
+
+**device.h** - podaci o platformi: rezolucija ekrana, define-ovi, ucitavanje "system.h" fajla sa emulatorom
+
+**engine.h** - strukture kamere i sprajta
+
+**fmath.h** - nasa matematicka biblioteka: sin, cos, abs, floor, shift divide
+
+**game_data.h** - mapa, skladistenje tekstura i sprajtova
+
+**sprites_data.h** - pikseli sprajtova i tekstura
+
+**player.h** - funkcije igraca: initialize i update
+
+**raycast_renderer.h** - funkcije renderera: init, render, wait_for_vsync, cls, floor/wall/sprite_raycaster, transfer_buffer, dda
+
+**sprites_renderer.h** - funkcije sprajtova: draw_sprite, sort_sprites (quick_sort, partition, swap)
+
 
 ## Igrica <a name = "igrica"></a>
