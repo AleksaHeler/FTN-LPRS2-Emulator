@@ -1,6 +1,12 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#ifdef DEBUG
+	#include <stdio.h>	// For testing only: todo remove in final version
+	#include <time.h>
+	#define MAX_FPS 60	// Actual FPS may be lower, but not higher
+#endif
+
 typedef struct {
 	double pos_x;
 	double pos_y;
