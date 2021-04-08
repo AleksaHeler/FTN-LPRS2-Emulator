@@ -6,6 +6,11 @@ void player_init() {
     player_camera.pos_x = 22.5, player_camera.pos_y = 12.5;  // player x and y start position
     player_camera.dir_x = -1, player_camera.dir_y = 0; // initial player direction vector
 
+    #ifdef DEBUG
+        player_camera.time = 0;
+        player_camera.oldTime = 0;
+    #endif
+
     // Camera plane is perpendicular to the direction, but we 
     //  can change the length of it. The ratio between the length
     //  of the direction and the camera plane determinates the FOV.
@@ -23,8 +28,21 @@ void player_update() {
     //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
     //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
     // TODO: make speeds relate to time and not FPS
-    double move_speed = 5.0/60.0;
-    double rotation_speed = 3.0/60.0;
+    
+    #ifdef DEBUG
+        player_camera.oldTime = player_camera.time;
+        player_camera.time = clock();
+
+        double frameTime = (player_camera.time - player_camera.oldTime) / 1000.0; //frametime is the time this frame has taken, in milliseconds
+
+        /* Speed modifiers */
+        double move_speed = frameTime * 2 * 0.001; //the constant value is in squares/second
+        double rotation_speed = frameTime * 1.2 * 0.001; //the constant value is in radians/second
+    #else
+        double move_speed = 5.0/60.0;
+        double rotation_speed = 3.0/60.0;
+    #endif
+
     double player_width = 0.3;
     
     // Move forward if no wall in front of the player

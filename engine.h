@@ -14,6 +14,11 @@ typedef struct {
 	double dir_y;
 	double plane_x;
 	double plane_y;
+
+    #ifdef DEBUG
+		double time;    // time of current frame
+		double oldTime; // time of previous frame
+	#endif
 } camera_t;
 
 typedef struct
