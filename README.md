@@ -25,11 +25,12 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
 TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
 
 ## Timeline <a name = "timeline"></a>
-- [ ] Proof of concept
+- [X] Proof of concept
   - [X] Render bez tekstura sa dve boje (1bit color indexing)
   - [X] Render bez tekstura sa više boja (4bit color indexing)
   - [X] Render sa teksturama (učitavanje iz fajla)
-  - [ ] Učitavanje mape iz fajla (idealno slike, ali može bilo koji fajl)
+  - [X] Render sa podom
+  - [X] Render sa sprajtovima (bure, stub, lampa)
 - [ ] Engine
   - [ ] *Renderer*
     - [X] Pomeriti sve u svoje funkcije i fajlove i sredjivanje koda (**Aleksa**)
@@ -78,6 +79,9 @@ TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
 ``` sudo ./waf build run --app=project ``` - run the app
 
 ## Proof of concept <a name = "poc"></a>
+
+<details><summary>Click to expand</summary>
+
 ### proof_of_concept1.c <a name = "poc1"></a>
 Koristi 1bit indeksiranje boja, dakle postoje dve boje (u našem slučaju plava 0 i crvena 1). Implementira jednostavno kretanje igrača (napred nazad, okretanje levo desno). Kod iscrtavanja na ekran, nakon što sačeka vSync signal, sve piksele postavi na plavo (pozadina = 0), i zatim prolazi kroz širinu ekrana, od levo ka desno i iscrtava linije odgovarajuće visine koristeći DDA algoritam i svaki zid oboji istom bojom. Mapa je zabeležena u kodu (hard coded) kao dvodimenzionalni niz tipa *int*.
 
@@ -108,5 +112,6 @@ Dodati sprajtovi (bure, stub i lampa). Crtanje sprajtova se odvija nakon zidova 
  6. Nacrtamo sprajtove jednu po jednu vertikalnu liniju, i ne crtamo linije gde je sprajt uddaljeniji od 1D ZBuffer-a koji govori da je zid između
  7. Nacrtamo vertikalnu liniju piksel po piksel, i obratimo pažnju da postoje 'nevidljive' boje (u našem slučaju 0xffffff) kako svi sprajtovi ne bi bili kockasti
 Nije potrebno apdejtovati ZBuffer dok crtamo linije, kako su već sortirani sprajtovi, oni koji su bliži biće nacrtani poslednji.
+</details>
 
 ## Igrica <a name = "igrica"></a>
