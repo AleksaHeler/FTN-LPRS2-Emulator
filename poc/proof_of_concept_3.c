@@ -1,6 +1,6 @@
 /* This file is 'renderer.c' in project files */
 
-#include "renderer.h"
+#include "raycast_renderer.h"
 
 void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x, uint16_t dst_y) {
     // Prodje kroz region na ekranu na kom treba biti iscrtano, i za svaki piksel nadje vrednost

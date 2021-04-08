@@ -11,7 +11,7 @@
 #include "game_data.h"
 #include "engine.h"
 #include "fmath.h"
-#include "sprites.h"
+#include "sprites_renderer.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Useful macros:

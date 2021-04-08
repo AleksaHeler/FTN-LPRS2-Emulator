@@ -1,4 +1,4 @@
-#include "renderer.h"
+#include "raycast_renderer.h"
 
 
 double z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer

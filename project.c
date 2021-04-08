@@ -1,4 +1,4 @@
-#include "renderer.h"
+#include "raycast_renderer.h"
 #include "player.h"
 
 int main(void) {
