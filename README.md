@@ -13,6 +13,7 @@ Grupni projekat iz predmeta LPRS2.
   - [POC 3 - textured walls](#poc3)
   - [POC 4 - floor and ceiling](#poc4)
   - [POC 5 - sprites](#poc5)
+- [Igrica](#igrica)
 
 ## Uvod <a name = "uvod"></a>
 Ideja je bila napraviti igricu za emulator koja je slična [Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D). Kako bi mogli napraviti 3D igru u 2D emulatoru, koristimo Raycasting algoritam (ne raytracing). Kako bi pojednostavili sebi problem, i kako nije neophodno imati vertikalnost u igri (spratovi, stepenice, skokovi), možemo mapu predstaviti 2D matricom celih brojeva, gde broj označava tip zida, i ako je 0 znači prazno polje po kojem se igrač može kretati.
@@ -29,14 +30,44 @@ TODO: dodati objašnjenje za celu igricu, ne samo raycasting.
   - [X] Render bez tekstura sa više boja (4bit color indexing)
   - [X] Render sa teksturama (učitavanje iz fajla)
   - [ ] Učitavanje mape iz fajla (idealno slike, ali može bilo koji fajl)
-- [ ] Igra
-  - [ ] Do kraja implementiran naš renderer
-  - [ ] Modularne mape i teksture
-  - [ ] Napredne kontrole igrača (drugačije kretanje, konstantna brzina nezavisno od FPS, pucanje)
-  - [ ] UI (životi, municija, rezultat...)
-  - [ ] Items (bure sa: municijom, životima... powerup?)
-  - [ ] AI (neprijatelji, kretanje neprijatelja, interakcija sa njima)
-
+- [ ] Engine
+  - [ ] *Renderer*
+    - [X] Pomeriti sve u svoje funkcije i fajlove i sredjivanje koda (**Aleksa**)
+    - [X] Sort funkcija za sprite-ove kako bi bili jedni ispred drugih kad se renderuju (**Radomir**)
+    - [ ] Particle system: samo renderovati sitne pravougaonike u world space-u. Hard code: stvori mi particle ovde ove boje i da bude samo jedan efekat kao eksplozija (kada pogodi neprijatelja npr) (**Marko**)
+    - [ ] Animacija za sprajtove: apstrakcija da iz game code-a kazemo taj sprajt promeni u taj state (tako mozemo pucati i neprijatelj imati animacije)
+    - [X] Sprite rendering: directly to world space 1:1 (**Aleksa**)
+    - [X] Double buffering: da se ne racuna u toku vSync-a, vec u slobodno vreme i upisuje u drugi bafer i kad dodje vSync samo se kopira u pravi bafer za ekran (**Aleksa**)
+    - [ ] Preci na packed mod indeksiranja (**Aleksa**)
+    - [ ] Napraviti da player init vraca pokazivac na player strukturu i da se to prosledjuje dalje funkcijama, a ne da imamo samo globalnu kameru ili nesto tako - pomoci ce kasnije sa apstrakcijama (**Aleksa**)
+    - [ ] (optional) Osvetljenje i dithering
+  - [ ] *Apstrakcija engine-a* (**Marko**)
+  - [ ] *fmath.h*
+    - [ ] preci na fixed point (**Marko**)
+    - [X] floor, sin, cos - CORDIC algoritam (**Aleksa**)
+    - [ ] abs, round (**Radomir**)
+- [ ] Game
+  - [ ] UI
+    - [ ] Main menu: biranje nivoa i tezine (player/enemy damage)
+  - [ ] Graphics design
+    - [ ] Naci dobru paletu - 16 boja: 8 pravih boja ali svaka ima svoj taminiji duplikat
+    - [ ] Naci dobre sprajtove za igru: teksture, sprajtovi, UI
+  - [ ] Game mechanics
+    - [ ] Imamo dva dugmeta: A i B. Na jedno se menja selekcija, na drugo se upotrebljava selektovano
+    - [ ] oruzje (za pocetak samo jedno)
+    - [ ] municija, smrt, taking damage
+    - [ ] hp / lives
+    - [ ] Consumable items / grenades
+    - [ ] Igrac ima 'debljinu' da ne moze prici zidu beskonacno blizu
+    - [ ] Player UI (nisan, municija, health)
+    - [ ] (optional) Postoji kljuc na mapi koji treba da se pokupi i otkljuca vrata da se ode na naredni nivo/pobedi
+    - [ ] Vezati brzinu kretanja za vreme, a ne FPS
+  - [ ] Enemy - AI
+    - [ ] Za pocetak samo jedan tip
+    - [ ] Kako se krece (npr odrzava neku idealnu razdaljinu)
+    - [ ] Puca ka igracu kad je u nekom dometu
+    - [ ] Kako umire (animacija/nestaje/drop)
+  - [ ] Apstrakcija nivoa
 
 ## Pokretanje <a name = "pokretanje"></a>
 
@@ -77,3 +108,5 @@ Dodati sprajtovi (bure, stub i lampa). Crtanje sprajtova se odvija nakon zidova 
  6. Nacrtamo sprajtove jednu po jednu vertikalnu liniju, i ne crtamo linije gde je sprajt uddaljeniji od 1D ZBuffer-a koji govori da je zid između
  7. Nacrtamo vertikalnu liniju piksel po piksel, i obratimo pažnju da postoje 'nevidljive' boje (u našem slučaju 0xffffff) kako svi sprajtovi ne bi bili kockasti
 Nije potrebno apdejtovati ZBuffer dok crtamo linije, kako su već sortirani sprajtovi, oni koji su bliži biće nacrtani poslednji.
+
+## Igrica <a name = "igrica"></a>
