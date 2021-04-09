@@ -5,6 +5,7 @@ Grupni projekat iz predmeta LPRS2.
 
 ## Sadržaj
 - [Uvod](#uvod)
+- [Koncept](#koncept)
 - [Timeline](#timeline)
 - [Pokretanje](#pokretanje)
 - [Proof of concept](#poc)
@@ -17,6 +18,9 @@ Grupni projekat iz predmeta LPRS2.
 - [Igrica](#igrica)
 
 ## Uvod <a name = "uvod"></a>
+[TODO]
+
+## Koncept <a name = "koncept"></a>
 Ideja je bila napraviti igricu za emulator koja je slična [Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D). Kako bi mogli napraviti 3D igru u 2D emulatoru, koristimo Raycasting algoritam (ne raytracing). Kako bi pojednostavili sebi problem, i kako nije neophodno imati vertikalnost u igri (spratovi, stepenice, skokovi), možemo mapu predstaviti 2D matricom celih brojeva, gde broj označava tip zida, i ako je 0 znači prazno polje po kojem se igrač može kretati.
 
 Kako bismo dobili 3D efekat, potrebno je zidove nacrtati tako da im je visina obrnuto proporcionalna udaljenosti od kamere. To radimo tako što crtamo jednu po jednu vertikalnu liniju. Za svaku vertikalnu liniju bacimo zrak u tom smeru i gledamo kad ce udariti u prvi zid i time dobijemo udaljenost, i za to koristimo relativno jednostavan "**Digital Differential Analysis**" ([DDA](https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm))) algoritam.
@@ -29,7 +33,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
   - [X] Render bez tekstura sa dve boje (1bit color indexing)
   - [X] Render bez tekstura sa više boja (4bit color indexing)
   - [X] Render sa teksturama (učitavanje iz fajla)
-  - [X] Render sa podom
+  - [X] Render sa podom i plafonom
   - [X] Render sa sprajtovima (bure, stub, lampa)
 - [ ] Engine
   - [ ] *Renderer*
