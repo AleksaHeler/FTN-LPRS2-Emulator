@@ -46,11 +46,13 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Preci na packed mod indeksiranja (**Aleksa**)
     - [ ] Napraviti da player init vraca pokazivac na player strukturu i da se to prosledjuje dalje funkcijama, a ne da imamo samo globalnu kameru ili nesto tako - pomoci ce kasnije sa apstrakcijama (**Aleksa**)
     - [ ] (optional) Osvetljenje i dithering
+    - [ ] (optional) Renderer funkcija se poziva maksimalno 60 puta u sekundi (moze i manje ali ne i vise) da se izbegne prevelik framerate i ubrzanje igrice
   - [ ] *Apstrakcija engine-a* (**Marko**)
   - [ ] *fmath.h*
     - [ ] preci na fixed point (**Marko**)
     - [X] floor, sin, cos - CORDIC algoritam (**Aleksa**)
     - [ ] abs, round (**Radomir**)
+    - [ ] (optional) smooth ubrzanje za igraca
 - [ ] Game
   - [ ] UI
     - [ ] Main menu: biranje nivoa i tezine (player/enemy damage)
@@ -73,6 +75,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Puca ka igracu kad je u nekom dometu
     - [ ] Kako umire (animacija/nestaje/drop)
   - [ ] Apstrakcija nivoa
+  - [ ] Development timelapse video
 
 ## Pokretanje <a name = "pokretanje"></a>
 
