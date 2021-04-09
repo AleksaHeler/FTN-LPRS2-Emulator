@@ -41,7 +41,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [X] Double buffering: da se ne racuna u toku vSync-a, vec u slobodno vreme i upisuje u drugi bafer i kad dodje vSync samo se kopira u pravi bafer za ekran (**Aleksa**)
     - [ ] Preci na packed mod indeksiranja (**Aleksa**)
     - [ ] Napraviti da player init vraca pokazivac na player strukturu i da se to prosledjuje dalje funkcijama, a ne da imamo samo globalnu kameru ili nesto tako - pomoci ce kasnije sa apstrakcijama (**Aleksa**)
-    - [ ] (optional) Osvetljenje i dithering
+    - [ ] (optional) Osvetljenje i dithering (bayer ordered dithering?)
   - [ ] *Apstrakcija engine-a* (**Marko**)
   - [ ] *fmath.h*
     - [ ] preci na fixed point (**Marko**)
