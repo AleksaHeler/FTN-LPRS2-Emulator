@@ -59,37 +59,38 @@ void floor_raycaster(camera_t* camera){
     // For every horizontal line from middle to the bottom of the screen
     for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y) {
         // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-        float ray_dir_x0 = camera->dir_x - camera->plane_x;
-        float ray_dir_y0 = camera->dir_y - camera->plane_y;
-        float ray_dir_x1 = camera->dir_x + camera->plane_x;
-        float ray_dir_y1 = camera->dir_y + camera->plane_y;
+        fp32_t ray_dir_x0 = fp32_from_float_round(camera->dir_x) - fp32_from_float_round(camera->plane_x);
+        fp32_t ray_dir_y0 = fp32_from_float_round(camera->dir_y) - fp32_from_float_round(camera->plane_y);
+        fp32_t ray_dir_x1 = fp32_from_float_round(camera->dir_x) + fp32_from_float_round(camera->plane_x);
+        fp32_t ray_dir_y1 = fp32_from_float_round(camera->dir_y) + fp32_from_float_round(camera->plane_y);
 
         // Current y position compared to the center of the screen (the horizon)
         int p = y - SCREEN_H / 2;
 
-        // Vertical position of the camera
-        float pos_z = 0.5 * SCREEN_H;
+        // Vertical position of the camera (SCREEN_H / 2)
+        fp32_t pos_z = FP32(SCREEN_H) >> 1;
 
         // Horizontal distance from the camera to the floor for the current row
-        float row_distance = pos_z / p;
+        fp32_t row_distance = pos_z / p;
 
         // Calculate the real world step vector we have to add for each x (parallel to camera plane)
         // adding step by step avoids multiplications with a weight in the inner loop
-        float floor_step_x = row_distance * (ray_dir_x1 - ray_dir_x0) / SCREEN_W;
-        float floor_step_y = row_distance * (ray_dir_y1 - ray_dir_y0) / SCREEN_W;
+        fp32_t floor_step_x = fp32_mul(row_distance, (ray_dir_x1 - ray_dir_x0) / SCREEN_W);
+        fp32_t floor_step_y = fp32_mul(row_distance, (ray_dir_y1 - ray_dir_y0) / SCREEN_W);
 
         // real world coordinates of the leftmost column. This will be updated as we step to the right.
-        float floor_x = camera->pos_x + row_distance * ray_dir_x0;
-        float floor_y = camera->pos_y + row_distance * ray_dir_y0;
+        fp32_t floor_x = fp32_from_float_round(camera->pos_x) + fp32_mul(row_distance, ray_dir_x0);
+        fp32_t floor_y = fp32_from_float_round(camera->pos_y) + fp32_mul(row_distance, ray_dir_y0);
 
         for(int x = 0; x < SCREEN_W; ++x){
             // the cell coord is simply derived from the integer parts of floor_x and floor_y
-            int cell_x = (int)(floor_x);
-            int cell_y = (int)(floor_y);
+            int cell_x = fp32_to_int(floor_x);
+            int cell_y = fp32_to_int(floor_y);
 
             // get the texture coordinate from the fractional part
-            int tx = (int)(tex_width * (floor_x - cell_x)) & (tex_width - 1);
-            int ty = (int)(tex_height * (floor_y - cell_y)) & (tex_height - 1);
+            // TODO optimize
+            int tx = fp32_to_int(tex_width * (floor_x - fp32_from_int(cell_x))) & (tex_width - 1);
+            int ty = fp32_to_int(tex_height * (floor_y - fp32_from_int(cell_y))) & (tex_height - 1);
 
             floor_x += floor_step_x;
             floor_y += floor_step_y;
