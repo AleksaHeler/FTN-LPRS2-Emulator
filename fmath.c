@@ -26,7 +26,6 @@
     }
 
     double my_sin(double a) { // a is in radians
-        // TODO: check if math is ok, and fix the bug when using our sin/cos (camera skews after couple of turns)
         // Translate all input angles to range -pi/2 -- pi/2
         if(a < -M_PI/2){
             a = a - ((int)(a/M_PI)) * M_PI; // if less than -PI it will clip it
