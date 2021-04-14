@@ -7,7 +7,6 @@
 //   make all those functions use a double of screen buffer
 //   function render will only copy to screen buffer
 
-#include "device.h"
 #include "game_data.h"
 #include "engine.h"
 #include "fmath.h"

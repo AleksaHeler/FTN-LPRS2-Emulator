@@ -32,17 +32,6 @@
 #define SCREEN_W SCREEN_IDX4_W		// Currently used screen size
 #define SCREEN_H SCREEN_IDX4_H
 #define USE_PACKED 0 				// Use unpacked indexing
-#define USE_DOUBLE_BUFFER			// Wether to use seperate buffer to store rendered data and only then display it
-//#define DEBUG						// Enable some debuging features
-
-// Double buffer: renderer draws to this buffer, and then on vSync copies it to the screen
-// Although this may reduce framerate a bit, it can save us from displaying unfinished renders.
-// So we can use 'buffer' in code, while actually having control over what exact buffer is used
-#ifdef USE_DOUBLE_BUFFER
-	volatile uint32_t buffer[SCREEN_W*SCREEN_H];
-#else
-	#define buffer unpack_idx4_p32		
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Indexing structs:

@@ -1,7 +1,6 @@
 #ifndef SPRITES_H
 #define SPRITES_H
 
-#include "device.h"
 #include "game_data.h"
 #include "engine.h"
 #include "fmath.h"
