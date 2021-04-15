@@ -34,6 +34,7 @@ static inline fp32_t fp32_from_float_round(float a) {
 static inline float fp32_to_float(fp32_t a) { return (float)a / fp32_one; }
 
 // Useful functions
+static inline fp32_t fp32_frac(fp32_t x) { return x & (fp32_one - 1); } // Return only the fraction part
 static inline fp32_t fp32_abs(fp32_t x) { return (x < 0 ? -x : x); }
 static inline fp32_t fp32_floor(fp32_t x) { return x & 0xFFFF0000; }
 static inline fp32_t fp32_ceil(fp32_t x) { return (x & 0xFFFF0000) + (x & 0x0000FFFF ? fp32_one : 0); }

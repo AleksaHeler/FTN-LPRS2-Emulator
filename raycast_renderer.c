@@ -88,9 +88,8 @@ void floor_raycaster(camera_t* camera){
             int cell_y = fp32_to_int(floor_y);
 
             // get the texture coordinate from the fractional part
-            // TODO optimize
-            int tx = fp32_to_int(tex_width * (floor_x - fp32_from_int(cell_x))) & (tex_width - 1);
-            int ty = fp32_to_int(tex_height * (floor_y - fp32_from_int(cell_y))) & (tex_height - 1);
+            int tx = fp32_frac(floor_x) >> (FP32_DECIMAL_PLACES - tex_width_shift);
+            int ty = fp32_frac(floor_y) >> (FP32_DECIMAL_PLACES - tex_height_shift);
 
             floor_x += floor_step_x;
             floor_y += floor_step_y;
