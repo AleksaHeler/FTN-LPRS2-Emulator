@@ -127,25 +127,25 @@ void wall_raycaster(camera_t* camera){
         //                      \ |
         //                       \|
         //                      player
-        double camera_x = 2 * x / (double)SCREEN_W - 1; //x-coordinate in camera space
-        double ray_dir_x = camera->dir_x + camera->plane_x * camera_x;
-        double ray_dir_y = camera->dir_y + camera->plane_y * camera_x;
+        fp32_t camera_x = 2 * fp32_from_int(x) / SCREEN_W - FP32(1); //x-coordinate in camera space
+        fp32_t ray_dir_x = fp32_from_float_round(camera->dir_x) + fp32_mul(fp32_from_float_round(camera->plane_x), camera_x);
+        fp32_t ray_dir_y = fp32_from_float_round(camera->dir_y) + fp32_mul(fp32_from_float_round(camera->plane_y), camera_x);
 
         // Which box of the map we're in (just rounding to int), basically the index in map matrix
         int map_x = (int)camera->pos_x;
         int map_y = (int)camera->pos_y;
 
         // Length of ray from current position to next x or y-side
-        double side_dist_x;
-        double side_dist_y;
+        fp32_t side_dist_x;
+        fp32_t side_dist_y;
 
         // The distance the ray has to travel to go from 1 x-side 
         // to the next x-side, or from 1 y-side to the next y-side.
-        double delta_dist_x = ABS(1 / ray_dir_x);
-        double delta_dist_y = ABS(1 / ray_dir_y);
+        fp32_t delta_dist_x = fp32_abs(fp32_div(FP32(1), ray_dir_x));
+        fp32_t delta_dist_y = fp32_abs(fp32_div(FP32(1), ray_dir_y));
 
         // Will be used later to calculate the length of the ray
-        double perpendicular_wall_distance;
+        fp32_t perpendicular_wall_distance;
 
         int step_x;
         int step_y;
@@ -159,17 +159,17 @@ void wall_raycaster(camera_t* camera){
         // initial side_dist_x and side_dist_y still have to be calculated.
         if(ray_dir_x < 0) {
             step_x = -1;
-            side_dist_x = (camera->pos_x - map_x) * delta_dist_x;
+            side_dist_x = fp32_mul(fp32_from_float_round(camera->pos_x) - fp32_from_int(map_x), delta_dist_x);
         } else { // ray_dir_x > 0
             step_x = 1;
-            side_dist_x = (map_x + 1.0 - camera->pos_x) * delta_dist_x;
+            side_dist_x = fp32_mul(fp32_from_int(map_x + 1) - fp32_from_float_round(camera->pos_x), delta_dist_x);
         }
         if(ray_dir_y < 0) {
             step_y = -1;
-            side_dist_y = (camera->pos_y - map_y) * delta_dist_y;
+            side_dist_y = fp32_mul(fp32_from_float_round(camera->pos_y) - fp32_from_int(map_y), delta_dist_y);
         } else { // ray_dir_y > 0
             step_y = 1;
-            side_dist_y = (map_y + 1.0 - camera->pos_y) * delta_dist_y;
+            side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - fp32_from_float_round(camera->pos_y), delta_dist_y);
         }
 
         dda(&hit, &map_x, &map_y, &step_x, &step_y, &side_dist_x, &side_dist_y, &delta_dist_x, &delta_dist_y, &side);
@@ -178,47 +178,47 @@ void wall_raycaster(camera_t* camera){
         // Euclidean distance to the point representing player, but instead 
         // the distance to the camera plane (or, the distance of the point 
         // projected on the camera direction to the player), to avoid the fisheye effect
-        if(side == 0) perpendicular_wall_distance = (map_x - camera->pos_x + (1 - step_x) / 2) / ray_dir_x;
-        else          perpendicular_wall_distance = (map_y - camera->pos_y + (1 - step_y) / 2) / ray_dir_y;
+        if(side == 0) perpendicular_wall_distance = fp32_div(fp32_from_int(map_x) - fp32_from_float_round(camera->pos_x) + fp32_from_int(1 - step_x) / 2, ray_dir_x);
+        else          perpendicular_wall_distance = fp32_div(fp32_from_int(map_y) - fp32_from_float_round(camera->pos_y) + fp32_from_int(1 - step_y) / 2, ray_dir_y);
 
 
         // Calculate the height of the line that has to be drawn on screen
-        double line_height = (double)SCREEN_H / perpendicular_wall_distance;
+        fp32_t line_height = fp32_div(FP32(SCREEN_H), perpendicular_wall_distance);
         
         // TODO: add draw_wall() function
         // Calculate lowest and highest pixel to fill in current stripe. 
         // The center of the wall should be at the center of the screen, and 
         // if these points lie outside the screen, they're capped to 0 or h-1
-        int draw_start = -(int)line_height / 2 + SCREEN_H / 2;
-        if(draw_start < 0)draw_start = 0;
-        int draw_end = (int)line_height / 2 + SCREEN_H / 2;
-        if(draw_end >= SCREEN_H)draw_end = SCREEN_H;
+        int draw_start = -fp32_to_int(line_height) / 2 + SCREEN_H / 2;
+        if(draw_start < 0) draw_start = 0;
+        int draw_end = fp32_to_int(line_height) / 2 + SCREEN_H / 2;
+        if(draw_end >= SCREEN_H) draw_end = SCREEN_H;
         
         // Choose wall texture from map
         // Number 1 on map corresponds with texture 0 and so on
         int tex_num = world_map[map_x][map_y] - 1;
 
         // Calculate value of wall_x 
-        double wall_x; //where exactly the wall was hit
-        if(side == 0) wall_x = camera->pos_y + perpendicular_wall_distance * ray_dir_y;
-        else          wall_x = camera->pos_x + perpendicular_wall_distance * ray_dir_x;
-        wall_x -= floor((wall_x));
+        fp32_t wall_x; //where exactly the wall was hit
+        if(side == 0) wall_x = fp32_from_float_round(camera->pos_y) + fp32_mul(perpendicular_wall_distance, ray_dir_y);
+        else          wall_x = fp32_from_float_round(camera->pos_x) + fp32_mul(perpendicular_wall_distance, ray_dir_x);
+        wall_x = fp32_frac(wall_x);
 
         // X coordinate on the texture 
-        int tex_x = (int)(wall_x * ((double)tex_width)); // pos on the wall texture
+        int tex_x = fp32_to_int(wall_x << tex_width_shift); // pos on the wall texture
         if(side == 0 && ray_dir_x > 0) tex_x = tex_width - tex_x - 1;
         if(side == 1 && ray_dir_y < 0) tex_x = tex_width - tex_x - 1;
 
         // TODO: an integer-only bresenham or DDA like algorithm could make the texture coordinate stepping faster
         // How much to increase the texture coordinate per screen pixel
-        double step = (double)tex_height / (double)line_height;
+        fp32_t step = fp32_div(FP32(tex_height), line_height);
         // Starting texture coordinate
-        double tex_pos = ((double)draw_start - (double)(SCREEN_H / 2) + (double)line_height / 2.0) * step;
+        fp32_t tex_pos = fp32_mul(fp32_from_int(draw_start) - FP32(SCREEN_H / 2) + line_height / 2, step);
 
         // Draw the texture vertical stripe
         for(int y = draw_start; y < draw_end; y++) {
             // Cast the texture coordinate to integer, and mask with (tex_height - 1) in case of overflow
-            int tex_y = (int)floor(tex_pos) & (tex_height - 1);
+            int tex_y = fp32_to_int(tex_pos) & (tex_height - 1);
             tex_pos += step;
 
             // Get the indices of source texture pixel and destination in buffer
@@ -233,11 +233,11 @@ void wall_raycaster(camera_t* camera){
         }
 
         // Set the Z buffer (depth) for sprite casting
-        z_buffer[x] = perpendicular_wall_distance; //perpendicular distance is used
+        z_buffer[x] = fp32_to_float(perpendicular_wall_distance); //perpendicular distance is used
     }
 }
 
-void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, double* side_dist_x, double* side_dist_y, double* delta_dist_x, double* delta_dist_y, int* side){
+void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* side_dist_x, fp32_t* side_dist_y, fp32_t* delta_dist_x, fp32_t* delta_dist_y, int* side){
     // A loop that increments the ray with one square every time, until a wall is hit 
     while (*hit == 0) { // Perform DDA
         // Either jumps a square in the x-direction (with step_x) or a square in the 

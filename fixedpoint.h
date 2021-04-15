@@ -15,7 +15,7 @@ static const fp32_t fp32_minimum = 0x80000000;
 
 // Only use for constants, works with 16 dec
 #define FP32F(x) ((fp32_t)(((x) >= 0) ? ((x)*65536.0 + 0.5) : ((x)*65536.0 - 0.5)))
-#define FP32(x) ((fp32_t)(x << FP32_DECIMAL_PLACES))
+#define FP32(x) ((fp32_t)((x) << FP32_DECIMAL_PLACES))
 
 // Use following functions for runtime conversion
 static inline fp32_t fp32_from_int(int a) { return a << FP32_DECIMAL_PLACES; }
@@ -47,6 +47,9 @@ static inline fp32_t fp32_add(fp32_t x, fp32_t y) { return (x + y); }
 static inline fp32_t fp32_subtract(fp32_t x, fp32_t y) { return (x - y); }
 // TODO: optimize these further
 static inline fp32_t fp32_mul(fp32_t x, fp32_t y) { return ((int64_t)x * y) >> FP32_DECIMAL_PLACES; }
-static inline fp32_t fp32_div(fp32_t x, fp32_t y) { return ((int64_t)x << FP32_DECIMAL_PLACES) / y; }
+static inline fp32_t fp32_div(fp32_t x, fp32_t y) {
+    if (y == 0) return fp32_maximum | (x & fp32_minimum); // Division by zero
+    else return ((int64_t)x << FP32_DECIMAL_PLACES) / y; 
+}
 
 #endif
