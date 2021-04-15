@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "device.h"
+#include "fixedpoint.h"
 
 #ifdef USE_DOUBLE_BUFFER
     extern uint32_t buffer[SCREEN_W * SCREEN_H];
@@ -24,12 +25,12 @@
 #endif
 
 typedef struct {
-	double pos_x;
-	double pos_y;
-	double dir_x;
-	double dir_y;
-	double plane_x;
-	double plane_y;
+	fp32_t pos_x;
+	fp32_t pos_y;
+	fp32_t dir_x;
+	fp32_t dir_y;
+	fp32_t plane_x;
+	fp32_t plane_y;
 
     #ifdef DEBUG
 		double time;    // time of current frame
@@ -39,8 +40,8 @@ typedef struct {
 
 typedef struct
 {
-	double x;
-	double y;
+	fp32_t x;
+	fp32_t y;
 	int texture;
 } sprite_t;
 

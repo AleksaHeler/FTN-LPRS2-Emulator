@@ -1,9 +1,9 @@
 #include "raycast_renderer.h"
 
 
-double z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
+fp32_t z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
 int sprite_order[num_sprites];            // Arrays used to sort the sprites
-double sprite_distance[num_sprites];
+fp32_t sprite_distance[num_sprites];
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,10 +59,10 @@ void floor_raycaster(camera_t* camera){
     // For every horizontal line from middle to the bottom of the screen
     for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y) {
         // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-        fp32_t ray_dir_x0 = fp32_from_float_round(camera->dir_x) - fp32_from_float_round(camera->plane_x);
-        fp32_t ray_dir_y0 = fp32_from_float_round(camera->dir_y) - fp32_from_float_round(camera->plane_y);
-        fp32_t ray_dir_x1 = fp32_from_float_round(camera->dir_x) + fp32_from_float_round(camera->plane_x);
-        fp32_t ray_dir_y1 = fp32_from_float_round(camera->dir_y) + fp32_from_float_round(camera->plane_y);
+        fp32_t ray_dir_x0 = camera->dir_x - camera->plane_x;
+        fp32_t ray_dir_y0 = camera->dir_y - camera->plane_y;
+        fp32_t ray_dir_x1 = camera->dir_x + camera->plane_x;
+        fp32_t ray_dir_y1 = camera->dir_y + camera->plane_y;
 
         // Current y position compared to the center of the screen (the horizon)
         int p = y - SCREEN_H / 2;
@@ -79,8 +79,8 @@ void floor_raycaster(camera_t* camera){
         fp32_t floor_step_y = fp32_mul(row_distance, (ray_dir_y1 - ray_dir_y0) / SCREEN_W);
 
         // real world coordinates of the leftmost column. This will be updated as we step to the right.
-        fp32_t floor_x = fp32_from_float_round(camera->pos_x) + fp32_mul(row_distance, ray_dir_x0);
-        fp32_t floor_y = fp32_from_float_round(camera->pos_y) + fp32_mul(row_distance, ray_dir_y0);
+        fp32_t floor_y = camera->pos_y + fp32_mul(row_distance, ray_dir_y0);
+        fp32_t floor_x = camera->pos_x + fp32_mul(row_distance, ray_dir_x0);
 
         for(int x = 0; x < SCREEN_W; ++x){
             // the cell coord is simply derived from the integer parts of floor_x and floor_y
@@ -128,12 +128,12 @@ void wall_raycaster(camera_t* camera){
         //                       \|
         //                      player
         fp32_t camera_x = 2 * fp32_from_int(x) / SCREEN_W - FP32(1); //x-coordinate in camera space
-        fp32_t ray_dir_x = fp32_from_float_round(camera->dir_x) + fp32_mul(fp32_from_float_round(camera->plane_x), camera_x);
-        fp32_t ray_dir_y = fp32_from_float_round(camera->dir_y) + fp32_mul(fp32_from_float_round(camera->plane_y), camera_x);
+        fp32_t ray_dir_x = camera->dir_x + fp32_mul(camera->plane_x, camera_x);
+        fp32_t ray_dir_y = camera->dir_y + fp32_mul(camera->plane_y, camera_x);
 
         // Which box of the map we're in (just rounding to int), basically the index in map matrix
-        int map_x = (int)camera->pos_x;
-        int map_y = (int)camera->pos_y;
+        int map_x = fp32_to_int(camera->pos_x);
+        int map_y = fp32_to_int(camera->pos_y);
 
         // Length of ray from current position to next x or y-side
         fp32_t side_dist_x;
@@ -159,17 +159,17 @@ void wall_raycaster(camera_t* camera){
         // initial side_dist_x and side_dist_y still have to be calculated.
         if(ray_dir_x < 0) {
             step_x = -1;
-            side_dist_x = fp32_mul(fp32_from_float_round(camera->pos_x) - fp32_from_int(map_x), delta_dist_x);
+            side_dist_x = fp32_mul(camera->pos_x - fp32_from_int(map_x), delta_dist_x);
         } else { // ray_dir_x > 0
             step_x = 1;
-            side_dist_x = fp32_mul(fp32_from_int(map_x + 1) - fp32_from_float_round(camera->pos_x), delta_dist_x);
+            side_dist_x = fp32_mul(fp32_from_int(map_x + 1) - camera->pos_x, delta_dist_x);
         }
         if(ray_dir_y < 0) {
             step_y = -1;
-            side_dist_y = fp32_mul(fp32_from_float_round(camera->pos_y) - fp32_from_int(map_y), delta_dist_y);
+            side_dist_y = fp32_mul(camera->pos_y - fp32_from_int(map_y), delta_dist_y);
         } else { // ray_dir_y > 0
             step_y = 1;
-            side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - fp32_from_float_round(camera->pos_y), delta_dist_y);
+            side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - camera->pos_y, delta_dist_y);
         }
 
         dda(&hit, &map_x, &map_y, &step_x, &step_y, &side_dist_x, &side_dist_y, &delta_dist_x, &delta_dist_y, &side);
@@ -178,8 +178,8 @@ void wall_raycaster(camera_t* camera){
         // Euclidean distance to the point representing player, but instead 
         // the distance to the camera plane (or, the distance of the point 
         // projected on the camera direction to the player), to avoid the fisheye effect
-        if(side == 0) perpendicular_wall_distance = fp32_div(fp32_from_int(map_x) - fp32_from_float_round(camera->pos_x) + fp32_from_int(1 - step_x) / 2, ray_dir_x);
-        else          perpendicular_wall_distance = fp32_div(fp32_from_int(map_y) - fp32_from_float_round(camera->pos_y) + fp32_from_int(1 - step_y) / 2, ray_dir_y);
+        if(side == 0) perpendicular_wall_distance = fp32_div(fp32_from_int(map_x) - camera->pos_x + fp32_from_int(1 - step_x) / 2, ray_dir_x);
+        else          perpendicular_wall_distance = fp32_div(fp32_from_int(map_y) - camera->pos_y + fp32_from_int(1 - step_y) / 2, ray_dir_y);
 
 
         // Calculate the height of the line that has to be drawn on screen
@@ -200,8 +200,8 @@ void wall_raycaster(camera_t* camera){
 
         // Calculate value of wall_x 
         fp32_t wall_x; //where exactly the wall was hit
-        if(side == 0) wall_x = fp32_from_float_round(camera->pos_y) + fp32_mul(perpendicular_wall_distance, ray_dir_y);
-        else          wall_x = fp32_from_float_round(camera->pos_x) + fp32_mul(perpendicular_wall_distance, ray_dir_x);
+        if(side == 0) wall_x = camera->pos_y + fp32_mul(perpendicular_wall_distance, ray_dir_y);
+        else          wall_x = camera->pos_x + fp32_mul(perpendicular_wall_distance, ray_dir_x);
         wall_x = fp32_frac(wall_x);
 
         // X coordinate on the texture 
@@ -233,7 +233,7 @@ void wall_raycaster(camera_t* camera){
         }
 
         // Set the Z buffer (depth) for sprite casting
-        z_buffer[x] = fp32_to_float(perpendicular_wall_distance); //perpendicular distance is used
+        z_buffer[x] = perpendicular_wall_distance; //perpendicular distance is used
     }
 }
 
@@ -260,22 +260,23 @@ void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* sid
 void sprite_raycaster(camera_t* camera){
     for(int i = 0; i < num_sprites; i++) {
         // Translate sprite position to relative to camera
-        double sprite_x = sprites_data[sprite_order[i]].x - camera->pos_x;
-        double sprite_y = sprites_data[sprite_order[i]].y - camera->pos_y;
+        // TODO convert sprite data to fp32_t
+        fp32_t sprite_x = sprites_data[sprite_order[i]].x - camera->pos_x;
+        fp32_t sprite_y = sprites_data[sprite_order[i]].y - camera->pos_y;
 
         //transform sprite with the inverse camera matrix
         // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
         // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
         // [ planeY   dirY ]                                          [ -planeY  planeX ]
-        double inv_det = 1.0 / (camera->plane_x * camera->dir_y - camera->dir_x * camera->plane_y); //required for correct matrix multiplication
+        fp32_t inv_det = fp32_div(FP32(1), (fp32_mul(camera->plane_x, camera->dir_y) - fp32_mul(camera->dir_x, camera->plane_y))); //required for correct matrix multiplication
 
-        double transform_x = inv_det * (camera->dir_y * sprite_x - camera->dir_x * sprite_y);
-        double transform_y = inv_det * (-camera->plane_y * sprite_x + camera->plane_x * sprite_y); //this is actually the depth inside the screen, that what Z is in 3D
+        fp32_t transform_x = fp32_mul(inv_det, (fp32_mul(camera->dir_y, sprite_x) - fp32_mul(camera->dir_x, sprite_y)));
+        fp32_t transform_y = fp32_mul(inv_det, (-fp32_mul(camera->plane_y, sprite_x) + fp32_mul(camera->plane_x, sprite_y))); //this is actually the depth inside the screen, that what Z is in 3D
 
-        int sprite_screen_x = (int)((SCREEN_W / 2) * (1 + transform_x / transform_y));
+        int sprite_screen_x = fp32_to_int(fp32_mul(FP32(SCREEN_W) / 2, FP32(1) + fp32_div(transform_x, transform_y)));
 
         //calculate height of the sprite on screen
-        int sprite_height = ABS((int)((double)SCREEN_H / transform_y)); //using 'transform_y' instead of the real distance prevents fisheye
+        int sprite_height = fp32_to_int(fp32_abs(fp32_div(FP32(SCREEN_H), transform_y))); //using 'transform_y' instead of the real distance prevents fisheye
         //calculate lowest and highest pixel to fill in current stripe
         int draw_start_y = -sprite_height / 2 + SCREEN_H / 2;
         if(draw_start_y < 0) draw_start_y = 0;
@@ -283,7 +284,7 @@ void sprite_raycaster(camera_t* camera){
         if(draw_end_y >= SCREEN_H) draw_end_y = SCREEN_H;
 
         //calculate width of the sprite
-        int sprite_width = ABS((int)(SCREEN_H / (transform_y)));
+        int sprite_width = fp32_to_int(fp32_abs(fp32_div(FP32(SCREEN_H), transform_y)));
         int draw_start_x = -sprite_width / 2 + sprite_screen_x;
         if(draw_start_x < 0) draw_start_x = 0;
         int draw_end_x = sprite_width / 2 + sprite_screen_x;
