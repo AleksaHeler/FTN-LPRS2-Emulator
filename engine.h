@@ -14,7 +14,8 @@
 #ifdef USE_DOUBLE_BUFFER
     extern uint32_t buffer[SCREEN_W * SCREEN_H];
 #else
-    #define buffer unpack_idx4_p32
+    //#define buffer unpack_idx4_p32
+	#define buffer unpack_rgb333_p32
 #endif
 
 #ifdef DEBUG

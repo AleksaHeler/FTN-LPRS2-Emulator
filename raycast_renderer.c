@@ -12,9 +12,6 @@ void renderer_init() {
 	gpu_p32[0] = INDEX_MODE;
 	gpu_p32[1] = USE_PACKED;
 
-    for(int i = 0; i < 16; i++)         // Copy colors from 'sprites_data.c'
-        palette_p32[i] = palette[i];
-
 	gpu_p32[0x800] = 0x0000FF00;        // Green for HUD
 }
 
@@ -104,14 +101,20 @@ void floor_raycaster(camera_t* camera){
 
             // floor
             uint32_t dst_idx = y*SCREEN_W + x;
-            uint32_t src_idx = tex_width/8 * ty + tx/8;
-            color = textures[floor_texture][src_idx] >> (tx%8)*4;
+            uint32_t src_idx = 4*tex_width * ty + 4*tx;
+            uint8_t r = textures[floor_texture][src_idx+2] / 32;
+            uint8_t g = textures[floor_texture][src_idx+1] / 32;
+            uint8_t b = textures[floor_texture][src_idx] / 32;
+            color = r | (g<<3) | (b<<6);
             buffer[dst_idx] = color;
 
             //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
             dst_idx = (SCREEN_H-y-1)*SCREEN_W + x;
-            src_idx = (tex_width/8) * ty + tx/8;
-            color = textures[ceiling_texture][src_idx] >> (tx%8)*4;
+            src_idx = 4*tex_width * ty + 4*tx;
+            r = textures[ceiling_texture][src_idx+2] / 32;
+            g = textures[ceiling_texture][src_idx+1] / 32;
+            b = textures[ceiling_texture][src_idx] / 32;
+            color = r | (g<<3) | (b<<6);
             buffer[dst_idx] = color;
         }
     }
@@ -223,12 +226,12 @@ void wall_raycaster(camera_t* camera){
 
             // Get the indices of source texture pixel and destination in buffer
             uint32_t dst_idx = y*SCREEN_W + x;
-            // shift_div_with_round_down
-            uint32_t src_idx = tex_y*(shift_div_with_round_up(tex_width, 3)) + shift_div_with_round_down(tex_x, 3);
-            if(y == SCREEN_H/2) // Fix bug where lines on horizon were fuzzy
-                src_idx = (tex_height/2)*shift_div_with_round_down(tex_width,3) + shift_div_with_round_down(tex_x,3);
+            uint32_t src_idx = 4*tex_y*tex_width + 4*tex_x;
             // Get the pixel color and write to buffer
-            uint32_t color = textures[tex_num][src_idx] >> (tex_x%8)*4;
+            uint8_t r = textures[tex_num][src_idx+2] / 32;
+            uint8_t g = textures[tex_num][src_idx+1] / 32;
+            uint8_t b = textures[tex_num][src_idx] / 32;
+            uint32_t color = r | (g<<3) | (b<<6);
             buffer[dst_idx] = color;
         }
 
@@ -301,10 +304,14 @@ void sprite_raycaster(camera_t* camera){
             for(int y = draw_start_y; y < draw_end_y; y++){ //for every pixel of the current stripe  
                 int d = (y) * 256 - SCREEN_H * 128 + sprite_height * 128; //256 and 128 factors to avoid floats
                 int tex_y = ((d * tex_height) / sprite_height) / 256;
-                uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
+                uint32_t src_idx = 4*tex_y*tex_width + 4*tex_x;
                 uint32_t dst_idx = y*SCREEN_W + stripe;
-                uint32_t color = sprites[sprites_data[sprite_order[i]].texture][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
-                if(color != 0xd) 
+                uint32_t tex_idx = sprites_data[sprite_order[i]].texture;
+                uint8_t r = sprites[tex_idx][src_idx+2] / 32;
+                uint8_t g = sprites[tex_idx][src_idx+1] / 32;
+                uint8_t b = sprites[tex_idx][src_idx] / 32;
+                uint32_t color = r | (g<<3) | (b<<6);
+                if(color != 0) 
                     buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
             }
         }
@@ -315,6 +322,6 @@ void sprite_raycaster(camera_t* camera){
 void transfer_buffer(){
     uint32_t end = SCREEN_W * SCREEN_H;
     for(uint32_t i = 0; i < end; i++){
-        unpack_idx4_p32[i] = buffer[i];
+        unpack_rgb333_p32[i] = buffer[i];
     }
 }

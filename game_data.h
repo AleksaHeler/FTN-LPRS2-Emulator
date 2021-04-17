@@ -13,8 +13,8 @@
 
 extern int world_map[map_width][map_height];
 
-extern uint32_t* textures[8];
-extern uint32_t* sprites[3];
+extern uint8_t* textures[8];
+extern uint8_t* sprites[3];
 
 extern sprite_t sprites_data[num_sprites];
 

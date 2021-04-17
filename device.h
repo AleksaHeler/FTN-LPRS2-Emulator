@@ -28,9 +28,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Game config:
 // TODO: parametrize stuff
-#define INDEX_MODE 2 				// IDX4 - 4b color
-#define SCREEN_W SCREEN_IDX4_W		// Currently used screen size
-#define SCREEN_H SCREEN_IDX4_H
+#define INDEX_MODE 3 				// RGB333 - 9b color
+#define SCREEN_W SCREEN_RGB333_W		// Currently used screen size
+#define SCREEN_H SCREEN_RGB333_H
 #define USE_PACKED 0 				// Use unpacked indexing
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -51,5 +51,6 @@ typedef struct {
 	uint32_t m[SCREEN_H][SCREEN_W];
 } bf_unpack_idx1;
 #define unpack_idx1 (*((volatile bf_unpack_idx1*)unpack_idx1_p32))
+
 
 #endif // DEVICE_H

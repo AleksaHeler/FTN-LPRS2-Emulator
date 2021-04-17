@@ -37,13 +37,13 @@ int world_map[map_width][map_height]=
 };
 
 // Wall, floor & ceiling textures
-uint32_t* textures[8] = {
+uint8_t* textures[8] = {
     bluestone__p, colorstone__p, eagle__p, greystone__p,
     mossy__p, purplestone__p, wood__p, redbrick__p
 };
 
 // Billboard sprites
-uint32_t* sprites[3] = {
+uint8_t* sprites[3] = {
     barrel__p, greenlight__p, pillar__p
 };
 
