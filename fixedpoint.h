@@ -48,7 +48,7 @@ static inline fp32_t fp32_subtract(fp32_t x, fp32_t y) { return (x - y); }
 // TODO: optimize these further
 static inline fp32_t fp32_mul(fp32_t x, fp32_t y) { return ((int64_t)x * y) >> FP32_DECIMAL_PLACES; }
 static inline fp32_t fp32_div(fp32_t x, fp32_t y) {
-    if (y == 0) return fp32_maximum | (x & fp32_minimum); // Division by zero
+    if (y == 0) return x < 0 ? fp32_minimum : fp32_maximum; // Division by zero
     else return ((int64_t)x << FP32_DECIMAL_PLACES) / y; 
 }
 

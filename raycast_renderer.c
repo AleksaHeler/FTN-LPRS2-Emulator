@@ -275,6 +275,10 @@ void sprite_raycaster(camera_t* camera){
 
         int sprite_screen_x = fp32_to_int(fp32_mul(FP32(SCREEN_W) / 2, FP32(1) + fp32_div(transform_x, transform_y)));
 
+        // TODO overflow happens when calculating sprite_screen_x
+        // Don't render sprites close to camera
+        if (transform_y < SPRITE_MIN_RENDER_DISTANCE) continue;
+
         //calculate height of the sprite on screen
         int sprite_height = fp32_to_int(fp32_abs(fp32_div(FP32(SCREEN_H), transform_y))); //using 'transform_y' instead of the real distance prevents fisheye
         //calculate lowest and highest pixel to fill in current stripe
