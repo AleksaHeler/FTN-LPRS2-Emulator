@@ -5,6 +5,7 @@ Grupni projekat iz predmeta LPRS2.
 
 ## Sadržaj
 - [Uvod](#uvod)
+- [Koncept](#koncept)
 - [Timeline](#timeline)
 - [Pokretanje](#pokretanje)
 - [Proof of concept](#poc)
@@ -17,19 +18,21 @@ Grupni projekat iz predmeta LPRS2.
 - [Igrica](#igrica)
 
 ## Uvod <a name = "uvod"></a>
+[TODO]
+
+## Koncept <a name = "koncept"></a>
 Ideja je bila napraviti igricu za emulator koja je slična [Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D). Kako bi mogli napraviti 3D igru u 2D emulatoru, koristimo Raycasting algoritam (ne raytracing). Kako bi pojednostavili sebi problem, i kako nije neophodno imati vertikalnost u igri (spratovi, stepenice, skokovi), možemo mapu predstaviti 2D matricom celih brojeva, gde broj označava tip zida, i ako je 0 znači prazno polje po kojem se igrač može kretati.
 
 Kako bismo dobili 3D efekat, potrebno je zidove nacrtati tako da im je visina obrnuto proporcionalna udaljenosti od kamere. To radimo tako što crtamo jednu po jednu vertikalnu liniju. Za svaku vertikalnu liniju bacimo zrak u tom smeru i gledamo kad ce udariti u prvi zid i time dobijemo udaljenost, i za to koristimo relativno jednostavan "**Digital Differential Analysis**" ([DDA](https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm))) algoritam.
 
 DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. Mi ga koristimo da nađemo koji kvadrat naše mape je zrak pogodio i zaustavimo algoritam u tom trenutku i nacrtamo vertikalnu liniju čija visina odgovara udaljenosti zida tj. dužini zraka. Ideju za ovaj algoritam nam je dao [Lode Vandevenne](https://lodev.org/), i deo implementacije je odrađen po njegovom [tutorijalu](https://lodev.org/cgtutor/raycasting.html).
 
-
 ## Timeline <a name = "timeline"></a>
 - [X] Proof of concept
   - [X] Render bez tekstura sa dve boje (1bit color indexing)
   - [X] Render bez tekstura sa više boja (4bit color indexing)
   - [X] Render sa teksturama (učitavanje iz fajla)
-  - [X] Render sa podom
+  - [X] Render sa podom i plafonom
   - [X] Render sa sprajtovima (bure, stub, lampa)
 - [ ] Engine
   - [ ] *Renderer*
@@ -42,11 +45,13 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Preci na packed mod indeksiranja (**Aleksa**)
     - [ ] Napraviti da player init vraca pokazivac na player strukturu i da se to prosledjuje dalje funkcijama, a ne da imamo samo globalnu kameru ili nesto tako - pomoci ce kasnije sa apstrakcijama (**Aleksa**)
     - [ ] (optional) Osvetljenje i dithering (bayer ordered dithering?)
+    - [ ] (optional) Renderer funkcija se poziva maksimalno 60 puta u sekundi (moze i manje ali ne i vise) da se izbegne prevelik framerate i ubrzanje igrice
   - [ ] *Apstrakcija engine-a* (**Marko**)
   - [ ] *fmath.h*
     - [ ] preci na fixed point (**Marko**)
     - [X] floor, sin, cos - CORDIC algoritam (**Aleksa**)
     - [ ] abs, round (**Radomir**)
+    - [ ] (optional) smooth ubrzanje za igraca
 - [ ] Game
   - [ ] UI
     - [ ] Main menu: biranje nivoa i tezine (player/enemy damage)
@@ -69,6 +74,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Puca ka igracu kad je u nekom dometu
     - [ ] Kako umire (animacija/nestaje/drop)
   - [ ] Apstrakcija nivoa
+  - [ ] Development timelapse video
 
 ## Pokretanje <a name = "pokretanje"></a>
 
