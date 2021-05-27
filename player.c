@@ -18,6 +18,13 @@ void player_init() {
     player_camera.plane_x = FP32F(0), player_camera.plane_y = FP32F(0.66); // the 2d raycaster version of camera plane
 }
 
+// Registering inputs in main menu
+int player_menu() {
+    if(joypad.a) return 1;
+    if(joypad.b) return -1;
+    return 0;
+}
+
 void player_update() {
     /////////////////////////////////////
     // Poll controls:

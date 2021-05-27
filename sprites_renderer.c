@@ -17,6 +17,23 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Draws whole sprite at the given location with specific color from palette as transparent:
+void draw_sprite_transparent(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x, uint16_t dst_y) {
+    // Prodje kroz region na ekranu na kom treba biti iscrtano, i za svaki piksel nadje vrednost
+    for(uint16_t x = 0; x < src_w; x++){ 
+        for(uint16_t y = 0; y < src_h; y++){
+            uint32_t dst_idx = (dst_y+y)*SCREEN_W + dst_x+x;
+            uint32_t src_idx = (y)*(src_w/8) + x/8;
+
+            uint32_t pixel = (src_p[src_idx] >> (x%8)*4) & 0xf;
+            if(pixel  == 0xd) continue;  // If transparent color skip this pixel
+        
+            buffer[dst_idx] = pixel;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Sorting sprites by distance to player so that closer ones are rendered last (over the others) 
 void swap(int* order1, fp32_t* dist1, int* order2, fp32_t* dist2){
     int temp_order = *order1;

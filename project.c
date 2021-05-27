@@ -12,7 +12,14 @@ int main(void) {
     renderer_init();
 	player_init();
 	
-	// TODO: add main menu here
+	// Main menu: wait for player to press 'A' or 'B' button
+	while(1){
+		int input = player_menu();		// Get input
+		if(input == 1) break; 			// Play the game (start)
+		if(input == -1) return;			// Quit (B)
+        renderer_menu();				// Render screen
+	}
+
 
 	while(1){
 	

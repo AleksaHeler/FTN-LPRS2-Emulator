@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
 void draw_sprite(uint32_t*, uint16_t, uint16_t, uint16_t, uint16_t);
+void draw_sprite_transparent(uint32_t*, uint16_t, uint16_t, uint16_t, uint16_t);
 void swap(int*, fp32_t*, int*, fp32_t*);
 int partition(int*, fp32_t*, int, int);
 void quick_sort(int*, fp32_t*, int, int);

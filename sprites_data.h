@@ -53,4 +53,18 @@ extern uint16_t pillar__w;
 extern uint16_t pillar__h;
 extern uint32_t pillar__p[];
 
+// UI sprites
+
+extern uint16_t background__w;
+extern uint16_t background__h;
+extern uint32_t background__p[];
+
+extern uint16_t play__w;
+extern uint16_t play__h;
+extern uint32_t play__p[];
+
+extern uint16_t quit__w;
+extern uint16_t quit__h;
+extern uint32_t quit__p[];
+
 #endif // SPRITES_DATA_H
