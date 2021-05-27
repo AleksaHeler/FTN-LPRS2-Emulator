@@ -13,7 +13,7 @@
 #include "fixedpoint.h"
 
 #ifdef USE_DOUBLE_BUFFER
-    extern uint32_t buffer[SCREEN_W * SCREEN_H];
+	extern uint32_t buffer[SCREEN_W * SCREEN_H];
 #else
     #define buffer unpack_idx4_p32
 #endif
@@ -32,7 +32,7 @@ typedef struct {
 	fp32_t plane_x;
 	fp32_t plane_y;
 
-    #ifdef DEBUG
+	#ifdef DEBUG
 		double time;    // time of current frame
 		double oldTime; // time of previous frame
 	#endif
