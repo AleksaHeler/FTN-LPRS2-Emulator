@@ -4,10 +4,10 @@ Grupni projekat iz predmeta LPRS2.
 **Autori**: *Marko Đorđević, Radomir Zlatković, Aleksa Heler*
 
 ## Sadržaj
+- [Pokretanje](#pokretanje)
 - [Uvod](#uvod)
 - [Koncept](#koncept)
 - [Timeline](#timeline)
-- [Pokretanje](#pokretanje)
 - [Proof of concept](#poc)
   - [POC 1 - 2 color rendering](#poc1)
   - [POC 2 - 16 color rendering](#poc2)
@@ -18,7 +18,17 @@ Grupni projekat iz predmeta LPRS2.
 - [Struktura projekta](#struktura)
 - [Igrica](#igrica)
 
+
+## Pokretanje <a name = "pokretanje"></a>
+
+``` sudo ./waf prerequisites ``` - install waf prerequisites
+
+``` sudo ./waf configure ``` - configure project
+
+``` sudo ./waf build run --app=project ``` - run the app
+
 ## Uvod <a name = "uvod"></a>
+
 [TODO]
 
 ## Koncept <a name = "koncept"></a>
@@ -43,19 +53,19 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Animacija za sprajtove: apstrakcija da iz game code-a kazemo taj sprajt promeni u taj state (tako mozemo pucati i neprijatelj imati animacije)
     - [X] Sprite rendering: directly to world space 1:1 (**Aleksa**)
     - [X] Double buffering: da se ne racuna u toku vSync-a, vec u slobodno vreme i upisuje u drugi bafer i kad dodje vSync samo se kopira u pravi bafer za ekran (**Aleksa**)
-    - [ ] Preci na packed mod indeksiranja (**Aleksa**)
     - [ ] Napraviti da player init vraca pokazivac na player strukturu i da se to prosledjuje dalje funkcijama, a ne da imamo samo globalnu kameru ili nesto tako - pomoci ce kasnije sa apstrakcijama (**Aleksa**)
-    - [ ] (optional) Osvetljenje i dithering (bayer ordered dithering?)
-    - [ ] (optional) Renderer funkcija se poziva maksimalno 60 puta u sekundi (moze i manje ali ne i vise) da se izbegne prevelik framerate i ubrzanje igrice
+    - [ ] /// Osvetljenje i dithering (bayer ordered dithering?) /// 
+    - [ ] /// Preci na packed mod indeksiranja /// 
+    - [ ] /// Renderer funkcija se poziva maksimalno 60 puta u sekundi (moze i manje ali ne i vise) da se izbegne prevelik framerate i ubrzanje igrice /// 
+    - [ ] /// smooth ubrzanje za igraca ///
   - [ ] *Apstrakcija engine-a* (**Marko**)
   - [ ] *fmath.h*
-    - [ ] preci na fixed point (**Marko**)
+    - [X] preci na fixed point (**Marko**)
     - [X] floor, sin, cos - CORDIC algoritam (**Aleksa**)
-    - [ ] abs, round (**Radomir**)
-    - [ ] (optional) smooth ubrzanje za igraca
+    - [X] abs, round (**Radomir**)
 - [ ] Game
   - [ ] UI
-    - [ ] Main menu: biranje nivoa i tezine (player/enemy damage)
+    - [ ] Main menu: biranje nivoa i tezine (player/enemy damage) (**Aleksa**)
   - [ ] Graphics design
     - [ ] Naci dobru paletu - 16 boja: 8 pravih boja ali svaka ima svoj taminiji duplikat
     - [ ] Naci dobre sprajtove za igru: teksture, sprajtovi, UI
@@ -76,14 +86,6 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Kako umire (animacija/nestaje/drop)
   - [ ] Apstrakcija nivoa
   - [ ] Development timelapse video
-
-## Pokretanje <a name = "pokretanje"></a>
-
-``` sudo ./waf prerequisites ``` - install waf prerequisites
-
-``` sudo ./waf configure ``` - configure project
-
-``` sudo ./waf build run --app=project ``` - run the app
 
 ## Proof of concept <a name = "poc"></a>
 
