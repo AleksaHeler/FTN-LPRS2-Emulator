@@ -124,6 +124,7 @@ Nije potrebno apdejtovati ZBuffer dok crtamo linije, kako su već sortirani spra
 
 ### Proof of concept 6 <a name = "rgb"></a>
 Ovde se postavlja pitanje da li vredi preći na RGB333 color space koji nudi vise boja i lakse upravljanje bojama, po cenu smanjenje rezolucije, ili zadržati IDX4 color space. Na slikama ispod se vidi primer razlike (levo RGB333, desno IDX4):
+
 ![proof of concept 6 a](poc/images/rgb333vsidx4_poc_1.png)
 ![proof of concept 6 b](poc/images/rgb333vsidx4_poc_2.png)
 
