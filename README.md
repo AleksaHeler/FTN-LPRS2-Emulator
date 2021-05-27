@@ -28,7 +28,6 @@ Kako bismo dobili 3D efekat, potrebno je zidove nacrtati tako da im je visina ob
 
 DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. Mi ga koristimo da nađemo koji kvadrat naše mape je zrak pogodio i zaustavimo algoritam u tom trenutku i nacrtamo vertikalnu liniju čija visina odgovara udaljenosti zida tj. dužini zraka. Ideju za ovaj algoritam nam je dao [Lode Vandevenne](https://lodev.org/), i deo implementacije je odrađen po njegovom [tutorijalu](https://lodev.org/cgtutor/raycasting.html).
 
-
 ## Timeline <a name = "timeline"></a>
 - [X] Proof of concept
   - [X] Render bez tekstura sa dve boje (1bit color indexing)
@@ -46,7 +45,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [X] Double buffering: da se ne racuna u toku vSync-a, vec u slobodno vreme i upisuje u drugi bafer i kad dodje vSync samo se kopira u pravi bafer za ekran (**Aleksa**)
     - [ ] Preci na packed mod indeksiranja (**Aleksa**)
     - [ ] Napraviti da player init vraca pokazivac na player strukturu i da se to prosledjuje dalje funkcijama, a ne da imamo samo globalnu kameru ili nesto tako - pomoci ce kasnije sa apstrakcijama (**Aleksa**)
-    - [ ] (optional) Osvetljenje i dithering
+    - [ ] (optional) Osvetljenje i dithering (bayer ordered dithering?)
     - [ ] (optional) Renderer funkcija se poziva maksimalno 60 puta u sekundi (moze i manje ali ne i vise) da se izbegne prevelik framerate i ubrzanje igrice
   - [ ] *Apstrakcija engine-a* (**Marko**)
   - [ ] *fmath.h*
@@ -125,7 +124,6 @@ Nije potrebno apdejtovati ZBuffer dok crtamo linije, kako su već sortirani spra
 
 ### Proof of concept 6 <a name = "rgb"></a>
 Ovde se postavlja pitanje da li vredi preći na RGB333 color space koji nudi vise boja i lakse upravljanje bojama, po cenu smanjenje rezolucije, ili zadržati IDX4 color space. Na slikama ispod se vidi primer razlike (levo RGB333, desno IDX4):
-
 ![proof of concept 6 a](poc/images/rgb333vsidx4_poc_1.png)
 ![proof of concept 6 b](poc/images/rgb333vsidx4_poc_2.png)
 

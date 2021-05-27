@@ -18,9 +18,9 @@ void draw_sprite(uint32_t* src_p, uint16_t src_w, uint16_t src_h, uint16_t dst_x
 
 ///////////////////////////////////////////////////////////////////////////////
 // Sorting sprites by distance to player so that closer ones are rendered last (over the others) 
-void swap(int* order1, double* dist1, int* order2, double* dist2){
+void swap(int* order1, fp32_t* dist1, int* order2, fp32_t* dist2){
     int temp_order = *order1;
-    double temp_dist = *dist1;
+    fp32_t temp_dist = *dist1;
 
     *order1 = *order2;
     *dist1 = *dist2;
@@ -29,8 +29,8 @@ void swap(int* order1, double* dist1, int* order2, double* dist2){
     *dist2 = temp_dist;
 }
 
-int partition(int* order, double* dist, int begin, int end){
-    double pivot_dist = dist[end];
+int partition(int* order, fp32_t* dist, int begin, int end){
+    fp32_t pivot_dist = dist[end];
 
     int i = begin - 1;
 
@@ -46,7 +46,7 @@ int partition(int* order, double* dist, int begin, int end){
     return i + 1;
 }
 
-void quick_sort(int* order, double* dist, int begin, int end){
+void quick_sort(int* order, fp32_t* dist, int begin, int end){
     if(begin < end){
         int index = partition(order, dist, begin, end);
 
@@ -56,12 +56,12 @@ void quick_sort(int* order, double* dist, int begin, int end){
 }
 
 // From farthest to nearest
-void sort_sprites(int* order, double* dist, camera_t* cam, int amount){
+void sort_sprites(int* order, fp32_t* dist, camera_t* cam, int amount){
     // First calculate the distane frome player for each sprite
     for(int i = 0; i < num_sprites; i++) {
         order[i] = i;
         // Sqrt not taken, only relative distance is enough
-        dist[i] = ((cam->pos_x - sprites_data[i].x) * (cam->pos_x - sprites_data[i].x) + (cam->pos_y - sprites_data[i].y) * (cam->pos_y - sprites_data[i].y));
+        dist[i] = (fp32_mul(cam->pos_x - sprites_data[i].x, cam->pos_x - sprites_data[i].x) + fp32_mul(cam->pos_y - sprites_data[i].y, cam->pos_y - sprites_data[i].y));
     }
     // Then sort them
     quick_sort(order, dist, 0, amount - 1);

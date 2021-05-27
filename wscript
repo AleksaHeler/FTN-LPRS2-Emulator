@@ -93,7 +93,8 @@ def build(bld):
 		source = ['project.c', 'game_data.c', 'sprites_data.c', 'fmath.c', 'sprites_renderer.c', 'raycast_renderer.c', 'player.c', 'engine.c'],
 		includes = ['build/'],
 		use = 'emulator',
-		target = 'project'
+		target = 'project',
+		cflags = '-g3'
 	)
 
 def run(ctx):
