@@ -13,7 +13,7 @@ typedef int32_t fp32_t;
 static const fp32_t fp32_one = 1 << FP32_DECIMAL_PLACES;
 static const fp32_t fp32_maximum = 0x7FFFFFFF;
 static const fp32_t fp32_minimum = 0x80000000;
-//static const fp32_t fp32_pi = 205887;
+static const fp32_t fp32_pi = 205887;
 //static const fp32_t fp32_e = 178145;
 
 // Only use for constants, works with 16 dec
