@@ -291,6 +291,7 @@ void sprite_raycaster(camera_t* camera){
         // Translate sprite position to relative to camera
         // TODO convert sprite data to fp32_t
         sprite_t* sprite = &sprites_data[standing_sprite_order[i]];
+        if (!sprite->visible) continue;
         fp32_t sprite_x = sprite->x - camera->pos_x;
         fp32_t sprite_y = sprite->y - camera->pos_y;
 
