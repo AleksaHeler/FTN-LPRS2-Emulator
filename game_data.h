@@ -11,15 +11,15 @@
 #define tex_height 64
 #define tex_width_shift 6    // 2^6 = 64
 #define tex_height_shift 6
-#define num_sprites 19       // How many sprites in the map (3 pillars + 8 lights + 8 barrels)
+#define SPRITES_MAX_NUM 19       // How many sprites in the map (3 pillars + 8 lights + 8 barrels)
 #define num_enemies 5        // How many enemies in the map
 
 extern int world_map[map_width][map_height];
 
 extern uint32_t* textures[8];
-extern uint32_t* sprites[5];
+extern uint32_t* sprite_textures[5];
 
-extern sprite_t sprites_data[num_sprites];
+extern sprite_t sprites_data[SPRITES_MAX_NUM];
 extern enemy_t enemies_data[num_enemies];
 
 #endif

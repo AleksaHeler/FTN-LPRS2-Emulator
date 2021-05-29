@@ -9,7 +9,7 @@ int main(void) {
 		double passed_ms;
 	#endif
 
-    renderer_init();
+    renderer_init(sprites_data, SPRITES_MAX_NUM);
 	player_init();
 	
 	// Main menu: wait for player to press 'A' or 'B' button

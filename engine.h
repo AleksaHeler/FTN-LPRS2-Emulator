@@ -40,9 +40,15 @@ typedef struct {
 
 typedef struct
 {
+    unsigned anim_index;
+    unsigned textures[];
+} sprite_data_t;
+
+typedef struct
+{
 	fp32_t x;
 	fp32_t y;
-	int texture;
+	sprite_data_t* sprite;
 } sprite_t;
 
 typedef struct
