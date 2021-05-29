@@ -67,4 +67,14 @@ extern uint16_t quit__w;
 extern uint16_t quit__h;
 extern uint32_t quit__p[];
 
+// Enemies/monsters
+
+extern uint16_t monster_doom__w;
+extern uint16_t monster_doom__h;
+extern uint32_t monster_doom__p[];
+
+extern uint16_t monster_afrit__w;
+extern uint16_t monster_afrit__h;
+extern uint32_t monster_afrit__p[];
+
 #endif // SPRITES_DATA_H
