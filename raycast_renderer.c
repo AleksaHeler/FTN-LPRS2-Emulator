@@ -58,6 +58,8 @@ void renderer_render(camera_t* camera) {                                // Time 
     sort_sprites(standing_sprite_order, standing_sprite_distance, camera, SPRITES_MAX_NUM); // usually: 0.006ms
     sort_sprites(enemies_sprite_order, enemies_sprite_distance, camera, num_enemies);
     sprite_raycaster(camera);                                           // usually: 0.65ms
+
+    printf("Time: %f\n", time());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "raycast_renderer.h"
 #include "player.h"
 
@@ -18,6 +19,8 @@ int main(void) {
 		if(input == 1) break; 			// Play the game (start)
 		if(input == -1) return -1;			// Quit (B)
         renderer_menu();				// Render screen
+
+		frame_count++;
 	}
 
 
@@ -35,6 +38,8 @@ int main(void) {
 			frame_start = clock();
 			/////////////////////////////////////////////////////////////////////////////
 		#endif
+
+    	frame_count++;
 	}
 	return 0;
 }

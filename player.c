@@ -1,5 +1,4 @@
 #include "player.h"
-#include "stdio.h"  // Temp!!!
 
 camera_t player_camera;
 
@@ -156,15 +155,17 @@ void player_update() {
             looking_at_player = 0;
 
         /////////////// If we are looking at the player (and not a wall) 
-        fp32_t dist_a = FP32(2);    // Min and max distance to player (for moving/shooting)
-        fp32_t dist_b = FP32(4);    // TODO: move these as a parameter somewhere (enemy struct?)
+        fp32_t dist_a = FP32(2*2);    // Min and max distance to player (for moving/shooting)
+        fp32_t dist_b = FP32(4*4);    // TODO: move these as a parameter somewhere (enemy struct?)
         if(looking_at_player){
-            // If distance is in some range (a to b) -> move towards player until distance is 'a'
-            // Also take into account some offset, so we dont have jittering
-            if(dist_to_player - FP32F(0.1) > fp32_mul(dist_a, dist_a)){
+            /////////////// If distance is in some range (a to b) -> move towards player until distance is 'a'
+            if(dist_to_player - FP32F(0.1) > dist_a){
                 enemies_data[i].x += fp32_mul(dist_x, FP32F(0.002));
                 enemies_data[i].y += fp32_mul(dist_y, FP32F(0.002));
-            } else if (dist_to_player + FP32F(0.1) < fp32_mul(dist_a, dist_a)) {
+            }
+
+            /////////////// If distance is too close (less than 'a') -> move backwards if there is no wall there
+            if (dist_to_player + FP32F(0.1) < dist_a) {
                 // check if there is a wall behind this position
                 fp32_t new_pos_x = enemies_data[i].x - fp32_mul(dist_x, FP32F(0.015));
                 fp32_t new_pos_y = enemies_data[i].y - fp32_mul(dist_y, FP32F(0.015));
@@ -176,8 +177,10 @@ void player_update() {
                 }
             }
 
-            //   if distance is too close (less than 'a') -> move backwards if there is no wall there
-            //   if distance to player is in shooting range (a to b) -> shoot at player on regular interval
+            /////////////// If distance to player is in shooting range (a to b) -> shoot at player on regular interval
+            if (dist_to_player > dist_a && dist_to_player < dist_b) {
+                
+            }
         }
     }
 

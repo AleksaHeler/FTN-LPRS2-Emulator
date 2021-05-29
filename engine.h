@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #define USE_DOUBLE_BUFFER // Wether to use seperate buffer to store rendered data and only then display it
+#define SECONDS_PER_FRAME 1/60
 //#define DEBUG						// Enable some debuging features
 
 // Double buffer: renderer draws to this buffer, and then on vSync copies it to the screen
@@ -54,5 +55,9 @@ typedef struct
 	fp32_t y;
 	int texture;
 } enemy_t;
+
+// Time management
+extern unsigned long long int frame_count;
+float time();	// Returns current time in seconds since game started
 
 #endif
