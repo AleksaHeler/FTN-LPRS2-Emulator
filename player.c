@@ -6,11 +6,6 @@ void player_init() {
     player_camera.pos_x = FP32F(22.5), player_camera.pos_y = FP32F(12.5); // player x and y start position
     player_camera.dir_x = FP32(-1), player_camera.dir_y = FP32(0);       // initial player direction vector
 
-#ifdef DEBUG
-        player_camera.time = 0;
-        player_camera.oldTime = 0;
-    #endif
-
     // Camera plane is perpendicular to the direction, but we 
     //  can change the length of it. The ratio between the length
     //  of the direction and the camera plane determinates the FOV.
@@ -106,14 +101,14 @@ void player_update() {
 
         /////////////// Calculate distance to player ///////////////
         // {dist_x, dist_y} is a vector pointing from enemy to player
-        fp32_t dist_x = player_camera.pos_x - enemies_data[i].x;
-        fp32_t dist_y = player_camera.pos_y - enemies_data[i].y;
+        fp32_t dist_x = player_camera.pos_x - enemies_data[i].sprite->x;
+        fp32_t dist_y = player_camera.pos_y - enemies_data[i].sprite->y;
         fp32_t dist_to_player = fp32_mul(dist_x, dist_x) + fp32_mul(dist_y, dist_y);
 
         /////////////// Use DDA alg. to find wall we are looking at ///////////////
         int hit = 0;
-        int map_x = fp32_to_int(enemies_data[i].x);
-        int map_y = fp32_to_int(enemies_data[i].y);
+        int map_x = fp32_to_int(enemies_data[i].sprite->x);
+        int map_y = fp32_to_int(enemies_data[i].sprite->y);
         int side;
         int step_x;
         int step_y;
@@ -123,17 +118,17 @@ void player_update() {
         fp32_t delta_dist_y = fp32_abs(fp32_div(FP32(1), dist_y));
         if(dist_x < 0) {
             step_x = -1;
-            side_dist_x = fp32_mul(enemies_data[i].x - fp32_from_int(map_x), delta_dist_x);
+            side_dist_x = fp32_mul(enemies_data[i].sprite->x - fp32_from_int(map_x), delta_dist_x);
         } else {
             step_x = 1;
-            side_dist_x = fp32_mul(fp32_from_int(map_x + 1) - enemies_data[i].x, delta_dist_x);
+            side_dist_x = fp32_mul(fp32_from_int(map_x + 1) - enemies_data[i].sprite->x, delta_dist_x);
         }
         if(dist_y < 0) {
             step_y = -1;
-            side_dist_y = fp32_mul(enemies_data[i].y - fp32_from_int(map_y), delta_dist_y);
+            side_dist_y = fp32_mul(enemies_data[i].sprite->y - fp32_from_int(map_y), delta_dist_y);
         } else {
             step_y = 1;
-            side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - enemies_data[i].y, delta_dist_y);
+            side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - enemies_data[i].sprite->y, delta_dist_y);
         }
         fp32_t dist_to_wall;
         dda(&hit, &map_x, &map_y, &step_x, &step_y, &side_dist_x, &side_dist_y, &delta_dist_x, &delta_dist_y, &side, &dist_to_wall);
@@ -160,20 +155,20 @@ void player_update() {
         if(looking_at_player){
             /////////////// If distance is in some range (a to b) -> move towards player until distance is 'a'
             if(dist_to_player - FP32F(0.1) > dist_a){
-                enemies_data[i].x += fp32_mul(dist_x, FP32F(0.002));
-                enemies_data[i].y += fp32_mul(dist_y, FP32F(0.002));
+                enemies_data[i].sprite->x += fp32_mul(dist_x, FP32F(0.002));
+                enemies_data[i].sprite->y += fp32_mul(dist_y, FP32F(0.002));
             }
 
             /////////////// If distance is too close (less than 'a') -> move backwards if there is no wall there
             if (dist_to_player + FP32F(0.1) < dist_a) {
                 // check if there is a wall behind this position
-                fp32_t new_pos_x = enemies_data[i].x - fp32_mul(dist_x, FP32F(0.015));
-                fp32_t new_pos_y = enemies_data[i].y - fp32_mul(dist_y, FP32F(0.015));
+                fp32_t new_pos_x = enemies_data[i].sprite->x - fp32_mul(dist_x, FP32F(0.015));
+                fp32_t new_pos_y = enemies_data[i].sprite->y - fp32_mul(dist_y, FP32F(0.015));
                 int new_pos_x_int = fp32_to_int(new_pos_x);
                 int new_pos_y_int = fp32_to_int(new_pos_y);
                 if(world_map[new_pos_x_int][new_pos_y_int] == 0){
-                    enemies_data[i].x = new_pos_x;
-                    enemies_data[i].y = new_pos_y;
+                    enemies_data[i].sprite->x = new_pos_x;
+                    enemies_data[i].sprite->y = new_pos_y;
                 }
             }
 

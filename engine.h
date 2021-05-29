@@ -3,7 +3,6 @@
 
 #define USE_DOUBLE_BUFFER // Wether to use seperate buffer to store rendered data and only then display it
 #define SECONDS_PER_FRAME 1/60
-//#define DEBUG						// Enable some debuging features
 
 // Double buffer: renderer draws to this buffer, and then on vSync copies it to the screen
 // Although this may reduce framerate a bit, it can save us from displaying unfinished renders.
@@ -19,12 +18,6 @@
     #define buffer unpack_idx4_p32
 #endif
 
-#ifdef DEBUG
-	#include <stdio.h>	// For testing only: todo remove in final version
-	#include <time.h>
-	#define MAX_FPS 60	// Actual FPS may be lower, but not higher
-#endif
-
 typedef struct {
 	fp32_t pos_x;
 	fp32_t pos_y;
@@ -32,11 +25,6 @@ typedef struct {
 	fp32_t dir_y;
 	fp32_t plane_x;
 	fp32_t plane_y;
-
-	#ifdef DEBUG
-		double time;    // time of current frame
-		double oldTime; // time of previous frame
-	#endif
 } camera_t;
 
 // Sprite objects in-game
@@ -51,9 +39,7 @@ typedef struct
 
 typedef struct
 {
-	fp32_t x;
-	fp32_t y;
-	int texture;
+	sprite_t* sprite;
 } enemy_t;
 
 // Time management

@@ -54,12 +54,10 @@ void renderer_render(camera_t* camera) {                                // Time 
     cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
     floor_raycaster(camera);                                            // usually: 1.5 - 5ms
     wall_raycaster(camera);                                             // usually: 1 - 1.4ms
-    // TODO: still some work on sorting all sprites at once to remove sorting bugs
     sort_sprites(standing_sprite_order, standing_sprite_distance, camera, SPRITES_MAX_NUM); // usually: 0.006ms
-    sort_sprites(enemies_sprite_order, enemies_sprite_distance, camera, num_enemies);
     sprite_raycaster(camera);                                           // usually: 0.65ms
-
-    printf("Time: %f\n", time());
+    
+    frame_count++;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -350,8 +348,8 @@ void sprite_raycaster(camera_t* camera){
     for(int i = 0; i < num_enemies; i++) {
         // Translate sprite position to relative to camera
         // TODO convert sprite data to fp32_t
-        fp32_t sprite_x = enemies_data[enemies_sprite_order[i]].x - camera->pos_x;
-        fp32_t sprite_y = enemies_data[enemies_sprite_order[i]].y - camera->pos_y;
+        fp32_t sprite_x = enemies_data[enemies_sprite_order[i]].sprite->x - camera->pos_x;
+        fp32_t sprite_y = enemies_data[enemies_sprite_order[i]].sprite->y - camera->pos_y;
 
         //transform sprite with the inverse camera matrix
         // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
@@ -397,7 +395,8 @@ void sprite_raycaster(camera_t* camera){
                 int tex_y = ((d * tex_height) / sprite_height) / 256;
                 uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
                 uint32_t dst_idx = y*SCREEN_W + stripe;
-                uint32_t color = sprite_textures[enemies_data[enemies_sprite_order[i]].texture][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
+                uint32_t anim_index = enemies_data[enemies_sprite_order[i]].sprite->anim_index;
+                uint32_t color = sprite_textures[enemies_data[enemies_sprite_order[i]].sprite->textures[anim_index]][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
                 if(color != 0xd) 
                     buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
             }
