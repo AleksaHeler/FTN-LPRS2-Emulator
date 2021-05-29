@@ -65,7 +65,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [X] abs, round (**Radomir**)
 - [ ] Game
   - [ ] UI
-    - [ ] Main menu: biranje nivoa i tezine (player/enemy damage) (**Aleksa**)
+    - [X] Main menu: biranje nivoa i tezine (player/enemy damage) (**Aleksa**)
   - [ ] Graphics design
     - [ ] Naci dobru paletu - 16 boja: 8 pravih boja ali svaka ima svoj taminiji duplikat
     - [ ] Naci dobre sprajtove za igru: teksture, sprajtovi, UI
@@ -75,7 +75,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] municija, smrt, taking damage
     - [ ] hp / lives
     - [ ] Consumable items / grenades
-    - [ ] Igrac ima 'debljinu' da ne moze prici zidu beskonacno blizu
+    - [X] Igrac ima 'debljinu' da ne moze prici zidu beskonacno blizu
     - [ ] Player UI (nisan, municija, health)
     - [ ] (optional) Postoji kljuc na mapi koji treba da se pokupi i otkljuca vrata da se ode na naredni nivo/pobedi
     - [ ] Vezati brzinu kretanja za vreme, a ne FPS

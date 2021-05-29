@@ -1,4 +1,6 @@
 #include "player.h"
+//#include "raycast_renderer.h" // Temp: for dda() funciton
+//#include "stdio.h"  // Temp!!!
 
 camera_t player_camera;
 
@@ -103,17 +105,66 @@ void player_update() {
 
     // Animate enemies (maybe move to another place?)
     for(int i = 0; i < num_enemies; i++){
-        // enemies_data[i].x, enemies_data[i].x
-        // Calculate distance to player
-        // Check if there is a wall in front
-        // If there is no wall
+
+        /////////////// Calculate distance to player ///////////////
+        fp32_t dist_x = player_camera.pos_x - enemies_data[i].x;
+        fp32_t dist_y = player_camera.pos_y - enemies_data[i].y;
+        fp32_t dist_to_player = fp32_mul(dist_x, dist_x) + fp32_mul(dist_y, dist_y);
+
+        /////////////// Use DDA alg. to find wall we are looking at ///////////////
+        int hit = 0;
+        int map_x = fp32_to_int(enemies_data[i].x);
+        int map_y = fp32_to_int(enemies_data[i].y);
+        int side;
+        int step_x;
+        int step_y;
+        fp32_t side_dist_x;
+        fp32_t side_dist_y;
+        fp32_t delta_dist_x = fp32_abs(fp32_div(FP32(1), dist_x));
+        fp32_t delta_dist_y = fp32_abs(fp32_div(FP32(1), dist_y));
+        if(dist_x < 0) {
+            step_x = -1;
+            side_dist_x = fp32_mul(enemies_data[i].x - fp32_from_int(map_x), delta_dist_x);
+        } else {
+            step_x = 1;
+            side_dist_x = fp32_mul(fp32_from_int(map_x + 1) - enemies_data[i].x, delta_dist_x);
+        }
+        if(dist_y < 0) {
+            step_y = -1;
+            side_dist_y = fp32_mul(enemies_data[i].y - fp32_from_int(map_y), delta_dist_y);
+        } else {
+            step_y = 1;
+            side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - enemies_data[i].y, delta_dist_y);
+        }
+        fp32_t dist_to_wall;
+        dda(&hit, &map_x, &map_y, &step_x, &step_y, &side_dist_x, &side_dist_y, &delta_dist_x, &delta_dist_y, &side, &dist_to_wall);
+        
+        /////////////// Compare coordinates of wall the enemy is looking at when looking at player and 
+        /////////////// player coordinates, in case the player is in front of the wall we are looking at player
+        int player_map_x = fp32_to_int(player_camera.pos_x);
+        int player_map_y = fp32_to_int(player_camera.pos_y);
+        int player_to_wall_vector_x = map_x - player_map_x;
+        int player_to_wall_vector_y = map_y - player_map_y;
+        int looking_at_player = 1;  // Assume we are looking at player
+        if(dist_x < 0 && player_to_wall_vector_x > 0)
+            looking_at_player = 0;
+        if(dist_x > 0 && player_to_wall_vector_x < 0)
+            looking_at_player = 0;
+        if(dist_y < 0 && player_to_wall_vector_y > 0)
+            looking_at_player = 0;
+        if(dist_y > 0 && player_to_wall_vector_y < 0)
+            looking_at_player = 0;
+        
+        // Debug message
+        /*if(looking_at_player)
+            printf("Looking at player: %d -> distance: %f\n", looking_at_player, fp32_to_float(dist_to_player));
+        else
+            printf("Looking at player: %d\n", looking_at_player);*/
+        
+        /////////////// If we are looking at the player (and not a wall) 
         //   if distance is in some range (a to b) -> move towards player until distance is 'a' 
         //   if distance is too close (less than 'a') -> move backwards if there is no wall there
         //   if distance to player is in shooting range (a to b) -> shoot at player on regular interval
-        
-        // Example of moving in diagonal line each frame: 
-        //enemies_data[i].x += FP32F(0.005);
-        //enemies_data[i].y += FP32F(0.005);
     }
 
     // TODO temp
