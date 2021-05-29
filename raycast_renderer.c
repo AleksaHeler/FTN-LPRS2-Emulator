@@ -196,7 +196,8 @@ void wall_raycaster(camera_t* camera){
             side_dist_y = fp32_mul(fp32_from_int(map_y + 1) - camera->pos_y, delta_dist_y);
         }
 
-        dda(&hit, &map_x, &map_y, &step_x, &step_y, &side_dist_x, &side_dist_y, &delta_dist_x, &delta_dist_y, &side);
+        fp32_t distance; // Not used here, but function needs the parameter
+        dda(&hit, &map_x, &map_y, &step_x, &step_y, &side_dist_x, &side_dist_y, &delta_dist_x, &delta_dist_y, &side, &distance);
 
         // Calculate distance projected on camera direction. We don't use the 
         // Euclidean distance to the point representing player, but instead 
@@ -261,7 +262,7 @@ void wall_raycaster(camera_t* camera){
     }
 }
 
-void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* side_dist_x, fp32_t* side_dist_y, fp32_t* delta_dist_x, fp32_t* delta_dist_y, int* side){
+void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* side_dist_x, fp32_t* side_dist_y, fp32_t* delta_dist_x, fp32_t* delta_dist_y, int* side, fp32_t* dist){
     // A loop that increments the ray with one square every time, until a wall is hit 
     while (*hit == 0) { // Perform DDA
         // Either jumps a square in the x-direction (with step_x) or a square in the 
@@ -270,6 +271,7 @@ void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* sid
             *side_dist_x += *delta_dist_x;
             *map_x += *step_x;
             *side = 0;
+            *dist += *delta_dist_x;
         }
         else {
             *side_dist_y += *delta_dist_y;
