@@ -38,17 +38,14 @@ typedef struct {
 	#endif
 } camera_t;
 
-typedef struct
-{
-    unsigned anim_index;
-    unsigned textures[];
-} sprite_data_t;
-
+// Sprite objects in-game
 typedef struct
 {
 	fp32_t x;
 	fp32_t y;
-	sprite_data_t* sprite;
+	uint8_t visible; 
+    unsigned anim_index;
+	const uint8_t* textures;
 } sprite_t;
 
 typedef struct

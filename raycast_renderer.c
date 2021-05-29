@@ -334,7 +334,7 @@ void sprite_raycaster(camera_t* camera){
                 int tex_y = ((d * tex_height) / sprite_height) / 256;
                 uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
                 uint32_t dst_idx = y*SCREEN_W + stripe;
-                uint32_t color = sprite_textures[sprite->sprite->textures[sprite->sprite->anim_index]][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
+                uint32_t color = sprite_textures[sprite->textures[sprite->anim_index]][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
                 if(color != 0xd) 
                     buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
             }
