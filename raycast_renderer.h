@@ -27,6 +27,8 @@
 void renderer_init();
 void renderer_render(camera_t* camera);
 
+void renderer_menu();
+
 void wait_for_vsync();      // Wait for the vSync pulse signal
 void cls();                 // Clear screen to color with index 0
 void floor_raycaster();     // Render floors and ceiling

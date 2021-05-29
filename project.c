@@ -16,7 +16,7 @@ int main(void) {
 	while(1){
 		int input = player_menu();		// Get input
 		if(input == 1) break; 			// Play the game (start)
-		if(input == -1) return;			// Quit (B)
+		if(input == -1) return -1;			// Quit (B)
         renderer_menu();				// Render screen
 	}
 

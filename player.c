@@ -46,33 +46,35 @@ void player_update() {
         double move_speed = frameTime * 2 * 0.001; //the constant value is in squares/second
         double rotation_speed = frameTime * 1.2 * 0.001; //the constant value is in radians/second
     #else
-        double move_speed = 5.0/60.0;
-        double rotation_speed = 3.0/60.0;
+        fp32_t move_speed = FP32F(5.0/60.0);
+        fp32_t rotation_speed = FP32F(3.0/60.0);
     #endif
 
-    double player_width = 0.3;
+    fp32_t player_width = FP32F(0.4);
 
     // TODO temp
-    float pos_x = fp32_to_float(player_camera.pos_x);
-    float pos_y = fp32_to_float(player_camera.pos_y);
-    float dir_x = fp32_to_float(player_camera.dir_x);
-    float dir_y = fp32_to_float(player_camera.dir_y);
-    float plane_x = fp32_to_float(player_camera.plane_x);
-    float plane_y = fp32_to_float(player_camera.plane_y);
+    fp32_t pos_x = player_camera.pos_x;
+    fp32_t pos_y = player_camera.pos_y;
+    fp32_t dir_x = player_camera.dir_x;
+    fp32_t dir_y = player_camera.dir_y;
+    fp32_t plane_x = player_camera.plane_x;
+    fp32_t plane_y = player_camera.plane_y;
+
+    // TODO Optimize these pls
 
     // Move forward if no wall in front of the player
     if(joypad.up) {
-        if(world_map[(int)(pos_x + dir_x * move_speed + dir_x*player_width)][(int)pos_y] == 0) 
-            pos_x += dir_x * move_speed;
-        if(world_map[(int)(pos_x)][(int)(pos_y + dir_y * move_speed + dir_y*player_width)] == 0) 
-            pos_y += dir_y * move_speed;
+        if(world_map[fp32_to_int(pos_x + fp32_mul(dir_x, move_speed) + fp32_mul(dir_x, player_width))][fp32_to_int(pos_y)] == 0) 
+            pos_x += fp32_mul(dir_x, move_speed);
+        if(world_map[fp32_to_int(pos_x)][fp32_to_int(pos_y + fp32_mul(dir_y, move_speed) + fp32_mul(dir_y, player_width))] == 0) 
+            pos_y += fp32_mul(dir_y, move_speed);
     }
     // Move backwards if no wall behind the player
     if(joypad.down) {
-        if(world_map[(int)(pos_x - dir_x * move_speed - dir_x*player_width)][(int)pos_y] == 0) 
-            pos_x -= dir_x * move_speed;
-        if(world_map[(int)(pos_x)][(int)(pos_y - dir_y * move_speed - dir_y*player_width)] == 0) 
-            pos_y -= dir_y * move_speed;
+        if(world_map[fp32_to_int(pos_x - fp32_mul(dir_x, move_speed) - fp32_mul(dir_x, player_width))][fp32_to_int(pos_y)] == 0) 
+            pos_x -= fp32_mul(dir_x, move_speed);
+        if(world_map[fp32_to_int(pos_x)][fp32_to_int(pos_y - fp32_mul(dir_y, move_speed) - fp32_mul(dir_y, player_width))] == 0) 
+            pos_y -= fp32_mul(dir_y, move_speed);
     }
 
     // Rotate to the right
@@ -81,22 +83,22 @@ void player_update() {
         // Rotating vectors by multiplying it with rotation matrix:
         //   [ cos(a) -sin(a) ]
         //   [ sin(a)  cos(a) ]
-        double old_dir_x = dir_x;
-        dir_x = dir_x * my_cos(-rotation_speed) - dir_y * my_sin(-rotation_speed);
-        dir_y = old_dir_x * my_sin(-rotation_speed) + dir_y * my_cos(-rotation_speed);
-        double old_plane_x = plane_x;
-        plane_x = plane_x * my_cos(-rotation_speed) - plane_y * my_sin(-rotation_speed);
-        plane_y = old_plane_x * my_sin(-rotation_speed) + plane_y * my_cos(-rotation_speed);
+        fp32_t old_dir_x = dir_x;
+        dir_x = fp32_mul(dir_x, my_cos(-rotation_speed)) - fp32_mul(dir_y, my_sin(-rotation_speed));
+        dir_y = fp32_mul(old_dir_x, my_sin(-rotation_speed)) + fp32_mul(dir_y, my_cos(-rotation_speed));
+        fp32_t old_plane_x = plane_x;
+        plane_x = fp32_mul(plane_x, my_cos(-rotation_speed)) - fp32_mul(plane_y, my_sin(-rotation_speed));
+        plane_y = fp32_mul(old_plane_x, my_sin(-rotation_speed)) + fp32_mul(plane_y, my_cos(-rotation_speed));
     }
     // Rotate to the left
     if(joypad.left) {
         // Both camera direction and camera plane must be rotated
-        double old_dir_x = dir_x;
-        dir_x = dir_x * my_cos(rotation_speed) - dir_y * my_sin(rotation_speed);
-        dir_y = old_dir_x * my_sin(rotation_speed) + dir_y * my_cos(rotation_speed);
-        double old_plane_x = plane_x;
-        plane_x = plane_x * my_cos(rotation_speed) - plane_y * my_sin(rotation_speed);
-        plane_y = old_plane_x * my_sin(rotation_speed) + plane_y * my_cos(rotation_speed);
+        fp32_t old_dir_x = dir_x;
+        dir_x = fp32_mul(dir_x, my_cos(rotation_speed)) - fp32_mul(dir_y, my_sin(rotation_speed));
+        dir_y = fp32_mul(old_dir_x, my_sin(rotation_speed)) + fp32_mul(dir_y, my_cos(rotation_speed));
+        fp32_t old_plane_x = plane_x;
+        plane_x = fp32_mul(plane_x, my_cos(rotation_speed)) - fp32_mul(plane_y, my_sin(rotation_speed));
+        plane_y = fp32_mul(old_plane_x, my_sin(rotation_speed)) + fp32_mul(plane_y, my_cos(rotation_speed));
     }
 
     // Animate enemies (maybe move to another place?)
@@ -115,10 +117,10 @@ void player_update() {
     }
 
     // TODO temp
-    player_camera.pos_x = fp32_from_float_round(pos_x);
-    player_camera.pos_y = fp32_from_float_round(pos_y);
-    player_camera.dir_x = fp32_from_float_round(dir_x);
-    player_camera.dir_y = fp32_from_float_round(dir_y);
-    player_camera.plane_x = fp32_from_float_round(plane_x);
-    player_camera.plane_y = fp32_from_float_round(plane_y);
+    player_camera.pos_x = pos_x;
+    player_camera.pos_y = pos_y;
+    player_camera.dir_x = dir_x;
+    player_camera.dir_y = dir_y;
+    player_camera.plane_x = plane_x;
+    player_camera.plane_y = plane_y;
 }

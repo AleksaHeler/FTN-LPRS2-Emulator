@@ -237,7 +237,7 @@ void wall_raycaster(camera_t* camera){
         // Draw the texture vertical stripe
         for(int y = draw_start; y < draw_end; y++) {
             // Cast the texture coordinate to integer, and mask with (tex_height - 1) in case of overflow
-            int tex_y = fp32_to_int_round(tex_pos) & (tex_height - 1);
+            int tex_y = fp32_to_int(tex_pos) & (tex_height - 1);
             tex_pos += step;
 
             // Get the indices of source texture pixel and destination in buffer

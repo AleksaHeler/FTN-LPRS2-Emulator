@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+// Are the return values saturated in case of an overflow
+#define FP32_SATURATED
+
 #define FP32_DECIMAL_PLACES 16
 
 typedef int32_t fp32_t;
@@ -10,7 +13,7 @@ typedef int32_t fp32_t;
 static const fp32_t fp32_one = 1 << FP32_DECIMAL_PLACES;
 static const fp32_t fp32_maximum = 0x7FFFFFFF;
 static const fp32_t fp32_minimum = 0x80000000;
-//static const fp32_t fp32_pi = 205887;
+static const fp32_t fp32_pi = 205887;
 //static const fp32_t fp32_e = 178145;
 
 // Only use for constants, works with 16 dec
@@ -35,7 +38,7 @@ static inline float fp32_to_float(fp32_t a) { return (float)a / fp32_one; }
 
 // Useful functions
 static inline fp32_t fp32_frac(fp32_t x) { return x & (fp32_one - 1); } // Return only the fraction part
-static inline fp32_t fp32_abs(fp32_t x) { return (x < 0 ? -x : x); }
+static inline fp32_t fp32_abs(fp32_t x) { return (fp32_t)(x == fp32_minimum ? fp32_maximum : x < 0 ? -x : x); }
 static inline fp32_t fp32_floor(fp32_t x) { return x & 0xFFFF0000; }
 static inline fp32_t fp32_ceil(fp32_t x) { return (x & 0xFFFF0000) + (x & 0x0000FFFF ? fp32_one : 0); }
 static inline fp32_t fp32_min(fp32_t x, fp32_t y) { return (x < y ? x : y); }
@@ -47,9 +50,14 @@ static inline fp32_t fp32_add(fp32_t x, fp32_t y) { return (x + y); }
 static inline fp32_t fp32_subtract(fp32_t x, fp32_t y) { return (x - y); }
 // TODO: optimize these further
 static inline fp32_t fp32_mul(fp32_t x, fp32_t y) { return ((int64_t)x * y) >> FP32_DECIMAL_PLACES; }
+
 static inline fp32_t fp32_div(fp32_t x, fp32_t y) {
     if (y == 0) return x < 0 ? fp32_minimum : fp32_maximum; // Division by zero
-    else return ((int64_t)x << FP32_DECIMAL_PLACES) / y; 
+    fp32_t ret = ((int64_t)x << FP32_DECIMAL_PLACES) / y;
+#ifdef FP32_SATURATED
+    if (ret == 0 && x != 0) return (x >= 0) == (y >= 0) ? fp32_maximum : fp32_minimum;
+#endif
+    return ret;
 }
 
 #endif
