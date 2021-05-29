@@ -31,19 +31,8 @@ void player_update() {
     //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
     // TODO: make speeds relate to time and not FPS
     
-    #ifdef DEBUG
-        player_camera.oldTime = player_camera.time;
-        player_camera.time = clock();
-
-        double frameTime = (player_camera.time - player_camera.oldTime) / 1000.0; //frametime is the time this frame has taken, in milliseconds
-
-        /* Speed modifiers */
-        double move_speed = frameTime * 2 * 0.001; //the constant value is in squares/second
-        double rotation_speed = frameTime * 1.2 * 0.001; //the constant value is in radians/second
-    #else
-        fp32_t move_speed = FP32F(5.0/60.0);
-        fp32_t rotation_speed = FP32F(3.0/60.0);
-    #endif
+    fp32_t move_speed = FP32F(5.0/60.0);
+    fp32_t rotation_speed = FP32F(3.0/60.0);
 
     fp32_t player_width = FP32F(0.4);
 
@@ -97,7 +86,12 @@ void player_update() {
     }
 
     // Animate enemies (maybe move to another place?)
+    // TODO: make movement speed constant with time and not percentage of distance
     for(int i = 0; i < num_enemies; i++){
+        // Distances from enemy struct, squared so we dont have to use sqrt()
+        fp32_t enemy_to_player_dist = fp32_mul(enemies_data[i].dist_to_player, enemies_data[i].dist_to_player);
+        fp32_t enemy_max_shot_distance = fp32_mul(enemies_data[i].max_shot_distance, enemies_data[i].max_shot_distance);
+        fp32_t enemy_view_distance = fp32_mul(enemies_data[i].view_distance, enemies_data[i].view_distance);
 
         /////////////// Calculate distance to player ///////////////
         // {dist_x, dist_y} is a vector pointing from enemy to player
@@ -152,15 +146,15 @@ void player_update() {
         /////////////// If we are looking at the player (and not a wall) 
         fp32_t dist_a = FP32(2*2);    // Min and max distance to player (for moving/shooting)
         fp32_t dist_b = FP32(4*4);    // TODO: move these as a parameter somewhere (enemy struct?)
-        if(looking_at_player){
+        if(looking_at_player && dist_to_player < enemy_view_distance){
             /////////////// If distance is in some range (a to b) -> move towards player until distance is 'a'
-            if(dist_to_player - FP32F(0.1) > dist_a){
+            if(dist_to_player - FP32F(0.1) > enemy_to_player_dist){
                 enemies_data[i].sprite->x += fp32_mul(dist_x, FP32F(0.002));
                 enemies_data[i].sprite->y += fp32_mul(dist_y, FP32F(0.002));
             }
 
             /////////////// If distance is too close (less than 'a') -> move backwards if there is no wall there
-            if (dist_to_player + FP32F(0.1) < dist_a) {
+            if (dist_to_player + FP32F(0.1) < enemy_to_player_dist) {
                 // check if there is a wall behind this position
                 fp32_t new_pos_x = enemies_data[i].sprite->x - fp32_mul(dist_x, FP32F(0.015));
                 fp32_t new_pos_y = enemies_data[i].sprite->y - fp32_mul(dist_y, FP32F(0.015));
@@ -173,7 +167,7 @@ void player_update() {
             }
 
             /////////////// If distance to player is in shooting range (a to b) -> shoot at player on regular interval
-            if (dist_to_player > dist_a && dist_to_player < dist_b) {
+            if (dist_to_player > enemy_to_player_dist && dist_to_player < enemy_max_shot_distance) {
                 
             }
         }

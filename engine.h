@@ -39,7 +39,10 @@ typedef struct
 
 typedef struct
 {
-	sprite_t* sprite;
+	sprite_t* sprite;			// Sprite info
+	fp32_t dist_to_player;		// Distance to keep from player
+	fp32_t max_shot_distance;	// Max distance from which to shoot
+	fp32_t view_distance;		// When can this enemy see the player
 } enemy_t;
 
 // Time management
