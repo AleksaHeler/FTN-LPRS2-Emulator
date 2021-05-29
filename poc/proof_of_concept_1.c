@@ -389,10 +389,6 @@ int main(void) {
             //if(side == 1) {color = color / 2;}
 			int color = 1;
 
-			////// TODO: OVDE DOLAZI DO GRESKE
-            /* Draw the pixels of the stripe as a vertical line */
-            //verLine(x, drawStart, drawEnd, color);
-
 			for(int r = drawStart; r < drawEnd; r++){
 				unpack_idx1_p32[r*SCREEN_W + x] = 1;
 				
@@ -416,7 +412,7 @@ int main(void) {
 		// Packed.
 
 
-		//TODO This is just test. Implement same as for unpacked.
+		// This is just test. Implement same as for unpacked.
 		for(int r = 0; r < 32; r++){
 			for(int c = 0; c < 1; c++){
 				pack_idx1_p32[r*(SCREEN_W/32) + c] = 0xffffffff;

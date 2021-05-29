@@ -29,22 +29,19 @@ void player_update() {
     // moving and rotating speed is independent of the processor speed
     //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
     //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
-    // TODO: make speeds relate to time and not FPS
     
     fp32_t move_speed = FP32F(5.0/60.0);
     fp32_t rotation_speed = FP32F(3.0/60.0);
 
     fp32_t player_width = FP32F(0.4);
 
-    // TODO temp
+    // Temp variables for better code readability
     fp32_t pos_x = player_camera.pos_x;
     fp32_t pos_y = player_camera.pos_y;
     fp32_t dir_x = player_camera.dir_x;
     fp32_t dir_y = player_camera.dir_y;
     fp32_t plane_x = player_camera.plane_x;
     fp32_t plane_y = player_camera.plane_y;
-
-    // TODO Optimize these pls
 
     // Move forward if no wall in front of the player
     if(joypad.up) {
@@ -144,8 +141,6 @@ void player_update() {
             looking_at_player = 0;
 
         /////////////// If we are looking at the player (and not a wall) 
-        fp32_t dist_a = FP32(2*2);    // Min and max distance to player (for moving/shooting)
-        fp32_t dist_b = FP32(4*4);    // TODO: move these as a parameter somewhere (enemy struct?)
         if(looking_at_player && dist_to_player < enemy_view_distance){
             /////////////// If distance is in some range (a to b) -> move towards player until distance is 'a'
             if(dist_to_player - FP32F(0.1) > enemy_to_player_dist){
@@ -168,12 +163,12 @@ void player_update() {
 
             /////////////// If distance to player is in shooting range (a to b) -> shoot at player on regular interval
             if (dist_to_player > enemy_to_player_dist && dist_to_player < enemy_max_shot_distance) {
-                
+                // TODO: implement HP system and shooting system
             }
         }
     }
 
-    // TODO temp
+    // Temp variables for better code readability
     player_camera.pos_x = pos_x;
     player_camera.pos_y = pos_y;
     player_camera.dir_x = dir_x;

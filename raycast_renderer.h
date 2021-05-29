@@ -1,12 +1,6 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-// TODO:
-//   move sprite functions to sprites.h
-//   extract all functionality from renderer_render() to other functions
-//   make all those functions use a double of screen buffer
-//   function render will only copy to screen buffer
-
 #include "game_data.h"
 #include "engine.h"
 #include "fmath.h"

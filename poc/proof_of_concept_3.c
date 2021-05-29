@@ -95,12 +95,6 @@ void renderer_render(camera_t* camera) {
         double deltaDistX = ABS(1 / rayDirX);
         double deltaDistY = ABS(1 / rayDirY);
 
-        // TODO: Make this work
-        // Alternative code for deltaDist in case division through zero is not supported.
-        // the following will make the DDA loop also work correctly by instead setting the finite one to 0.
-        //double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : abs(1 / rayDirX));
-        //double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : abs(1 / rayDirY));
-
         // Will be used later to calculate the length of the ray
         double perpWallDist;
 
@@ -211,7 +205,6 @@ void renderer_render(camera_t* camera) {
         if(side == 0 && rayDirX > 0) texX = tex_width - texX - 1;
         if(side == 1 && rayDirY < 0) texX = tex_width - texX - 1;
 
-        // TODO: an integer-only bresenham or DDA like algorithm could make the texture coordinate stepping faster
         // How much to increase the texture coordinate per screen pixel
         double step = 1.0 * tex_height / lineHeight;
         // Starting texture coordinate

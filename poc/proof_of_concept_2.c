@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "system.h"
 #include <stdio.h>
-#include <math.h> // TODO: remove this library and use our own sin() and cos() functions
+#include <math.h> // remove this library and use our own sin() and cos() functions
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,6 @@ typedef struct {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Game config:
-// TODO: parametrize stuff
 
 ///////////////////////////////////////////////////////////////////////////////
 // Game data:
@@ -251,12 +250,6 @@ int main(void) {
                  deltaDistY = abs(1 / rayDirY) */
             double deltaDistX = ABS(1 / rayDirX);
             double deltaDistY = ABS(1 / rayDirY);
-
-            /* TODO: Make this work
-               Alternative code for deltaDist in case division through zero is not supported.
-               the following will make the DDA loop also work correctly by instead setting the finite one to 0. */
-            //double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : abs(1 / rayDirX));
-            //double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : abs(1 / rayDirY));
 
             /* Will be used later to calculate the length of the ray */
             double perpWallDist;
