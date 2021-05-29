@@ -49,6 +49,7 @@ void renderer_render(camera_t* camera) {                                // Time 
     cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
     floor_raycaster(camera);                                            // usually: 1.5 - 5ms
     wall_raycaster(camera);                                             // usually: 1 - 1.4ms
+    // TODO: still some work on sorting all sprites at once to remove sorting bugs
     sort_sprites(standing_sprite_order, standing_sprite_distance, camera, num_sprites); // usually: 0.006ms
     sort_sprites(enemies_sprite_order, enemies_sprite_distance, camera, num_enemies);
     sprite_raycaster(camera);                                           // usually: 0.65ms
