@@ -3,6 +3,8 @@
 sprite_t *renderer_sprites;
 unsigned sprites_num;
 
+// TODO malloc these
+
 fp32_t z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
 int standing_sprite_order[SPRITES_MAX_NUM];            // Arrays used to sort the sprites
 fp32_t standing_sprite_distance[SPRITES_MAX_NUM];

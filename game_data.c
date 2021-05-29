@@ -54,6 +54,7 @@ const uint8_t sprite_barrel[] = { 0 };
 const uint8_t sprite_monster_doom[] = { 3 };
 const uint8_t sprite_monster_afrit[] = { 4 };
 
+// { x, y, visible, anim_index, textures }
 sprite_t sprites_data[SPRITES_MAX_NUM] =
 {
     // Green lights in every room
