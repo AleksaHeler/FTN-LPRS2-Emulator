@@ -53,8 +53,6 @@ void _cordic(int theta, int *s, int *c, int n) {
 }
 
 void cordic(fp32_t a, fp32_t *s, fp32_t *c) {
-    // TODO Seems to work for cos as well but not sure
-    // TODO Optimize pls
     // Translate all input angles to range -pi/2 -- pi/2
     const fp32_t pi2 = fp32_pi * 2;
     while (a < -fp32_pi) a += pi2;

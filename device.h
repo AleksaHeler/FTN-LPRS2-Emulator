@@ -27,7 +27,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Game config:
-// TODO: parametrize stuff
 #define INDEX_MODE 2 				// IDX4 - 4b color
 #define SCREEN_W SCREEN_IDX4_W		// Currently used screen size
 #define SCREEN_H SCREEN_IDX4_H
