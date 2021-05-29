@@ -21,10 +21,14 @@
 #define WAIT_UNITL_0(x) while(x != 0){}
 #define WAIT_UNITL_1(x) while(x != 1){}
 
+///////////////////////////////////////////////////////////////////////////////
+// Sprite list for drawing:
+extern sprite_t* renderer_sprites;
+extern unsigned sprites_num;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
-void renderer_init();
+void renderer_init(sprite_t* s, unsigned n);
 void renderer_render(camera_t* camera);
 
 void renderer_menu();

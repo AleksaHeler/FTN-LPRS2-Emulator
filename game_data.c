@@ -42,39 +42,43 @@ uint32_t* textures[8] = {
     mossy__p, purplestone__p, wood__p, redbrick__p
 };
 
-// Billboard sprites
-uint32_t* sprites[5] = {
+// Sprite textures
+uint32_t* sprite_textures[5] = {
     barrel__p, greenlight__p, pillar__p, monster_doom__p, monster_afrit__p
 };
 
-sprite_t sprites_data[num_sprites] =
+// Compiler demands this
+sprite_data_t sprite_greenlight = { 0, { 1 } };
+sprite_data_t sprite_pillar = { 0, { 2 } };
+sprite_data_t sprite_barrel = { 0, { 0 } };
+
+sprite_t sprites_data[SPRITES_MAX_NUM] =
 {
-  // Green lights in every room
-  {FP32F(20.5), FP32F(11.5), 1},
-  {FP32F(18.5), FP32F(4.5), 1},
-  {FP32F(10.0), FP32F(4.5), 1},
-  {FP32F(10.0), FP32F(12.5), 1},
-  {FP32F(3.5), FP32F(6.5), 1},
-  {FP32F(3.5), FP32F(20.5), 1},
-  {FP32F(3.5), FP32F(14.5), 1},
-  {FP32F(14.5), FP32F(20.5), 1},
+    // Green lights in every room
+    {FP32F(20.5), FP32F(11.5), &sprite_greenlight},
+    {FP32F(18.5), FP32F(4.5), &sprite_greenlight},
+    {FP32F(10.0), FP32F(4.5), &sprite_greenlight},
+    {FP32F(10.0), FP32F(12.5), &sprite_greenlight},
+    {FP32F(3.5), FP32F(6.5), &sprite_greenlight},
+    {FP32F(3.5), FP32F(20.5), &sprite_greenlight},
+    {FP32F(3.5), FP32F(14.5), &sprite_greenlight},
+    {FP32F(14.5), FP32F(20.5), &sprite_greenlight},
 
-  // Row of pillars in front of wall: fisheye test
-  {FP32F(18.5), FP32F(10.5), 2},
-  {FP32F(18.5), FP32F(11.5), 2},
-  {FP32F(18.5), FP32F(12.5), 2},
+    // Row of pillars in front of wall: fisheye test
+    {FP32F(18.5), FP32F(10.5), &sprite_pillar},
+    {FP32F(18.5), FP32F(11.5), &sprite_pillar},
+    {FP32F(18.5), FP32F(12.5), &sprite_pillar},
 
-  // Some barrels around the map
-  {FP32F(21.5), FP32F(1.5), 0},
-  {FP32F(15.5), FP32F(1.5), 0},
-  {FP32F(16.0), FP32F(1.8), 0},
-  {FP32F(16.2), FP32F(1.2), 0},
-  {FP32F(3.5), FP32F(2.5), 0},
-  {FP32F(9.5), FP32F(15.5), 0},
-  {FP32F(10.0), FP32F(15.1), 0},
-  {FP32F(10.5), FP32F(15.8), 0}
+    // Some barrels around the map
+    {FP32F(21.5), FP32F(1.5), &sprite_barrel},
+    {FP32F(15.5), FP32F(1.5), &sprite_barrel},
+    {FP32F(16.0), FP32F(1.8), &sprite_barrel},
+    {FP32F(16.2), FP32F(1.2), &sprite_barrel},
+    {FP32F(3.5), FP32F(2.5), &sprite_barrel},
+    {FP32F(9.5), FP32F(15.5), &sprite_barrel},
+    {FP32F(10.0), FP32F(15.1), &sprite_barrel},
+    {FP32F(10.5), FP32F(15.8), &sprite_barrel}
 };
-
 
 enemy_t enemies_data[num_enemies] =
 {
