@@ -1,6 +1,5 @@
 #include "player.h"
-//#include "raycast_renderer.h" // Temp: for dda() funciton
-//#include "stdio.h"  // Temp!!!
+#include "stdio.h"  // Temp!!!
 
 camera_t player_camera;
 
@@ -107,6 +106,7 @@ void player_update() {
     for(int i = 0; i < num_enemies; i++){
 
         /////////////// Calculate distance to player ///////////////
+        // {dist_x, dist_y} is a vector pointing from enemy to player
         fp32_t dist_x = player_camera.pos_x - enemies_data[i].x;
         fp32_t dist_y = player_camera.pos_y - enemies_data[i].y;
         fp32_t dist_to_player = fp32_mul(dist_x, dist_x) + fp32_mul(dist_y, dist_y);
@@ -154,17 +154,31 @@ void player_update() {
             looking_at_player = 0;
         if(dist_y > 0 && player_to_wall_vector_y < 0)
             looking_at_player = 0;
-        
-        // Debug message
-        /*if(looking_at_player)
-            printf("Looking at player: %d -> distance: %f\n", looking_at_player, fp32_to_float(dist_to_player));
-        else
-            printf("Looking at player: %d\n", looking_at_player);*/
-        
+
         /////////////// If we are looking at the player (and not a wall) 
-        //   if distance is in some range (a to b) -> move towards player until distance is 'a' 
-        //   if distance is too close (less than 'a') -> move backwards if there is no wall there
-        //   if distance to player is in shooting range (a to b) -> shoot at player on regular interval
+        fp32_t dist_a = FP32(2);    // Min and max distance to player (for moving/shooting)
+        fp32_t dist_b = FP32(4);    // TODO: move these as a parameter somewhere (enemy struct?)
+        if(looking_at_player){
+            // If distance is in some range (a to b) -> move towards player until distance is 'a'
+            // Also take into account some offset, so we dont have jittering
+            if(dist_to_player - FP32F(0.1) > fp32_mul(dist_a, dist_a)){
+                enemies_data[i].x += fp32_mul(dist_x, FP32F(0.002));
+                enemies_data[i].y += fp32_mul(dist_y, FP32F(0.002));
+            } else if (dist_to_player + FP32F(0.1) < fp32_mul(dist_a, dist_a)) {
+                // check if there is a wall behind this position
+                fp32_t new_pos_x = enemies_data[i].x - fp32_mul(dist_x, FP32F(0.015));
+                fp32_t new_pos_y = enemies_data[i].y - fp32_mul(dist_y, FP32F(0.015));
+                int new_pos_x_int = fp32_to_int(new_pos_x);
+                int new_pos_y_int = fp32_to_int(new_pos_y);
+                if(world_map[new_pos_x_int][new_pos_y_int] == 0){
+                    enemies_data[i].x = new_pos_x;
+                    enemies_data[i].y = new_pos_y;
+                }
+            }
+
+            //   if distance is too close (less than 'a') -> move backwards if there is no wall there
+            //   if distance to player is in shooting range (a to b) -> shoot at player on regular interval
+        }
     }
 
     // TODO temp
