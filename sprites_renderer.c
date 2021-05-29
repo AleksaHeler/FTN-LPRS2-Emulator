@@ -75,7 +75,7 @@ void quick_sort(int* order, fp32_t* dist, int begin, int end){
 // From farthest to nearest
 void sort_sprites(int* order, fp32_t* dist, camera_t* cam, int amount){
     // First calculate the distane frome player for each sprite
-    for(int i = 0; i < num_sprites; i++) {
+    for(int i = 0; i < amount; i++) {
         order[i] = i;
         // Sqrt not taken, only relative distance is enough
         dist[i] = (fp32_mul(cam->pos_x - sprites_data[i].x, cam->pos_x - sprites_data[i].x) + fp32_mul(cam->pos_y - sprites_data[i].y, cam->pos_y - sprites_data[i].y));

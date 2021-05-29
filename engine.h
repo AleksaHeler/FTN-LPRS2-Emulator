@@ -45,4 +45,11 @@ typedef struct
 	int texture;
 } sprite_t;
 
+typedef struct
+{
+	fp32_t x;
+	fp32_t y;
+	int texture;
+} enemy_t;
+
 #endif

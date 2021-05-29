@@ -99,6 +99,21 @@ void player_update() {
         plane_y = old_plane_x * my_sin(rotation_speed) + plane_y * my_cos(rotation_speed);
     }
 
+    // Animate enemies (maybe move to another place?)
+    for(int i = 0; i < num_enemies; i++){
+        // enemies_data[i].x, enemies_data[i].x
+        // Calculate distance to player
+        // Check if there is a wall in front
+        // If there is no wall
+        //   if distance is in some range (a to b) -> move towards player until distance is 'a' 
+        //   if distance is too close (less than 'a') -> move backwards if there is no wall there
+        //   if distance to player is in shooting range (a to b) -> shoot at player on regular interval
+        
+        // Example of moving in diagonal line each frame: 
+        //enemies_data[i].x += FP32F(0.005);
+        //enemies_data[i].y += FP32F(0.005);
+    }
+
     // TODO temp
     player_camera.pos_x = fp32_from_float_round(pos_x);
     player_camera.pos_y = fp32_from_float_round(pos_y);

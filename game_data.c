@@ -72,8 +72,12 @@ sprite_t sprites_data[num_sprites] =
   {FP32F(3.5), FP32F(2.5), 0},
   {FP32F(9.5), FP32F(15.5), 0},
   {FP32F(10.0), FP32F(15.1), 0},
-  {FP32F(10.5), FP32F(15.8), 0},
+  {FP32F(10.5), FP32F(15.8), 0}
+};
 
+
+enemy_t enemies_data[num_enemies] =
+{
   // Monsters in rooms
   {FP32F(21.5), FP32F(4.5), 3},
   {FP32F(17.5), FP32F(4.5), 4},

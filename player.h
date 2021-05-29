@@ -8,7 +8,7 @@
 extern camera_t player_camera;
 
 void player_init();
-
+int player_menu();
 void player_update();
 
 #endif

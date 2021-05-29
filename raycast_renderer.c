@@ -2,8 +2,10 @@
 
 
 fp32_t z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
-int sprite_order[num_sprites];            // Arrays used to sort the sprites
-fp32_t sprite_distance[num_sprites];
+int standing_sprite_order[num_sprites];            // Arrays used to sort the sprites
+fp32_t standing_sprite_distance[num_sprites];
+int enemies_sprite_order[num_sprites];            // Arrays used to sort the sprites
+fp32_t enemies_sprite_distance[num_sprites];
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,7 +49,8 @@ void renderer_render(camera_t* camera) {                                // Time 
     cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
     floor_raycaster(camera);                                            // usually: 1.5 - 5ms
     wall_raycaster(camera);                                             // usually: 1 - 1.4ms
-    sort_sprites(sprite_order, sprite_distance, camera, num_sprites);   // usually: 0.006ms
+    sort_sprites(standing_sprite_order, standing_sprite_distance, camera, num_sprites); // usually: 0.006ms
+    sort_sprites(enemies_sprite_order, enemies_sprite_distance, camera, num_enemies);
     sprite_raycaster(camera);                                           // usually: 0.65ms
 }
 
@@ -273,11 +276,12 @@ void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* sid
 }
 
 void sprite_raycaster(camera_t* camera){
+    // Draw standing sprites
     for(int i = 0; i < num_sprites; i++) {
         // Translate sprite position to relative to camera
         // TODO convert sprite data to fp32_t
-        fp32_t sprite_x = sprites_data[sprite_order[i]].x - camera->pos_x;
-        fp32_t sprite_y = sprites_data[sprite_order[i]].y - camera->pos_y;
+        fp32_t sprite_x = sprites_data[standing_sprite_order[i]].x - camera->pos_x;
+        fp32_t sprite_y = sprites_data[standing_sprite_order[i]].y - camera->pos_y;
 
         //transform sprite with the inverse camera matrix
         // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
@@ -323,7 +327,65 @@ void sprite_raycaster(camera_t* camera){
                 int tex_y = ((d * tex_height) / sprite_height) / 256;
                 uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
                 uint32_t dst_idx = y*SCREEN_W + stripe;
-                uint32_t color = sprites[sprites_data[sprite_order[i]].texture][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
+                uint32_t color = sprites[sprites_data[standing_sprite_order[i]].texture][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
+                if(color != 0xd) 
+                    buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
+            }
+        }
+    }
+
+    // Draw enemies
+    for(int i = 0; i < num_enemies; i++) {
+        // Translate sprite position to relative to camera
+        // TODO convert sprite data to fp32_t
+        fp32_t sprite_x = enemies_data[enemies_sprite_order[i]].x - camera->pos_x;
+        fp32_t sprite_y = enemies_data[enemies_sprite_order[i]].y - camera->pos_y;
+
+        //transform sprite with the inverse camera matrix
+        // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
+        // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
+        // [ planeY   dirY ]                                          [ -planeY  planeX ]
+        fp32_t inv_det = fp32_div(FP32(1), (fp32_mul(camera->plane_x, camera->dir_y) - fp32_mul(camera->dir_x, camera->plane_y))); //required for correct matrix multiplication
+
+        fp32_t transform_x = fp32_mul(inv_det, (fp32_mul(camera->dir_y, sprite_x) - fp32_mul(camera->dir_x, sprite_y)));
+        fp32_t transform_y = fp32_mul(inv_det, (-fp32_mul(camera->plane_y, sprite_x) + fp32_mul(camera->plane_x, sprite_y))); //this is actually the depth inside the screen, that what Z is in 3D
+
+        int sprite_screen_x = fp32_to_int(fp32_mul(FP32(SCREEN_W) / 2, FP32(1) + fp32_div(transform_x, transform_y)));
+
+        // TODO overflow happens when calculating sprite_screen_x
+        // Don't render sprites close to camera
+        if (transform_y < SPRITE_MIN_RENDER_DISTANCE) continue;
+
+        //calculate height of the sprite on screen
+        int sprite_height = fp32_to_int(fp32_abs(fp32_div(FP32(SCREEN_H), transform_y))); //using 'transform_y' instead of the real distance prevents fisheye
+        //calculate lowest and highest pixel to fill in current stripe
+        int draw_start_y = -sprite_height / 2 + SCREEN_H / 2;
+        if(draw_start_y < 0) draw_start_y = 0;
+        int draw_end_y = sprite_height / 2 + SCREEN_H / 2;
+        if(draw_end_y >= SCREEN_H) draw_end_y = SCREEN_H;
+
+        //calculate width of the sprite
+        int sprite_width = fp32_to_int(fp32_abs(fp32_div(FP32(SCREEN_H), transform_y)));
+        int draw_start_x = -sprite_width / 2 + sprite_screen_x;
+        if(draw_start_x < 0) draw_start_x = 0;
+        int draw_end_x = sprite_width / 2 + sprite_screen_x;
+        if(draw_end_x >= SCREEN_W) draw_end_x = SCREEN_W;
+
+        //loop through every vertical stripe of the sprite on screen
+        for(int stripe = draw_start_x; stripe < draw_end_x; stripe++) {
+            int tex_x = (int)(256 * (stripe - (-sprite_width / 2 + sprite_screen_x)) * tex_width / sprite_width) / 256;
+            //the conditions in the if are:
+            //1) it's in front of camera plane so you don't see things behind you
+            //2) it's on the screen (left)
+            //3) it's on the screen (right)
+            //4) z_buffer, with perpendicular distance
+            if(transform_y > 0 && stripe >= 0 && stripe < SCREEN_W && transform_y < z_buffer[stripe])
+            for(int y = draw_start_y; y < draw_end_y; y++){ //for every pixel of the current stripe  
+                int d = (y) * 256 - SCREEN_H * 128 + sprite_height * 128; //256 and 128 factors to avoid floats
+                int tex_y = ((d * tex_height) / sprite_height) / 256;
+                uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
+                uint32_t dst_idx = y*SCREEN_W + stripe;
+                uint32_t color = sprites[enemies_data[enemies_sprite_order[i]].texture][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
                 if(color != 0xd) 
                     buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
             }
