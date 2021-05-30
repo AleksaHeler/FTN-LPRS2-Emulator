@@ -1,6 +1,6 @@
 #include "enemy.h"
 
-void enemy_update(camera_t* player_camera){
+void enemy_update(player_t* player){
     // Animate all enemies
     for(int i = 0; i < num_enemies; i++){
         // Distances from enemy struct, squared so we dont have to use sqrt() for distance
@@ -10,8 +10,8 @@ void enemy_update(camera_t* player_camera){
 
         /////////////// Calculate distance to player ///////////////
         // { dist_x, dist_y } is a vector pointing from enemy to player
-        fp32_t dist_x = player_camera->pos_x - enemies_data[i].sprite->x;
-        fp32_t dist_y = player_camera->pos_y - enemies_data[i].sprite->y;
+        fp32_t dist_x = player->pos_x - enemies_data[i].sprite->x;
+        fp32_t dist_y = player->pos_y - enemies_data[i].sprite->y;
         fp32_t dist_to_player = fp32_mul(dist_x, dist_x) + fp32_mul(dist_y, dist_y);
 
         /////////////// Use DDA alg. to find wall we are looking at ///////////////
@@ -39,8 +39,8 @@ void enemy_update(camera_t* player_camera){
         
         /////////////// Compare coordinates of wall the enemy is looking at when looking at player and player coordinates
         // In case the player is in front of the wall -> we are looking at player
-        int player_map_x = fp32_to_int(player_camera->pos_x);
-        int player_map_y = fp32_to_int(player_camera->pos_y);
+        int player_map_x = fp32_to_int(player->pos_x);
+        int player_map_y = fp32_to_int(player->pos_y);
         int player_to_wall_vector_x = map_x - player_map_x;
         int player_to_wall_vector_y = map_y - player_map_y;
         int looking_at_player = 1;  // Assume we are looking at player
