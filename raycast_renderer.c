@@ -42,6 +42,21 @@ void renderer_menu(){
     draw_sprite_transparent(quit__p, quit__w, quit__h, 55, 95);         // Quit text
 }
 
+void renderer_game_over(int state){
+    #ifdef USE_DOUBLE_BUFFER
+        wait_for_vsync();                                               // usually: 24-28ms
+        transfer_buffer(); // Copy buffer from prev frame to screen     // usually: 0.4 - 4ms
+    #else
+        wait_for_vsync();
+    #endif
+
+    cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
+    // Draw background
+    draw_sprite(background__p, background__w, background__h, 0, 0);     // Background
+    draw_sprite_transparent(play__p, play__w, play__h, 55, 55);         // Play text
+    draw_sprite_transparent(quit__p, quit__w, quit__h, 55, 95);         // Quit text
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Rendering: floor&ceiling, walls, sprites
 void renderer_render(player_t* camera) {                                // Time taken on an average pc:

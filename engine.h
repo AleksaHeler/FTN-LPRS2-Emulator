@@ -2,7 +2,7 @@
 #define ENGINE_H
 
 #define USE_DOUBLE_BUFFER // Wether to use seperate buffer to store rendered data and only then display it
-#define SECONDS_PER_FRAME 1/60
+#define SECONDS_PER_FRAME FP32F(1.0/60.0)
 
 // Double buffer: renderer draws to this buffer, and then on vSync copies it to the screen
 // Although this may reduce framerate a bit, it can save us from displaying unfinished renders.
@@ -47,6 +47,8 @@ typedef struct
 	fp32_t view_distance;		// When can this enemy see the player
 	fp32_t hp;
 	fp32_t damage;
+	fp32_t speed;
+	int shoot_interval;
 } enemy_t;
 
 // Time management

@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "stdio.h" // TODO: remove when done
 
 void enemy_update(player_t* player){
     // Animate all enemies
@@ -57,8 +58,9 @@ void enemy_update(player_t* player){
         if(looking_at_player && dist_to_player < enemy_view_distance){
             //////// If distance is in some range (a to b) -> move towards player until distance is 'a'
             if(dist_to_player - FP32F(0.1) > enemy_to_player_dist){
-                enemies_data[i].sprite->x += fp32_mul(dist_x, FP32F(0.002));
-                enemies_data[i].sprite->y += fp32_mul(dist_y, FP32F(0.002));
+                fp32_t speed = enemies_data[i].speed;
+                enemies_data[i].sprite->x += fp32_mul(dist_x, fp32_mul(SECONDS_PER_FRAME, speed));
+                enemies_data[i].sprite->y += fp32_mul(dist_y, fp32_mul(SECONDS_PER_FRAME, speed));
             }
 
             //////// If distance is too close (less than 'a') -> move backwards if there is no wall there
@@ -78,6 +80,11 @@ void enemy_update(player_t* player){
             //////// If distance to player is in shooting range (a to b) -> shoot at player on regular interval
             if (dist_to_player > enemy_to_player_dist && dist_to_player < enemy_max_shot_distance) {
                 // TODO: implement HP system and shooting system
+
+                if(frame_count % enemies_data[i].shoot_interval == 0){
+                    player->hp -= enemies_data[i].damage;
+                    printf("Shooting player! [HP=%f]\n", fp32_to_float(player->hp));
+                }
             }
         }
     }

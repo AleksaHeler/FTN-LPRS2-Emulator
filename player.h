@@ -10,6 +10,6 @@ extern player_t player;
 
 void player_init();
 int player_menu();
-void player_update();
+int player_update();
 
 #endif

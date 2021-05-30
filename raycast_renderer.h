@@ -26,6 +26,7 @@ void renderer_init(sprite_t* s, unsigned n);
 void renderer_render(player_t* camera);
 
 void renderer_menu();
+void renderer_game_over(int);
 
 void wait_for_vsync();      // Wait for the vSync pulse signal
 void cls();                 // Clear screen to color with index 0

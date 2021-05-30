@@ -11,6 +11,9 @@ void player_init() {
     //  of the direction and the camera plane determinates the FOV.
     //  FOV is 2 * atan(0.66/1.0)=66°, which is perfect for a first person shooter game
     player.plane_x = FP32F(0), player.plane_y = FP32F(0.66); // the 2d raycaster version of camera plane
+
+    player.hp = FP32(100);
+    player.damage = FP32(50);
 }
 
 // Registering inputs in main menu
@@ -20,7 +23,7 @@ int player_menu() {
     return 0;
 }
 
-void player_update() {
+int player_update() {
     /////////////////////////////////////
     // Poll controls:
     // The speed modifiers use frameTime, and a constant value, to 
@@ -29,9 +32,13 @@ void player_update() {
     // moving and rotating speed is independent of the processor speed
     //double moveSpeed = frameTime * 5.0; //the constant value is in squares/second
     //double rotSpeed = frameTime * 3.0;  //the constant value is in radians/second
+
+    // Check if player is dead
+    if(player.hp <= FP32(0))
+        return -1;
     
-    fp32_t move_speed = FP32F(5.0/60.0);
-    fp32_t rotation_speed = FP32F(3.0/60.0);
+    fp32_t move_speed = fp32_mul(SECONDS_PER_FRAME, FP32F(5.0));
+    fp32_t rotation_speed = fp32_mul(SECONDS_PER_FRAME, FP32F(3.0));
 
     fp32_t player_width = FP32F(0.4);
 
@@ -89,4 +96,6 @@ void player_update() {
     player.dir_y = dir_y;
     player.plane_x = plane_x;
     player.plane_y = plane_y;
+
+    return 0;
 }
