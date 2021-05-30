@@ -1,5 +1,7 @@
 #include "raycast_renderer.h"
 #include "player.h"
+#include "enemy.h"
+#include "stdio.h"
 
 int main(void) {
     renderer_init(sprites_data, SPRITES_MAX_NUM);
@@ -13,9 +15,9 @@ int main(void) {
         renderer_menu();				// Render screen
 	}*/
 
-
 	while(1){
 		player_update();
+		enemy_update(&player_camera);
         renderer_render(&player_camera);
 	}
 	return 0;
