@@ -59,14 +59,6 @@ extern uint16_t background__w;
 extern uint16_t background__h;
 extern uint32_t background__p[];
 
-extern uint16_t play__w;
-extern uint16_t play__h;
-extern uint32_t play__p[];
-
-extern uint16_t quit__w;
-extern uint16_t quit__h;
-extern uint32_t quit__p[];
-
 // Enemies/monsters
 
 extern uint16_t monster_doom__w;

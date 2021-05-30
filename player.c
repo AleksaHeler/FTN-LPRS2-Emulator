@@ -19,8 +19,10 @@ void player_init() {
 
 // Registering inputs in main menu
 int player_menu() {
-    if(joypad.a) return 1;
-    if(joypad.b) return -1;
+    if(joypad.start)    return 1;
+    if(joypad.a)        return 1;
+    if(joypad.b)        return -1;
+    if(joypad.z)        return -1;
     return 0;
 }
 
