@@ -1,16 +1,16 @@
 #include "player.h"
 
-camera_t player_camera;
+player_t player;
 
 void player_init() {
-    player_camera.pos_x = FP32F(22.5), player_camera.pos_y = FP32F(12.5); // player x and y start position
-    player_camera.dir_x = FP32(-1), player_camera.dir_y = FP32(0);       // initial player direction vector
+    player.pos_x = FP32F(22.5), player.pos_y = FP32F(12.5); // player x and y start position
+    player.dir_x = FP32(-1), player.dir_y = FP32(0);       // initial player direction vector
 
     // Camera plane is perpendicular to the direction, but we 
     //  can change the length of it. The ratio between the length
     //  of the direction and the camera plane determinates the FOV.
     //  FOV is 2 * atan(0.66/1.0)=66°, which is perfect for a first person shooter game
-    player_camera.plane_x = FP32F(0), player_camera.plane_y = FP32F(0.66); // the 2d raycaster version of camera plane
+    player.plane_x = FP32F(0), player.plane_y = FP32F(0.66); // the 2d raycaster version of camera plane
 }
 
 // Registering inputs in main menu
@@ -36,12 +36,12 @@ void player_update() {
     fp32_t player_width = FP32F(0.4);
 
     // Temp variables for better code readability
-    fp32_t pos_x = player_camera.pos_x;
-    fp32_t pos_y = player_camera.pos_y;
-    fp32_t dir_x = player_camera.dir_x;
-    fp32_t dir_y = player_camera.dir_y;
-    fp32_t plane_x = player_camera.plane_x;
-    fp32_t plane_y = player_camera.plane_y;
+    fp32_t pos_x = player.pos_x;
+    fp32_t pos_y = player.pos_y;
+    fp32_t dir_x = player.dir_x;
+    fp32_t dir_y = player.dir_y;
+    fp32_t plane_x = player.plane_x;
+    fp32_t plane_y = player.plane_y;
 
     // Move forward if no wall in front of the player
     if(joypad.up) {
@@ -83,10 +83,10 @@ void player_update() {
     }
 
     // Temp variables for better code readability
-    player_camera.pos_x = pos_x;
-    player_camera.pos_y = pos_y;
-    player_camera.dir_x = dir_x;
-    player_camera.dir_y = dir_y;
-    player_camera.plane_x = plane_x;
-    player_camera.plane_y = plane_y;
+    player.pos_x = pos_x;
+    player.pos_y = pos_y;
+    player.dir_x = dir_x;
+    player.dir_y = dir_y;
+    player.plane_x = plane_x;
+    player.plane_y = plane_y;
 }

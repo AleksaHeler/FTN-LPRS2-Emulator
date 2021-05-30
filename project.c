@@ -17,8 +17,8 @@ int main(void) {
 
 	while(1){
 		player_update();
-		enemy_update(&player_camera);
-        renderer_render(&player_camera);
+		enemy_update(&player);
+        renderer_render(&player);
 	}
 	return 0;
 }

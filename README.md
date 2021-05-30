@@ -67,7 +67,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
   - [ ] UI
     - [X] Main menu: biranje nivoa i tezine (player/enemy damage) (**Aleksa**)
   - [ ] Graphics design
-    - [ ] Naci dobru paletu - 16 boja: 8 pravih boja ali svaka ima svoj taminiji duplikat
+    - [X] Naci dobru paletu (Endesga 16 Palette) - 16 boja: 8 pravih boja ali svaka ima svoj taminiji duplikat
     - [ ] Naci dobre sprajtove za igru: teksture, sprajtovi, UI
   - [ ] Game mechanics
     - [ ] Imamo dva dugmeta: A i B. Na jedno se menja selekcija, na drugo se upotrebljava selektovano
@@ -81,7 +81,7 @@ DDA je relativno brz i koristi se za pretragu koje kvadrate zrak (ray) pogađa. 
     - [ ] Vezati brzinu kretanja za vreme, a ne FPS
   - [ ] Enemy - AI
     - [ ] Za pocetak samo jedan tip
-    - [ ] Kako se krece (npr odrzava neku idealnu razdaljinu)
+    - [X] Kako se krece (npr odrzava neku idealnu razdaljinu)
     - [ ] Puca ka igracu kad je u nekom dometu
     - [ ] Kako umire (animacija/nestaje/drop)
   - [ ] Apstrakcija nivoa

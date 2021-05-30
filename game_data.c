@@ -90,12 +90,12 @@ sprite_t sprites_data[SPRITES_MAX_NUM] =
     {FP32F(15.5), FP32F(20.5), 1, 0, sprite_monster_doom}
 };
 
-// { pointer to sprite in sprites_data[], dist_to_player, max_shot_distance, view_distance }
+// { pointer to sprite in sprites_data[], dist_to_player, max_shot_distance, view_distance, hp, damage }
 enemy_t enemies_data[num_enemies] =
 {
-    {&sprites_data[19], FP32F(2), FP32F(4), FP32F(6)},
-    {&sprites_data[20], FP32F(3), FP32F(4), FP32F(6)},
-    {&sprites_data[21], FP32F(2), FP32F(4), FP32F(6)},
-    {&sprites_data[22], FP32F(3), FP32F(4), FP32F(6)},
-    {&sprites_data[23], FP32F(2), FP32F(4), FP32F(6)}
+    {&sprites_data[19], FP32F(2), FP32F(4), FP32F(6), FP32F(100), FP32F(10)},
+    {&sprites_data[20], FP32F(3), FP32F(4), FP32F(6), FP32F(100), FP32F(10)},
+    {&sprites_data[21], FP32F(2), FP32F(4), FP32F(6), FP32F(100), FP32F(10)},
+    {&sprites_data[22], FP32F(3), FP32F(4), FP32F(6), FP32F(100), FP32F(10)},
+    {&sprites_data[23], FP32F(2), FP32F(4), FP32F(6), FP32F(100), FP32F(10)}
 };

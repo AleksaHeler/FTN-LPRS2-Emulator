@@ -12,7 +12,7 @@ void draw_sprite_transparent(uint32_t*, uint16_t, uint16_t, uint16_t, uint16_t);
 void swap(int*, fp32_t*, int*, fp32_t*);
 int partition(int*, fp32_t*, int, int);
 void quick_sort(int*, fp32_t*, int, int);
-void sort_sprites(int*, fp32_t*, camera_t*, int);
+void sort_sprites(int*, fp32_t*, player_t*, int);
 
 
 #endif // SPRITES_H

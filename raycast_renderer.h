@@ -23,7 +23,7 @@ extern unsigned sprites_num;
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
 void renderer_init(sprite_t* s, unsigned n);
-void renderer_render(camera_t* camera);
+void renderer_render(player_t* camera);
 
 void renderer_menu();
 

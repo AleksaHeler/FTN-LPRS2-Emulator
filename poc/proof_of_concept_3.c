@@ -30,7 +30,7 @@ void renderer_init() {
 	gpu_p32[0x800] = 0x00ff00ff;    // Magenta for HUD.
 }
 
-void renderer_render(camera_t* camera) {
+void renderer_render(player_t* camera) {
     WAIT_UNITL_0(gpu_p32[2]);   // Detecting rising edge of VSync
     WAIT_UNITL_1(gpu_p32[2]);   // Draw in buffer while it is in VSync
     

@@ -6,7 +6,7 @@
 #include "fmath.h"
 #include "raycast_renderer.h"
 
-extern camera_t player_camera;
+extern player_t player;
 
 void player_init();
 int player_menu();

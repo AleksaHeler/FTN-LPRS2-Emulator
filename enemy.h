@@ -7,6 +7,6 @@
 #include "raycast_renderer.h"
 
 // Update enemy -> move, AI logic
-void enemy_update(camera_t*);
+void enemy_update(player_t*);
 
 #endif // ENEMY_H

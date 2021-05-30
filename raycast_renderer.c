@@ -44,7 +44,7 @@ void renderer_menu(){
 
 ///////////////////////////////////////////////////////////////////////////////
 // Rendering: floor&ceiling, walls, sprites
-void renderer_render(camera_t* camera) {                                // Time taken on an average pc:
+void renderer_render(player_t* camera) {                                // Time taken on an average pc:
     
     #ifdef USE_DOUBLE_BUFFER
         wait_for_vsync();                                               // usually: 24-28ms
@@ -81,7 +81,7 @@ void cls(){
 }
 
 // Draw floor and ceiling in screen buffer
-void floor_raycaster(camera_t* camera){
+void floor_raycaster(player_t* camera){
     // For every horizontal line from middle to the bottom of the screen
     for(int y = SCREEN_H / 2 + 1; y < SCREEN_H; ++y) {
         // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
@@ -143,7 +143,7 @@ void floor_raycaster(camera_t* camera){
     }
 }
 
-void wall_raycaster(camera_t* camera){
+void wall_raycaster(player_t* camera){
     // For every vertical line on the screen
     for(int x = 0; x < SCREEN_W; x++) {
         //                  \     
@@ -283,7 +283,7 @@ void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* sid
     }
 }
 
-void sprite_raycaster(camera_t* camera){
+void sprite_raycaster(player_t* camera){
     // Draw standing sprites
     for(int i = 0; i < sprites_num; i++) {
         // Translate sprite position to relative to camera
