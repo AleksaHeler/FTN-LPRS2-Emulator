@@ -1,4 +1,5 @@
 #include "player.h"
+#include "stdio.h" // TODO: remove when done
 
 player_t player;
 
@@ -21,6 +22,11 @@ int player_menu() {
     if(joypad.a) return 1;
     if(joypad.b) return -1;
     return 0;
+}
+
+void player_hit(int damage){
+    player.hp -= damage;
+    printf("Player hit! [HP=%f]\n", fp32_to_float(player.hp));
 }
 
 int player_update() {

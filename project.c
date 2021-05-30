@@ -1,6 +1,7 @@
 #include "raycast_renderer.h"
 #include "player.h"
 #include "enemy.h"
+#include "stdio.h"
 
 int main(void) {
 	int game_state = 0;
@@ -27,21 +28,21 @@ int main(void) {
 
 		// Game over menu loop: wait for player to press 'A' or 'B' button
 		if(game_state < 0){ // LOSE
-			while(1){
-				int input = player_menu();		// Get input
-				if(input == 1) break; 			// Restart the game (A)
-				if(input == -1) return -1;		// Quit (B)
-				renderer_game_over(-1);			// Render screen
-			}
 			printf("You lose!\n");
-		} else { // WIN
 			while(1){
 				int input = player_menu();		// Get input
 				if(input == 1) break; 			// Restart the game (A)
 				if(input == -1) return -1;		// Quit (B)
 				renderer_game_over(-1);			// Render screen
 			}
+		} else { // WIN
 			printf("You win!\n");
+			while(1){
+				int input = player_menu();		// Get input
+				if(input == 1) break; 			// Restart the game (A)
+				if(input == -1) return -1;		// Quit (B)
+				renderer_game_over(-1);			// Render screen
+			}
 		}
 	}
 	

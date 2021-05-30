@@ -11,5 +11,6 @@ extern player_t player;
 void player_init();
 int player_menu();
 int player_update();
+void player_hit(int damage);
 
 #endif
