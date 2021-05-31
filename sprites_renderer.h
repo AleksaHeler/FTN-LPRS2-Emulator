@@ -1,5 +1,5 @@
-#ifndef SPRITES_H
-#define SPRITES_H
+#ifndef SPRITES_RENDERER_H
+#define SPRITES_RENDERER_H
 
 #include "game_data.h"
 #include "engine.h"
