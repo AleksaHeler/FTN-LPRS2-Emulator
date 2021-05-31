@@ -72,11 +72,7 @@ void renderer_render(player_t* camera) {                                // Time 
     draw_hud(camera);
 
     frame_count++;
-<<<<<<< HEAD
     //draw_number(frame_count, 10, 10, 0xc);
-=======
-    draw_num(frame_count, 10, 10, 0xc);
->>>>>>> bcac1db2cef5d0fb800b30df071e923d48be1de5
 }
 
 ///////////////////////////////////////////////////////////////////////////////
