@@ -51,9 +51,15 @@ void draw_number(uint32_t number, uint16_t pos_x, uint16_t pos_y, uint8_t color)
     }
 }
 
+// TODO add player hp when converted to int
 void draw_hud(player_t *player) {
+<<<<<<< HEAD
     draw_sprite_transparent(game_ui__p, game_ui__w, game_ui__h, 0, 0);
     draw_number(player->hp, 41, 213, 0xd);
     draw_number(player->ammo, 148, 213, 0xd);
     draw_number(player->score, 260, 213, 0xd);
+=======
+    draw_sprite(background__p, background__w, 40, 0, 200);
+    draw_num(100, 25, 210, 5);
+>>>>>>> bcac1db2cef5d0fb800b30df071e923d48be1de5
 }
