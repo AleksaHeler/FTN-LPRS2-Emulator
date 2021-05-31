@@ -1,10 +1,11 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef RAYCAST_RENDERER_H
+#define RAYCAST_RENDERER_H
 
 #include "game_data.h"
 #include "engine.h"
 #include "fmath.h"
 #include "sprites_renderer.h"
+#include "ui_renderer.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Settings / parameters:
@@ -37,4 +38,4 @@ void sprite_raycaster();    // Render sprites
 
 void transfer_buffer();     // Copy from double buffer to original one for displaying
 
-#endif // RENDERER_H
+#endif // RAYCAST_RENDERER_H

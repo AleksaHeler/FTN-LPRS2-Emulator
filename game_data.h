@@ -17,7 +17,8 @@
 extern int world_map[map_width][map_height];
 
 extern uint32_t* textures[8];
-extern uint32_t* sprite_textures[5];
+extern uint32_t *sprite_textures[5];
+extern uint32_t *sprite_digits[10];
 
 extern sprite_t sprites_data[SPRITES_MAX_NUM];
 extern enemy_t enemies_data[num_enemies];

@@ -69,7 +69,8 @@ void renderer_render(player_t* camera) {                                // Time 
     wall_raycaster(camera);                                             // usually: 1 - 1.4ms
     sort_sprites(standing_sprite_order, standing_sprite_distance, camera, SPRITES_MAX_NUM); // usually: 0.006ms
     sprite_raycaster(camera);                                           // usually: 0.65ms
-    
+    draw_hud(camera);
+
     frame_count++;
 }
 

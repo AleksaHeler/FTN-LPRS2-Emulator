@@ -47,6 +47,12 @@ uint32_t* sprite_textures[5] = {
     barrel__p, greenlight__p, pillar__p, monster_doom__p, monster_afrit__p
 };
 
+// UI characters - digits
+// TODO: add these
+uint32_t* sprite_digits[10] = {
+    mossy__p, mossy__p
+};
+
 // Compiler demands this
 const uint8_t sprite_greenlight[] = { 1 };
 const uint8_t sprite_pillar[] = { 2 };
