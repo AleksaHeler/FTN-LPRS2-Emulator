@@ -12,6 +12,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
+void draw_digit(uint8_t, uint16_t, uint16_t, uint8_t);
+void draw_number(uint32_t, uint16_t, uint16_t, uint8_t);
 void draw_hud(player_t* player);
 
 #endif // UI_RENDERER_H

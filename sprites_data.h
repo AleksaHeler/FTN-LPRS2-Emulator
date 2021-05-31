@@ -5,11 +5,15 @@
 
 extern uint32_t palette[16];
 
-// Font
+// Font & UI
 
 extern uint16_t digits__w;
 extern uint16_t digits__h;
 extern uint32_t digits__p[];
+
+extern uint16_t game_ui__w;
+extern uint16_t game_ui__h;
+extern uint32_t game_ui__p[];
 
 // Wall, floor & ceiling sprites
 

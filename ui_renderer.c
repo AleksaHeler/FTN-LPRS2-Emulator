@@ -1,39 +1,59 @@
 #include "ui_renderer.h"
 
-// Divide by 10 with modulo
-uint32_t divmod10(uint32_t in, uint8_t* mod) {
-    // q = in * 0.8;
-    uint32_t q = (in >> 1) + (in >> 2);
-    q = q + (q >> 4);
-    q = q + (q >> 8);
-    q = q + (q >> 16); // not needed for 16 bit version
+///////////////////////////////////////////////////////////////////////////////
+// Draws a digit at a given place:
+void draw_digit(uint8_t digit, uint16_t pos_x, uint16_t pos_y, uint8_t color){
+    printf("Drawing a digit...\n");
+    int src_x = digit * 8; // 0 is at pixel 0, 1 is at pixel 8...
+    int src_y = 0;
 
-    // q = q / 8;  ==> q = in * 0.1;
-    q = q >> 3;
+    for(uint16_t x = 0; x < 8; x++){ 
+        for(uint16_t y = 0; y < digits__h; y++){
+            uint32_t dst_idx = (pos_y+y)*SCREEN_W + pos_x+x;
+            uint32_t src_idx = (y)*(digits__w/8) + (src_x+x)/8;
 
-    // determine error
-    uint32_t r = in - ((q << 3) + (q << 1)); // r = in - q*10;
-    if (r > 9)
-        *mod = r - 10;
-    else
-        *mod = r;
-    return q + (r > 9);
+            uint32_t pixel = (digits__p[src_idx] >> ((src_x+x)%8)*4) & 0xf;
+            if(pixel  == 0xd) continue;  // If transparent color skip this pixel
+        
+            buffer[dst_idx] = color;
+		}
+	}
 }
 
-// Helper functions
-// Draw a number on screen
-void draw_num(uint16_t number, uint16_t x, uint16_t y) {
-    uint32_t u = number;
+///////////////////////////////////////////////////////////////////////////////
+// Draws a number by calling function draw_digi() for every digit:
+void draw_number(uint32_t number, uint16_t pos_x, uint16_t pos_y, uint8_t color){
 
-    while (u > 0) {
-        uint8_t d = 0;
-        u = divmod10(u, &d);
-        draw_sprite(sprite_digits[d], 8, 16, x, y);
-        x += 10;
+    uint32_t digit_count = 0;
+
+    if(number == 0){ // 0 has one digit
+        digit_count = 1;   
+    }
+    else{ // Calculate num of digits
+        
+        uint32_t n = number;
+        while (n != 0) {
+            n /= 10;
+            ++digit_count;
+        }
+    }
+
+    if(number == 0)
+        draw_digit(0, pos_x, pos_y, color);
+    // Draw digit from least significant to most
+    while(number > 0){
+        uint8_t digit = number % 10; // Get least significant digit
+        digit_count--;
+
+        draw_digit(digit, pos_x + digit_count*8, pos_y, color); // Draw it at right place
+
+        number /= 10; // Delete last digit
     }
 }
 
 void draw_hud(player_t *player) {
-    draw_sprite(background__p, background__w, 40, 0, 200);
-    draw_num(111, 30, 220);
+    draw_sprite_transparent(game_ui__p, game_ui__w, game_ui__h, 0, 0);
+    draw_number(player->hp, 41, 213, 0xd);
+    draw_number(player->ammo, 148, 213, 0xd);
+    draw_number(player->score, 260, 213, 0xd);
 }

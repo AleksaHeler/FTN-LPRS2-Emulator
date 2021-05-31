@@ -13,8 +13,9 @@ void player_init() {
     //  FOV is 2 * atan(0.66/1.0)=66°, which is perfect for a first person shooter game
     player.plane_x = FP32F(0), player.plane_y = FP32F(0.66); // the 2d raycaster version of camera plane
 
-    player.hp = FP32(100);
-    player.damage = FP32(50);
+    player.hp = 100;
+    player.damage = 50;
+    player.score = 0;
 }
 
 // Registering inputs in main menu
@@ -26,9 +27,9 @@ int player_menu() {
     return 0;
 }
 
-void player_hit(int damage){
+void player_hit(uint8_t damage){
     player.hp -= damage;
-    printf("Player hit! [HP=%f]\n", fp32_to_float(player.hp));
+    printf("Player hit! [HP=%d]\n", player.hp);
 }
 
 int player_update() {

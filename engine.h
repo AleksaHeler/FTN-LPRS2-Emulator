@@ -25,8 +25,10 @@ typedef struct {
 	fp32_t dir_y;
 	fp32_t plane_x;
 	fp32_t plane_y;
-	fp32_t hp;
-	fp32_t damage;
+	uint8_t hp;
+	uint8_t damage;
+	uint8_t ammo;
+	uint32_t score;
 } player_t;
 
 // Sprite objects in-game
@@ -45,8 +47,8 @@ typedef struct
 	fp32_t dist_to_player;		// Distance to keep from player
 	fp32_t max_shot_distance;	// Max distance from which to shoot
 	fp32_t view_distance;		// When can this enemy see the player
-	fp32_t hp;
-	fp32_t damage;
+	uint8_t hp;
+	uint8_t damage;
 	fp32_t speed;
 	int shoot_interval;
 } enemy_t;
