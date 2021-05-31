@@ -71,6 +71,7 @@ void renderer_render(player_t* camera) {                                // Time 
     sprite_raycaster(camera);                                           // usually: 0.65ms
     
     frame_count++;
+    draw_number(frame_count, 10, 10, 0xc);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

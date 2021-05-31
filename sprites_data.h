@@ -5,6 +5,12 @@
 
 extern uint32_t palette[16];
 
+// Font
+
+extern uint16_t digits__w;
+extern uint16_t digits__h;
+extern uint32_t digits__p[];
+
 // Wall, floor & ceiling sprites
 
 extern uint16_t bluestone__w;
