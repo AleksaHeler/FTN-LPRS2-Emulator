@@ -12,6 +12,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
-void draw_hud(player_t* player);
+void draw_num(uint16_t number, uint16_t x, uint16_t y, uint8_t color);
+void draw_hud(player_t *player);
 
 #endif // UI_RENDERER_H
