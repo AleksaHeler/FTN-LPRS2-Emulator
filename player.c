@@ -30,9 +30,11 @@ int player_menu() {
     return 0;
 }
 
-void player_hit(uint8_t damage){
-    player.hp -= damage;
-    printf("Player hit! [HP=%d]\n", player.hp);
+void player_take_damage(uint8_t damage){
+    if(player.hp >= damage)
+        player.hp -= damage;
+    else
+        player.hp = 0;
     renderer_blood(8);
 }
 

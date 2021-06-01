@@ -12,6 +12,6 @@ extern player_t player;
 void player_init();
 int player_menu();
 int player_update();
-void player_hit(uint8_t damage);
+void player_take_damage(uint8_t damage);
 
 #endif

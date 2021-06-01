@@ -81,9 +81,16 @@ void enemy_update(player_t* player){
                 // TODO: implement HP system and shooting system
 
                 if(frame_count % enemies_data[i].shoot_interval == 0){
-                    player_hit(enemies_data[i].damage);
+                    player_take_damage(enemies_data[i].damage);
                 }
             }
         }
     }
+}
+
+void enemy_take_damage(enemy_t* enemy, uint8_t damage){
+    if(enemy->hp >= damage)
+        enemy->hp -= damage;
+    else
+        enemy->hp = 0;
 }
