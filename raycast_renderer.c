@@ -11,6 +11,7 @@ fp32_t standing_sprite_distance[SPRITES_MAX_NUM];
 int enemies_sprite_order[SPRITES_MAX_NUM];            // Arrays used to sort the sprites
 fp32_t enemies_sprite_distance[SPRITES_MAX_NUM];
 uint8_t render_blood;
+uint8_t render_flash;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,6 +28,7 @@ void renderer_init(sprite_t *sprites, unsigned sprite_n) {
     renderer_sprites = sprites;
     sprites_num = sprite_n;
     render_blood = 0;
+    render_flash = 0;
 }
 
 void renderer_menu(){
@@ -76,11 +78,14 @@ void renderer_render(player_t* camera) {                                // Time 
     // Draw blood efect
     if(render_blood > 0){
         draw_sprite_transparent(blood__p, blood__w, blood__h, 0, 0);
+        render_blood--;
+    }
+    if(render_flash > 0){
+        draw_sprite_transparent(muzzle_flash__p, muzzle_flash__w, muzzle_flash__h, 0, 0);
+        render_flash--;
     }
 
     frame_count++;
-    if(render_blood > 0) render_blood--;
-    //draw_number(frame_count, 10, 10, 0xc);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -104,6 +109,11 @@ void cls(){
 // Go trough the whole screen and color it red
 void renderer_blood(uint8_t frames){
     render_blood = frames;
+}
+
+// Go trough the whole screen and color it red
+void renderer_flash(uint8_t frames){
+    render_flash = frames;
 }
 
 // Draw floor and ceiling in screen buffer

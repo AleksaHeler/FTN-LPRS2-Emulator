@@ -16,6 +16,9 @@ void player_init() {
     player.hp = 100;
     player.damage = 50;
     player.score = 0;
+
+	player.shoot_frequency = 30; // Player can shoot every 30 frames 
+	player.last_shot = frame_count;
 }
 
 // Registering inputs in main menu
@@ -60,6 +63,12 @@ int player_update() {
     fp32_t plane_x = player.plane_x;
     fp32_t plane_y = player.plane_y;
 
+    // Shoot on button 'A'
+    if(joypad.a && frame_count - player.last_shot >= player.shoot_frequency) {
+        renderer_flash(5);
+        player.last_shot = frame_count;
+        // TOOD: Implement shooting by raycasting
+    }
     // Move forward if no wall in front of the player
     if(joypad.up) {
         if(world_map[fp32_to_int(pos_x + fp32_mul(dir_x, move_speed) + fp32_mul(dir_x, player_width))][fp32_to_int(pos_y)] == 0) 

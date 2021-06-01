@@ -23,6 +23,10 @@ extern uint16_t blood__w;
 extern uint16_t blood__h;
 extern uint32_t blood__p[];
 
+extern uint16_t muzzle_flash__w;
+extern uint16_t muzzle_flash__h;
+extern uint32_t muzzle_flash__p[];
+
 // Wall, floor & ceiling sprites
 
 extern uint16_t bluestone__w;

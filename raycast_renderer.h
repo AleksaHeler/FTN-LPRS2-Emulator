@@ -21,6 +21,7 @@
 extern sprite_t* renderer_sprites;
 extern unsigned sprites_num;
 extern uint8_t render_blood;
+extern uint8_t render_flash;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
@@ -36,7 +37,8 @@ void floor_raycaster();         // Render floors and ceiling
 void wall_raycaster();          // Render walls
 void dda();                     // DDA algorithm implementation
 void sprite_raycaster();        // Render sprites
-void renderer_blood(uint8_t);   // Set how many frames should be blood
+void renderer_blood(uint8_t);   // Set how many frames should be blood damage effect
+void renderer_flash(uint8_t);   // Set how many frames should be muzzle flash
 
 void transfer_buffer();         // Copy from double buffer to original one for displaying
 

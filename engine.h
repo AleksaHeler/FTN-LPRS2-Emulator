@@ -29,6 +29,8 @@ typedef struct {
 	uint8_t damage;
 	uint8_t ammo;
 	uint32_t score;
+	uint32_t shoot_frequency;
+	unsigned long long int last_shot;
 } player_t;
 
 // Sprite objects in-game
