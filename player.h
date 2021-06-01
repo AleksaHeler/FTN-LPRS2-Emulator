@@ -5,6 +5,7 @@
 #include "game_data.h"
 #include "fmath.h"
 #include "raycast_renderer.h"
+#include "enemy.h"
 
 extern player_t player;
 

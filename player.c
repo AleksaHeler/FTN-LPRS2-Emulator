@@ -30,6 +30,7 @@ int player_menu() {
 void player_hit(uint8_t damage){
     player.hp -= damage;
     printf("Player hit! [HP=%d]\n", player.hp);
+    renderer_blood(8);
 }
 
 int player_update() {

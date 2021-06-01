@@ -45,6 +45,9 @@ void draw_num(uint16_t number, uint16_t x, uint16_t y, uint8_t color) {
     uint32_t u = number;
     uint8_t digit_count = 0;
 
+    if(u == 0){
+        digit_count = 1;
+    }
     while (u > 0) {
         uint8_t d = 0;
         u = divmod10(u, &d);

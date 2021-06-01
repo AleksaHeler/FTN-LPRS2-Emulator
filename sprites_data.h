@@ -15,6 +15,14 @@ extern uint16_t game_ui__w;
 extern uint16_t game_ui__h;
 extern uint32_t game_ui__p[];
 
+extern uint16_t game_over__w;
+extern uint16_t game_over__h;
+extern uint32_t game_over__p[];
+
+extern uint16_t blood__w;
+extern uint16_t blood__h;
+extern uint32_t blood__p[];
+
 // Wall, floor & ceiling sprites
 
 extern uint16_t bluestone__w;

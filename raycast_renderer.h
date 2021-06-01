@@ -20,22 +20,24 @@
 // Sprite list for drawing:
 extern sprite_t* renderer_sprites;
 extern unsigned sprites_num;
+extern uint8_t render_blood;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions:
-void renderer_init(sprite_t* s, unsigned n);
-void renderer_render(player_t* camera);
+void renderer_init(sprite_t*, unsigned);
+void renderer_render(player_t*);
 
 void renderer_menu();
-void renderer_game_over(int);
+void renderer_game_over(player_t*);
 
-void wait_for_vsync();      // Wait for the vSync pulse signal
-void cls();                 // Clear screen to color with index 0
-void floor_raycaster();     // Render floors and ceiling
-void wall_raycaster();      // Render walls
-void dda();                 // DDA algorithm implementation
-void sprite_raycaster();    // Render sprites
+void wait_for_vsync();          // Wait for the vSync pulse signal
+void cls();                     // Clear screen to color with index 0
+void floor_raycaster();         // Render floors and ceiling
+void wall_raycaster();          // Render walls
+void dda();                     // DDA algorithm implementation
+void sprite_raycaster();        // Render sprites
+void renderer_blood(uint8_t);   // Set how many frames should be blood
 
-void transfer_buffer();     // Copy from double buffer to original one for displaying
+void transfer_buffer();         // Copy from double buffer to original one for displaying
 
 #endif // RAYCAST_RENDERER_H

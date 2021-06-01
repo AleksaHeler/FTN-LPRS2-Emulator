@@ -10,6 +10,7 @@ int standing_sprite_order[SPRITES_MAX_NUM];            // Arrays used to sort th
 fp32_t standing_sprite_distance[SPRITES_MAX_NUM];
 int enemies_sprite_order[SPRITES_MAX_NUM];            // Arrays used to sort the sprites
 fp32_t enemies_sprite_distance[SPRITES_MAX_NUM];
+uint8_t render_blood;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,6 +26,7 @@ void renderer_init(sprite_t *sprites, unsigned sprite_n) {
 
     renderer_sprites = sprites;
     sprites_num = sprite_n;
+    render_blood = 0;
 }
 
 void renderer_menu(){
@@ -40,7 +42,7 @@ void renderer_menu(){
     draw_sprite(background__p, background__w, background__h, 0, 0);     // Background
 }
 
-void renderer_game_over(int state){
+void renderer_game_over(player_t* camera){
     #ifdef USE_DOUBLE_BUFFER
         wait_for_vsync();                                               // usually: 24-28ms
         transfer_buffer(); // Copy buffer from prev frame to screen     // usually: 0.4 - 4ms
@@ -49,8 +51,8 @@ void renderer_game_over(int state){
     #endif
 
     cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
-    // Draw background
-    draw_sprite(background__p, background__w, background__h, 0, 0);     // Background
+    draw_sprite(game_over__p, game_over__w, game_over__h, 0, 0);     // Background
+    draw_num(camera->score, 183, 130, 0xd);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -71,7 +73,13 @@ void renderer_render(player_t* camera) {                                // Time 
     sprite_raycaster(camera);                                           // usually: 0.65ms
     draw_hud(camera);
 
+    // Draw blood efect
+    if(render_blood > 0){
+        draw_sprite_transparent(blood__p, blood__w, blood__h, 0, 0);
+    }
+
     frame_count++;
+    if(render_blood > 0) render_blood--;
     //draw_number(frame_count, 10, 10, 0xc);
 }
 
@@ -91,6 +99,11 @@ void cls(){
     for(uint32_t i = 0; i < end; i++){
         buffer[i] = 0;
     }
+}
+
+// Go trough the whole screen and color it red
+void renderer_blood(uint8_t frames){
+    render_blood = frames;
 }
 
 // Draw floor and ceiling in screen buffer
