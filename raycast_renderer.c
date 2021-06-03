@@ -319,24 +319,25 @@ void dda(int* hit, int* map_x, int* map_y, int* step_x, int* step_y, fp32_t* sid
     }
 }
 
-void sprite_raycaster(player_t* camera){
+void sprite_raycaster(player_t* player){
+    // Reset player target indicator
+    player->target_valid = 0;
     // Draw standing sprites
     for(int i = 0; i < sprites_num; i++) {
         // Translate sprite position to relative to camera
-        // TODO convert sprite data to fp32_t
         sprite_t* sprite = &sprites_data[standing_sprite_order[i]];
         if (!sprite->visible) continue;
-        fp32_t sprite_x = sprite->x - camera->pos_x;
-        fp32_t sprite_y = sprite->y - camera->pos_y;
+        fp32_t sprite_x = sprite->x - player->pos_x;
+        fp32_t sprite_y = sprite->y - player->pos_y;
 
         //transform sprite with the inverse camera matrix
         // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
         // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
         // [ planeY   dirY ]                                          [ -planeY  planeX ]
-        fp32_t inv_det = fp32_div(FP32(1), (fp32_mul(camera->plane_x, camera->dir_y) - fp32_mul(camera->dir_x, camera->plane_y))); //required for correct matrix multiplication
+        fp32_t inv_det = fp32_div(FP32(1), (fp32_mul(player->plane_x, player->dir_y) - fp32_mul(player->dir_x, player->plane_y))); //required for correct matrix multiplication
 
-        fp32_t transform_x = fp32_mul(inv_det, (fp32_mul(camera->dir_y, sprite_x) - fp32_mul(camera->dir_x, sprite_y)));
-        fp32_t transform_y = fp32_mul(inv_det, (-fp32_mul(camera->plane_y, sprite_x) + fp32_mul(camera->plane_x, sprite_y))); //this is actually the depth inside the screen, that what Z is in 3D
+        fp32_t transform_x = fp32_mul(inv_det, (fp32_mul(player->dir_y, sprite_x) - fp32_mul(player->dir_x, sprite_y)));
+        fp32_t transform_y = fp32_mul(inv_det, (-fp32_mul(player->plane_y, sprite_x) + fp32_mul(player->plane_x, sprite_y))); //this is actually the depth inside the screen, that what Z is in 3D
 
         int sprite_screen_x = fp32_to_int(fp32_mul(FP32(SCREEN_W) / 2, FP32(1) + fp32_div(transform_x, transform_y)));
 
@@ -367,15 +368,21 @@ void sprite_raycaster(player_t* camera){
             //2) it's on the screen (left)
             //3) it's on the screen (right)
             //4) z_buffer, with perpendicular distance
-            if(transform_y > 0 && stripe >= 0 && stripe < SCREEN_W && transform_y < z_buffer[stripe])
-            for(int y = draw_start_y; y < draw_end_y; y++){ //for every pixel of the current stripe  
-                int d = (y) * 256 - SCREEN_H * 128 + sprite_height * 128; //256 and 128 factors to avoid floats
-                int tex_y = ((d * tex_height) / sprite_height) / 256;
-                uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
-                uint32_t dst_idx = y*SCREEN_W + stripe;
-                uint32_t color = sprite_textures[sprite->textures[sprite->anim_index]][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
-                if(color != 0xd) 
-                    buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
+            if(transform_y > 0 && stripe >= 0 && stripe < SCREEN_W && transform_y < z_buffer[stripe]) {
+                // If sprite is on the center stripe, it's a target candidate
+                if (stripe == SCREEN_W / 2 && sprite->raycast_transparent == 0) {
+                    player->target_valid = 1;
+                    player->target_sprite = sprite;
+                }
+                for(int y = draw_start_y; y < draw_end_y; y++) { //for every pixel of the current stripe  
+                    int d = (y) * 256 - SCREEN_H * 128 + sprite_height * 128; //256 and 128 factors to avoid floats
+                    int tex_y = ((d * tex_height) / sprite_height) / 256;
+                    uint32_t src_idx = tex_y*(tex_width/8) + tex_x/8;
+                    uint32_t dst_idx = y*SCREEN_W + stripe;
+                    uint32_t color = sprite_textures[sprite->textures[sprite->anim_index]][src_idx] >> (tex_x%8)*4 & 0xF; //get current color from the texture
+                    if(color != 0xd) 
+                        buffer[dst_idx] = color; //paint pixel if it isn't white, white is the invisible color
+                }
             }
         }
     }

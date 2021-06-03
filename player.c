@@ -19,6 +19,8 @@ void player_init() {
 
 	player.shoot_frequency = 30; // Player can shoot every 30 frames 
 	player.last_shot = frame_count;
+
+    player.target_valid = 0;
 }
 
 // Registering inputs in main menu
@@ -69,7 +71,13 @@ int player_update() {
     if(joypad.a && frame_count - player.last_shot >= player.shoot_frequency) {
         renderer_flash(5);
         player.last_shot = frame_count;
-        // TOOD: Implement shooting by raycasting
+        // We hit something
+        if (player.target_valid) {
+            enemy_t *enemy = find_enemy_by_sprite(player.target_sprite);
+            // TODO adjust damage
+            // We hit an enemy
+            if (enemy != 0) enemy_take_damage(enemy, 40);
+        }
     }
     // Move forward if no wall in front of the player
     if(joypad.up) {

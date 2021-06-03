@@ -64,36 +64,36 @@ const uint8_t sprite_monster_afrit[] = { 4 };
 sprite_t sprites_data[SPRITES_MAX_NUM] =
 {
     // Green lights in every room
-    {FP32F(20.5), FP32F(11.5), 1, 0, sprite_greenlight},
-    {FP32F(18.5), FP32F(4.5), 1, 0, sprite_greenlight},
-    {FP32F(10.0), FP32F(4.5), 1, 0, sprite_greenlight},
-    {FP32F(10.0), FP32F(12.5), 1, 0, sprite_greenlight},
-    {FP32F(3.5), FP32F(6.5), 1, 0, sprite_greenlight},
-    {FP32F(3.5), FP32F(20.5), 1, 0, sprite_greenlight},
-    {FP32F(3.5), FP32F(14.5), 1, 0, sprite_greenlight},
-    {FP32F(14.5), FP32F(20.5), 1, 0, sprite_greenlight},
+    {FP32F(20.5), FP32F(11.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(18.5), FP32F(4.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(10.0), FP32F(4.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(10.0), FP32F(12.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(3.5), FP32F(6.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(3.5), FP32F(20.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(3.5), FP32F(14.5), 1, 0, sprite_greenlight, 1},
+    {FP32F(14.5), FP32F(20.5), 1, 0, sprite_greenlight, 1},
 
     // Row of pillars in front of wall: fisheye test
-    {FP32F(18.5), FP32F(10.5), 1, 0, sprite_pillar},
-    {FP32F(18.5), FP32F(11.5), 1, 0, sprite_pillar},
-    {FP32F(18.5), FP32F(12.5), 1, 0, sprite_pillar},
+    {FP32F(18.5), FP32F(10.5), 1, 0, sprite_pillar, 0},
+    {FP32F(18.5), FP32F(11.5), 1, 0, sprite_pillar, 0},
+    {FP32F(18.5), FP32F(12.5), 1, 0, sprite_pillar, 0},
 
     // Some barrels around the map
-    {FP32F(21.5), FP32F(1.5), 1, 0, sprite_barrel},
-    {FP32F(15.5), FP32F(1.5), 1, 0, sprite_barrel},
-    {FP32F(16.0), FP32F(1.8), 1, 0, sprite_barrel},
-    {FP32F(16.2), FP32F(1.2), 1, 0, sprite_barrel},
-    {FP32F(3.5), FP32F(2.5), 1, 0, sprite_barrel},
-    {FP32F(9.5), FP32F(15.5), 1, 0, sprite_barrel},
-    {FP32F(10.0), FP32F(15.1), 1, 0, sprite_barrel},
-    {FP32F(10.5), FP32F(15.8), 1, 0, sprite_barrel},
+    {FP32F(21.5), FP32F(1.5), 1, 0, sprite_barrel, 0},
+    {FP32F(15.5), FP32F(1.5), 1, 0, sprite_barrel, 0},
+    {FP32F(16.0), FP32F(1.8), 1, 0, sprite_barrel, 0},
+    {FP32F(16.2), FP32F(1.2), 1, 0, sprite_barrel, 0},
+    {FP32F(3.5), FP32F(2.5), 1, 0, sprite_barrel, 0},
+    {FP32F(9.5), FP32F(15.5), 1, 0, sprite_barrel, 0},
+    {FP32F(10.0), FP32F(15.1), 1, 0, sprite_barrel, 0},
+    {FP32F(10.5), FP32F(15.8), 1, 0, sprite_barrel, 0},
 
     // Monsters in rooms
-    {FP32F(21.5), FP32F(4.5), 1, 0, sprite_monster_doom},
-    {FP32F(17.5), FP32F(4.5), 1, 0, sprite_monster_afrit},
-    {FP32F(3.5), FP32F(15.5), 1, 0, sprite_monster_doom},
-    {FP32F(3.5), FP32F(19.5), 1, 0, sprite_monster_afrit},
-    {FP32F(15.5), FP32F(20.5), 1, 0, sprite_monster_doom}
+    {FP32F(21.5), FP32F(4.5), 1, 0, sprite_monster_doom, 0},
+    {FP32F(17.5), FP32F(4.5), 1, 0, sprite_monster_afrit, 0},
+    {FP32F(3.5), FP32F(15.5), 1, 0, sprite_monster_doom, 0},
+    {FP32F(3.5), FP32F(19.5), 1, 0, sprite_monster_afrit, 0},
+    {FP32F(15.5), FP32F(20.5), 1, 0, sprite_monster_doom, 0}
 };
 
 enemy_t enemies_data[num_enemies] =

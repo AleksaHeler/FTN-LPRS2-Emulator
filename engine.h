@@ -18,6 +18,17 @@
     #define buffer unpack_idx4_p32
 #endif
 
+// Sprite objects in-game
+typedef struct
+{
+	fp32_t x;
+	fp32_t y;
+	uint8_t visible; 
+    unsigned anim_index;
+	const uint8_t* textures;
+	uint8_t raycast_transparent;
+} sprite_t;
+
 typedef struct {
 	fp32_t pos_x;
 	fp32_t pos_y;
@@ -31,17 +42,9 @@ typedef struct {
 	uint32_t score;
 	uint32_t shoot_frequency;
 	unsigned long long int last_shot;
+	sprite_t* target_sprite;
+	uint8_t target_valid;
 } player_t;
-
-// Sprite objects in-game
-typedef struct
-{
-	fp32_t x;
-	fp32_t y;
-	uint8_t visible; 
-    unsigned anim_index;
-	const uint8_t* textures;
-} sprite_t;
 
 typedef struct
 {

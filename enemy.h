@@ -8,5 +8,6 @@
 // Update enemy -> move, AI logic
 void enemy_update(player_t*);
 void enemy_take_damage(enemy_t*, uint8_t);
+enemy_t *find_enemy_by_sprite(sprite_t *sprite);
 
 #endif // ENEMY_H

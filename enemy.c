@@ -1,8 +1,9 @@
 #include "enemy.h"
 
 void enemy_update(player_t* player){
-    // Animate all enemies
+    // Animate all enemiesprint 
     for(int i = 0; i < num_enemies; i++){
+        if (enemies_data[i].hp == 0) continue;
         // Distances from enemy struct, squared so we dont have to use sqrt() for distance
         fp32_t enemy_to_player_dist = fp32_mul(enemies_data[i].dist_to_player, enemies_data[i].dist_to_player);
         fp32_t enemy_max_shot_distance = fp32_mul(enemies_data[i].max_shot_distance, enemies_data[i].max_shot_distance);
@@ -89,8 +90,17 @@ void enemy_update(player_t* player){
 }
 
 void enemy_take_damage(enemy_t* enemy, uint8_t damage){
-    if(enemy->hp >= damage)
+    if (enemy->hp >= damage) {
         enemy->hp -= damage;
-    else
+    } else {
         enemy->hp = 0;
+        enemy->sprite->visible = 0;
+    }
+}
+
+enemy_t* find_enemy_by_sprite(sprite_t* sprite) {
+    for (int i = 0; i < num_enemies; i++) {
+        if (enemies_data[i].sprite == sprite) return &enemies_data[i];
+    }
+    return 0;
 }
