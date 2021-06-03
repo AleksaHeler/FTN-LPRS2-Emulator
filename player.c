@@ -27,7 +27,10 @@ void player_init() {
 // Registering inputs in main menu
 int player_menu() {
     if(joypad.start)    return 1;
-    if(joypad.a)        return 1;
+    // Removed because when player wins by killing all enemies
+    // the A button is registered as input the first frame we 
+    // enter the game over screen and then it just restarts game
+    //if(joypad.a)        return 1; 
     if(joypad.b)        return -1;
     if(joypad.z)        return -1;
     return 0;
