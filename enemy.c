@@ -106,6 +106,7 @@ void enemy_take_damage(enemy_t* enemy, uint8_t damage){
     } else {
         enemy->hp = 0;
         enemy->sprite->visible = 0;
+        player.score += enemy->damage;
     }
 }
 

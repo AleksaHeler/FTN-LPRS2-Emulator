@@ -97,10 +97,10 @@ sprite_t sprites_data[SPRITES_MAX_NUM] =
 };
 
 enemy_t enemies_data[num_enemies] =
-{ //  sprite_ptr     dist_to_plyr shot_dist view_dist  hp damage     speed   shoot_interval
-    {FP32F(21.5), FP32F(4.5), &sprites_data[19], FP32F(2), FP32F(4), FP32F(9), 100, 10, FP32F(0.1), 120},
+{ //  original_x    original_y   sprite_ptr  dist_to_plyr shot_dist view_dist  hp damage   speed   shoot_interval
+    {FP32F(21.5), FP32F(4.5), &sprites_data[19], FP32F(2), FP32F(4), FP32F(9), 100, 20, FP32F(0.1), 120},
     {FP32F(17.5), FP32F(4.5), &sprites_data[20], FP32F(3), FP32F(4), FP32F(9), 100, 10, FP32F(0.3), 130},
-    {FP32F(3.5), FP32F(15.5), &sprites_data[21], FP32F(2), FP32F(4), FP32F(9), 100, 10, FP32F(0.1), 110},
+    {FP32F(3.5), FP32F(15.5), &sprites_data[21], FP32F(2), FP32F(4), FP32F(9), 100, 20, FP32F(0.1), 110},
     {FP32F(3.5), FP32F(19.5), &sprites_data[22], FP32F(3), FP32F(4), FP32F(9), 100, 10, FP32F(0.3), 100},
-    {FP32F(15.5), FP32F(20.5), &sprites_data[23], FP32F(2), FP32F(4), FP32F(9), 100, 10, FP32F(0.1), 140}
+    {FP32F(15.5), FP32F(20.5), &sprites_data[23], FP32F(2), FP32F(4), FP32F(9), 100, 20, FP32F(0.1), 140}
 };

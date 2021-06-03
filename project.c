@@ -46,7 +46,7 @@ void engine_game_loop(){
 
 	while(1){
 		while(1){ // Game loop
-			game_state = player_update();
+			game_state = player_update(); // Returns 0 if all is good, 1 if player won, -1 if player died
 			if(game_state != 0) break;
 			enemy_update(&player);
 			renderer_render(&player);

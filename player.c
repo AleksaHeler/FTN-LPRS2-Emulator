@@ -41,6 +41,7 @@ void player_take_damage(uint8_t damage){
     renderer_blood();
 }
 
+// Returns 0 if all is good, 1 if player won, -1 if player died
 int player_update() {
     /////////////////////////////////////
     // Poll controls:
@@ -78,9 +79,21 @@ int player_update() {
             enemy_t *enemy = find_enemy_by_sprite(player.target_sprite);
             // TODO adjust damage
             // We hit an enemy
-            if (enemy != 0) enemy_take_damage(enemy, 40);
+            if (enemy != 0){
+                enemy_take_damage(enemy, 40);
+            }
         }
     }
+
+    uint8_t win = 1;
+    for(int i = 0; i < num_enemies; i++){
+        if(enemies_data[i].sprite->visible == 1){
+            win = 0;
+            break;
+        }
+    }
+    if(win == 1) return 1; 
+
     // Move forward if no wall in front of the player
     if(joypad.up) {
         if(world_map[fp32_to_int(pos_x + fp32_mul(dir_x, move_speed) + fp32_mul(dir_x, player_width))][fp32_to_int(pos_y)] == 0) 
