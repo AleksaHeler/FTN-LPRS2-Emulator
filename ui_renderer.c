@@ -40,7 +40,7 @@ uint32_t divmod10(uint32_t in, uint8_t *mod) {
 }
 
 // Draw a number on screen
-void draw_num(uint16_t number, uint16_t x, uint16_t y, uint8_t color) {
+void draw_num(uint32_t number, uint16_t x, uint16_t y, uint8_t color) {
     static char reverse_digits[5] = {0};
     uint32_t u = number;
     uint8_t digit_count = 0;
@@ -64,7 +64,7 @@ void draw_num(uint16_t number, uint16_t x, uint16_t y, uint8_t color) {
 // Draw the HUD ingame
 void draw_hud(player_t *player) {
     draw_sprite_transparent(game_ui__p, game_ui__w, game_ui__h, 0, 0);
-    draw_num(player->hp, 41, 213, 0xd);
-    draw_num(player->ammo, 148, 213, 0xd);
     draw_num(player->score, 260, 213, 0xd);
+    draw_num(player->ammo, 148, 213, 0xd);
+    draw_num(player->hp, 41, 213, 0xd);
 }

@@ -75,14 +75,22 @@ void renderer_render(player_t* camera) {                                // Time 
     sprite_raycaster(camera);                                           // usually: 0.65ms
     draw_hud(camera);
 
-    // Draw blood efect
-    if(render_blood > 0){
-        draw_sprite_transparent(blood__p, blood__w, blood__h, 0, 0);
-        render_blood--;
-    }
+    // Draw muzzle flash efect
     if(render_flash > 0){
         draw_sprite_transparent(muzzle_flash__p, muzzle_flash__w, muzzle_flash__h, 0, 0);
         render_flash--;
+    }
+    // Draw blood efect
+    if(render_blood > 0){ // TODO: blood rendering is bodge
+        if(render_blood > 18){
+            uint32_t blood_anim_offset = (24-render_blood) * SCREEN_H;
+            draw_sprite_offset_transparent(blood__p, SCREEN_W, SCREEN_H, 0, blood_anim_offset, 0, 0);
+        }
+        else{
+            uint32_t blood_anim_offset = 5 * SCREEN_H;
+            draw_sprite_offset_transparent(blood__p, SCREEN_W, SCREEN_H, 0, blood_anim_offset, 0, 0);
+        }
+        render_blood--;
     }
 
     frame_count++;
@@ -107,8 +115,10 @@ void cls(){
 }
 
 // Go trough the whole screen and color it red
-void renderer_blood(uint8_t frames){
-    render_blood = frames;
+// TODO: blood rendering is bodge
+void renderer_blood(){
+    // Blood animation has 6 frames but exclude first one and keep it for 18 frames after its done 
+    render_blood = 22;   
 }
 
 // Go trough the whole screen and color it red

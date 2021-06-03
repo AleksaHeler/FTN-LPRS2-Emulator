@@ -17,6 +17,7 @@ void player_init() {
     player.damage = 50;
     player.score = 0;
 
+    player.ammo = 20;
 	player.shoot_frequency = 30; // Player can shoot every 30 frames 
 	player.last_shot = frame_count;
 
@@ -37,7 +38,7 @@ void player_take_damage(uint8_t damage){
         player.hp -= damage;
     else
         player.hp = 0;
-    renderer_blood(8);
+    renderer_blood();
 }
 
 int player_update() {
@@ -68,9 +69,10 @@ int player_update() {
     fp32_t plane_y = player.plane_y;
 
     // Shoot on button 'A'
-    if(joypad.a && frame_count - player.last_shot >= player.shoot_frequency) {
+    if(joypad.a && frame_count - player.last_shot >= player.shoot_frequency && player.ammo > 0) {
         renderer_flash(5);
         player.last_shot = frame_count;
+        player.ammo--;
         // We hit something
         if (player.target_valid) {
             enemy_t *enemy = find_enemy_by_sprite(player.target_sprite);
