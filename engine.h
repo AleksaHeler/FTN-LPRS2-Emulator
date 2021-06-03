@@ -48,6 +48,8 @@ typedef struct {
 
 typedef struct
 {
+	fp32_t original_x;
+	fp32_t original_y;
 	sprite_t* sprite;			// Sprite info
 	fp32_t dist_to_player;		// Distance to keep from player
 	fp32_t max_shot_distance;	// Max distance from which to shoot

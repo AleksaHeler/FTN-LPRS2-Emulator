@@ -1,5 +1,16 @@
 #include "enemy.h"
 
+
+void enemies_init(){
+    for(int i = 0; i < num_enemies; i++){
+        enemies_data[i].sprite->visible = 1;
+        enemies_data[i].hp = DEFAULT_ENEMY_HP;
+        // Reset position
+        enemies_data[i].sprite->x = enemies_data[i].original_x;
+        enemies_data[i].sprite->y = enemies_data[i].original_y;
+    }
+}
+
 void enemy_update(player_t* player){
     // Animate all enemiesprint 
     for(int i = 0; i < num_enemies; i++){
@@ -90,7 +101,7 @@ void enemy_update(player_t* player){
 }
 
 void enemy_take_damage(enemy_t* enemy, uint8_t damage){
-    if (enemy->hp >= damage) {
+    if (enemy->hp > damage) {
         enemy->hp -= damage;
     } else {
         enemy->hp = 0;

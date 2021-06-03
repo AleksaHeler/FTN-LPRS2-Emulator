@@ -26,6 +26,7 @@ int main(void) {
 void engine_init(){
     renderer_init(sprites_data, SPRITES_MAX_NUM);
 	player_init();
+	enemies_init();
 }
 
 // Main menu: show screen and wait for player to press a button certain

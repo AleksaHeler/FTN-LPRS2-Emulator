@@ -13,6 +13,7 @@
 #define tex_height_shift 6
 #define SPRITES_MAX_NUM 24      // How many sprites in the map (3 pillars + 8 lights + 8 barrels)
 #define num_enemies 5           // How many enemies in the map
+#define DEFAULT_ENEMY_HP 100
 
 extern int world_map[map_width][map_height];
 
