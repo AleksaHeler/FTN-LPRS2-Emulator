@@ -11,6 +11,7 @@
 // Drawing sprite:
 void draw_sprite(uint32_t*, uint16_t, uint16_t, uint16_t, uint16_t);
 void draw_sprite_transparent(uint32_t*, uint16_t, uint16_t, uint16_t, uint16_t);
+void draw_sprite_offset_transparent(uint32_t*, uint32_t, uint32_t, uint32_t, uint32_t, uint16_t, uint16_t);
 
 // Sorting sprites:
 void swap(int*, fp32_t*, int*, fp32_t*);

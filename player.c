@@ -35,7 +35,7 @@ void player_take_damage(uint8_t damage){
         player.hp -= damage;
     else
         player.hp = 0;
-    renderer_blood(8);
+    renderer_blood();
 }
 
 int player_update() {
