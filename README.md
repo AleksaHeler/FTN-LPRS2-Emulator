@@ -29,7 +29,7 @@ Grupni projekat iz predmeta LPRS2.
 
 ## Uvod <a name = "uvod"></a>
 
-[TODO]
+U folderu ``` dist ``` se nalazi zip koji treba otpakovati i zatim pokrenuti komande iznad u tom folderu.
 
 ## Koncept <a name = "koncept"></a>
 Ideja je bila napraviti igricu za emulator koja je slična [Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D). Kako bi mogli napraviti 3D igru u 2D emulatoru, koristimo Raycasting algoritam (ne raytracing). Kako bi pojednostavili sebi problem, i kako nije neophodno imati vertikalnost u igri (spratovi, stepenice, skokovi), možemo mapu predstaviti 2D matricom celih brojeva, gde broj označava tip zida, i ako je 0 znači prazno polje po kojem se igrač može kretati.
