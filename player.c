@@ -95,7 +95,10 @@ int player_update() {
             break;
         }
     }
-    if(win == 1) return 1; 
+    if(win == 1){
+        player.score += player.hp;
+        return 1; 
+    }
 
     // Move forward if no wall in front of the player
     if(joypad.up) {

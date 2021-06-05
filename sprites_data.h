@@ -19,6 +19,10 @@ extern uint16_t game_over__w;
 extern uint16_t game_over__h;
 extern uint32_t game_over__p[];
 
+extern uint16_t win__w;
+extern uint16_t win__h;
+extern uint32_t win__p[];
+
 extern uint16_t blood__w;
 extern uint16_t blood__h;
 extern uint32_t blood__p[];

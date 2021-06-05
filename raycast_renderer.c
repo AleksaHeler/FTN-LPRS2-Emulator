@@ -44,7 +44,7 @@ void renderer_menu(){
     draw_sprite(background__p, background__w, background__h, 0, 0);     // Background
 }
 
-void renderer_game_over(player_t* camera){
+void renderer_game_over(player_t* camera, uint32_t state){
     #ifdef USE_DOUBLE_BUFFER
         wait_for_vsync();                                               // usually: 24-28ms
         transfer_buffer(); // Copy buffer from prev frame to screen     // usually: 0.4 - 4ms
@@ -53,8 +53,13 @@ void renderer_game_over(player_t* camera){
     #endif
 
     cls();  // Clear background to color with index 0 in palette        // usually: 0.27ms
-    draw_sprite(game_over__p, game_over__w, game_over__h, 0, 0);     // Background
-    draw_num(camera->score, 183, 130, 0xd);
+    if(state > 0){ // if it is win
+        draw_sprite(win__p, win__w, win__h, 0, 0);     // Background
+        draw_num(camera->score, 183, 130, 0xd);
+    } else { // if it is game over
+        draw_sprite(game_over__p, game_over__w, game_over__h, 0, 0);     // Background
+        draw_num(camera->score, 183, 130, 0xd);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

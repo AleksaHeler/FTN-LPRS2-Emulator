@@ -59,7 +59,7 @@ void engine_game_loop(){
 				break;
 			}
 			if(input == -1) return;			// Quit (b/z)
-			renderer_game_over(&player);	// Render game over screen
+			renderer_game_over(&player, game_state);	// Render game over screen
 		}
 	}
 }
