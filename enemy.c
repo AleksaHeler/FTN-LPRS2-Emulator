@@ -89,8 +89,7 @@ void enemy_update(player_t* player){
             }
 
             //////// If distance to player is in shooting range (a to b) -> shoot at player on regular interval
-            if (dist_to_player > enemy_to_player_dist - FP32F(0.1) && dist_to_player < enemy_max_shot_distance) {
-                // TODO: implement HP system and shooting system
+            if (dist_to_player < enemy_max_shot_distance) {
 
                 if(frame_count % enemies_data[i].shoot_interval == 0){
                     player_take_damage(enemies_data[i].damage);

@@ -48,7 +48,6 @@ static inline fp32_t fp32_clamp(fp32_t x, fp32_t lo, fp32_t hi) { return fp32_mi
 // Arithmetic operations
 static inline fp32_t fp32_add(fp32_t x, fp32_t y) { return (x + y); }
 static inline fp32_t fp32_subtract(fp32_t x, fp32_t y) { return (x - y); }
-// TODO: optimize these further
 static inline fp32_t fp32_mul(fp32_t x, fp32_t y) { return ((int64_t)x * y) >> FP32_DECIMAL_PLACES; }
 
 static inline fp32_t fp32_div(fp32_t x, fp32_t y) {

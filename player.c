@@ -1,6 +1,4 @@
 #include "player.h"
-#include "stdio.h" // TODO: remove when done
-
 player_t player;
 
 void player_init() {
@@ -80,7 +78,6 @@ int player_update() {
         // We hit something
         if (player.target_valid) {
             enemy_t *enemy = find_enemy_by_sprite(player.target_sprite);
-            // TODO adjust damage
             // We hit an enemy
             if (enemy != 0){
                 enemy_take_damage(enemy, 40);

@@ -48,7 +48,6 @@ uint32_t* sprite_textures[5] = {
 };
 
 // UI characters - digits
-// TODO: add these
 uint32_t* sprite_digits[10] = {
     mossy__p, mossy__p
 };

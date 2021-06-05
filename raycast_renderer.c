@@ -3,8 +3,6 @@
 sprite_t *renderer_sprites;
 unsigned sprites_num;
 
-// TODO malloc these
-
 fp32_t z_buffer[SCREEN_W];               // 1D 'depth/distance' z_buffer
 int standing_sprite_order[SPRITES_MAX_NUM];            // Arrays used to sort the sprites
 fp32_t standing_sprite_distance[SPRITES_MAX_NUM];
@@ -86,7 +84,7 @@ void renderer_render(player_t* camera) {                                // Time 
         render_flash--;
     }
     // Draw blood efect
-    if(render_blood > 0){ // TODO: blood rendering is bodge
+    if(render_blood > 0){
         if(render_blood > 18){
             uint32_t blood_anim_offset = (24-render_blood) * SCREEN_H;
             draw_sprite_offset_transparent(blood__p, SCREEN_W, SCREEN_H, 0, blood_anim_offset, 0, 0);
@@ -120,7 +118,6 @@ void cls(){
 }
 
 // Go trough the whole screen and color it red
-// TODO: blood rendering is bodge
 void renderer_blood(){
     // Blood animation has 6 frames but exclude first one and keep it for 18 frames after its done 
     render_blood = 22;   
@@ -356,7 +353,6 @@ void sprite_raycaster(player_t* player){
 
         int sprite_screen_x = fp32_to_int(fp32_mul(FP32(SCREEN_W) / 2, FP32(1) + fp32_div(transform_x, transform_y)));
 
-        // TODO overflow happens when calculating sprite_screen_x
         // Don't render sprites close to camera
         if (transform_y < SPRITE_MIN_RENDER_DISTANCE) continue;
 
