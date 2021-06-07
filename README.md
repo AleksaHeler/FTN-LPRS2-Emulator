@@ -154,4 +154,5 @@ Ovde se postavlja pitanje da li vredi preći na RGB333 color space koji nudi vis
 
 ## Igrica <a name = "igrica"></a>
 Gameplay video
+
 [![Gameplay video](https://img.youtube.com/vi/yV0OKMVmyVE/0.jpg)](https://www.youtube.com/watch?v=yV0OKMVmyVE)
