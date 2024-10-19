@@ -3,6 +3,8 @@ Grupni projekat iz predmeta LPRS2.
 
 **Autori**: *Marko Đorđević, Radomir Zlatković, Aleksa Heler*
 
+[![Gameplay video](https://img.youtube.com/vi/yV0OKMVmyVE/0.jpg)](https://www.youtube.com/watch?v=yV0OKMVmyVE)
+
 ## Sadržaj
 - [Pokretanje](#pokretanje)
 - [Uvod](#uvod)
